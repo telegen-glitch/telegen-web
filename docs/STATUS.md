@@ -37,7 +37,8 @@ _Last updated: 2026-10-05_
 
 - Reference screenshots (fellos.nl, numan.com, manual.co, hims.com): blocked by network policy (403).
   `docs/parity-spec.md` is written from the known category pattern and must be re-checked.
-- GitHub CI and the Vercel preview: in progress on PR #1.
+- GitHub CI on PR #1: green (checks + e2e) at 7398a0a.
+- Vercel preview: no deployment has appeared on the PR; Vercel is not yet building the repo.
 - Phase 5 Sanity: interface ready (`src/content/source.ts`); needs project id/token.
 - Structured data validated by our own tests (parse + mirrors visible content); Google Rich Results
   Test not run (no network access to it).
