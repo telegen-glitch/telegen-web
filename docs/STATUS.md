@@ -31,14 +31,14 @@ _Last updated: 2026-10-05_
 ## Links
 
 - PR: https://github.com/telegen-glitch/telegen-web/pull/1 (branch `claude/telegen-production-build-sv94k7`)
-- Preview: waiting for Vercel's first deployment on the PR.
+- Preview: https://telegen-web-git-claude-telegen-production-build-sv94k7-telegem.vercel.app (Vercel: Ready at e515f2f)
 
 ## NOT DONE / NOT VERIFIED
 
 - Reference screenshots (fellos.nl, numan.com, manual.co, hims.com): blocked by network policy (403).
   `docs/parity-spec.md` is written from the known category pattern and must be re-checked.
 - GitHub CI on PR #1: green (checks + e2e) at 7398a0a.
-- Vercel: owner connected the repo on 2026-10-05; first PR preview requested by the next push.
+- Vercel: connected 2026-10-05. First build failed (project imported while repo was empty → no framework detected); fixed by `vercel.json` `framework: nextjs`. Preview deployed. Not opened from this container (vercel.app blocked by network policy).
 - Phase 5 Sanity: interface ready (`src/content/source.ts`); needs project id/token.
 - Structured data validated by our own tests (parse + mirrors visible content); Google Rich Results
   Test not run (no network access to it).
