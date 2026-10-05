@@ -1,0 +1,112 @@
+/**
+ * Content model. Typed local content now; Sanity documents map onto the same
+ * shapes in Phase 5 (see source.ts). Keep these types free of presentation.
+ */
+
+export type ISODate = `${number}-${number}-${number}`;
+
+/** Inline text. Supports [label](/internal-or-https-link) and citations like {{cite:olsen-2002}}. */
+export type RichText = string;
+
+export type Block =
+  | { type: "p"; text: RichText }
+  | { type: "list"; ordered?: boolean; items: RichText[] }
+  | { type: "callout"; tone: "info" | "caution"; title?: string; text: RichText }
+  | { type: "h3"; text: string };
+
+export interface Section {
+  id: string;
+  heading: string;
+  blocks: Block[];
+}
+
+export interface Faq {
+  question: string;
+  answer: RichText;
+}
+
+export interface Source {
+  id: string;
+  /** Citation as printed on the page. */
+  citation: string;
+  url: string;
+  kind: "guideline" | "trial" | "review" | "label" | "organisation";
+}
+
+export interface Clinician {
+  slug: string;
+  /** Real full name, or a clearly temporary role label. Never invent a person. */
+  name: string;
+  role: string;
+  /** Professional title and specialty, e.g. "Medic primar dermatovenerolog". */
+  credential?: string;
+  /** Registration with Colegiul Medicilor din România, if supplied. */
+  registration?: string;
+  bio: RichText[];
+  /** True until the owner supplies and confirms the real person's details. */
+  temporary: boolean;
+}
+
+export interface Review {
+  reviewerSlug: string;
+  reviewedAt: ISODate;
+}
+
+export interface RelatedLink {
+  href: string;
+  label: string;
+  description?: string;
+}
+
+export type DocKind = "condition" | "guide" | "treatment";
+
+/** Role in the internal linking graph (section 8). */
+export type GraphRole = "condition" | "symptoms" | "causes" | "treatment" | "questions";
+
+export interface MedicalDoc {
+  kind: DocKind;
+  slug: string;
+  graphRole: GraphRole;
+  /** Taxonomy: which condition this belongs to. */
+  conditionSlug: string;
+  title: string;
+  /** <title> without the brand suffix. */
+  metaTitle: string;
+  metaDescription: string;
+  h1: string;
+  /** Concise answer shown first and used for the description in structured data. */
+  summary: RichText;
+  sections: Section[];
+  faqs: Faq[];
+  sourceIds: string[];
+  limitations: RichText;
+  authorSlug?: string;
+  review?: Review;
+  publishedAt: ISODate;
+  updatedAt: ISODate;
+  related: RelatedLink[];
+  /** Draft docs are modelled but never routed, listed or put in the sitemap. */
+  status: "published" | "draft";
+}
+
+export interface TimelineStep {
+  period: string;
+  title: string;
+  text: RichText;
+}
+
+export interface Condition {
+  slug: string;
+  name: string;
+  shortName: string;
+  /** Medical name used in structured data, e.g. "Alopecie androgenetică". */
+  medicalName: string;
+  /** One line for hubs and navigation. */
+  teaser: string;
+  status: "published" | "draft";
+  doc: MedicalDoc;
+  /** Month-by-month expectations block on the condition page. */
+  timeline?: { heading: string; intro: RichText; steps: TimelineStep[]; sourceIds: string[] };
+  guideSlugs: string[];
+  treatmentSlugs: string[];
+}

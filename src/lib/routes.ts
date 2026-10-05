@@ -1,0 +1,38 @@
+import { content, hrefForDoc } from "@/content/source";
+import { reviewContext } from "@/lib/medical";
+
+export interface RouteEntry {
+  path: string;
+  indexable: boolean;
+  lastModified?: string;
+}
+
+/** Every public route with its page-level indexability. Source for sitemap and tests. */
+export function allRoutes(): RouteEntry[] {
+  const staticPages: RouteEntry[] = [
+    "/",
+    "/afectiuni",
+    "/ghiduri",
+    "/tratamente",
+    "/cum-functioneaza",
+    "/standarde-clinice",
+    "/evaluare",
+    "/termeni-si-conditii",
+    "/politica-de-confidentialitate",
+    "/politica-cookie",
+  ].map((path) => ({ path, indexable: true }));
+
+  const docs = [
+    ...content.listConditions().map((c) => c.doc),
+    ...content.listGuides(),
+    ...content.listTreatments(),
+  ].map((d) => ({ path: hrefForDoc(d), indexable: reviewContext(d).indexable, lastModified: d.updatedAt }));
+
+  const clinicians = content.listClinicians();
+  const team: RouteEntry[] = [
+    { path: "/echipa-medicala", indexable: clinicians.some((c) => !c.temporary) },
+    ...clinicians.map((c) => ({ path: `/echipa-medicala/${c.slug}`, indexable: !c.temporary })),
+  ];
+
+  return [...staticPages, ...docs, ...team];
+}
