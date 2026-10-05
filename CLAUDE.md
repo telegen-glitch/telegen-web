@@ -5,7 +5,7 @@
 - Resume from `docs/STATUS.md` (done / next / blockers). Update it after every work block.
 - Package manager: pnpm. Checks: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm e2e`.
 - Content lives in `src/content/` (typed, local) behind the interface in `src/content/source.ts`. Sanity plugs in behind the same interface in Phase 5.
-- Indexing: the whole site is `noindex` unless `SITE_INDEXING=on` AND `VERCEL_ENV=production` (see `src/lib/site.ts`). Medical pages are additionally `noindex` unless their data has a real reviewer (name, credential, review date) — `src/lib/indexing.ts`, enforced by `scripts/check-content.ts` and `tests/unit/indexing.test.ts`.
+- Indexing: the whole site is `noindex` unless `SITE_INDEXING=on` AND `VERCEL_ENV=production` (see `src/lib/site.ts`). Medical pages are additionally `noindex` unless their data has a real reviewer (name, credential, review date) — `src/lib/indexing.ts`, enforced by `tests/unit/indexing.test.ts`, which runs before every build (`prebuild`).
 - Health answers from `/evaluare` stay in React state only. Never in URL, cookies, storage, logs or analytics.
 - Open items: `docs/open-items.md`. Legal questions: `docs/legal-review-needed.md`. Parity: `docs/parity-spec.md`.
 
