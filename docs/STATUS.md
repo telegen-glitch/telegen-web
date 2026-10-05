@@ -28,25 +28,26 @@ _Last updated: 2026-10-05_
   Best Practices 100, SEO 66 (only failing audit: `is-crawlable`, intended noindex). LCP 2.86–3.01 s,
   TBT 45–61 ms, CLS 0.
 
+## Links
+- PR: https://github.com/telegen-glitch/telegen-web/pull/1 (branch `claude/telegen-production-build-sv94k7`)
+- Preview: waiting for Vercel's first deployment on the PR.
+
 ## NOT DONE / NOT VERIFIED
 
 - Reference screenshots (fellos.nl, numan.com, manual.co, hims.com): blocked by network policy (403).
   `docs/parity-spec.md` is written from the known category pattern and must be re-checked.
-- Push to GitHub, PR, CI on GitHub and Vercel preview: blocked (GitHub App not installed for the
-  repo owner; git push returns 403).
+- GitHub CI and the Vercel preview: in progress on PR #1.
 - Phase 5 Sanity: interface ready (`src/content/source.ts`); needs project id/token.
 - Structured data validated by our own tests (parse + mirrors visible content); Google Rich Results
   Test not run (no network access to it).
 
 ## NEXT
 
-1. Owner unblocks GitHub → push `claude/telegen-production-build-sv94k7`, open PR, get Vercel preview.
+1. Get CI green and the Vercel preview link on PR #1; owner reviews the preview on a phone.
 2. Reference capture → visual parity passes (3 loops) against real screenshots.
 3. Sanity adapter behind `ContentSource` once credentials arrive.
 
 ## BLOCKED (owner-only)
 
-- Install the Claude GitHub App on `telegen-glitch/telegen-web` (push + PR).
-- Connect Vercel to the repo (import project).
 - Allow reference domains in the environment's network settings, or send phone screenshots.
-- Later: company details, clinicians, prices, Brevo account/API key, lawyer review, Sanity credentials.
+- Later: company details, clinicians, prices, Brevo account/API key (owner approved Brevo), lawyer review, Sanity credentials.
