@@ -28,7 +28,7 @@ test("mobile menu opens, traps focus, closes with Escape", async ({ page }, info
 test("desktop conditions menu works with the keyboard", async ({ page }, info) => {
   test.skip(info.project.name !== "desktop-1280");
   await page.goto("/");
-  const btn = page.getByRole("button", { name: "Afecțiuni" });
+  const btn = page.getByRole("button", { name: "Tratamente" });
   await btn.focus();
   await page.keyboard.press("Enter");
   await expect(btn).toHaveAttribute("aria-expanded", "true");
@@ -42,4 +42,43 @@ test("skip link moves focus to main content", async ({ page }, info) => {
   await page.keyboard.press("Tab");
   const skip = page.getByRole("link", { name: "Sari la conținut" });
   await expect(skip).toBeFocused();
+});
+
+test("topic picker opens from the hero CTA and hands the topic to the flow in memory", async ({
+  page,
+}, info) => {
+  test.skip(info.project.name === "tablet-768");
+  await page.goto("/");
+  await page
+    .locator("main")
+    .getByRole("link", { name: /Începe evaluarea/ })
+    .first()
+    .click();
+  const dialog = page.getByRole("dialog", { name: "Cu ce te putem ajuta?" });
+  await expect(dialog).toBeVisible();
+  // Upcoming topics are visible but not links.
+  await expect(dialog.getByText("în curând").first()).toBeVisible();
+  await expect(dialog.getByRole("link", { name: /Acnee/ })).toHaveCount(0);
+  await page.screenshot({ path: `artifacts/screenshots/${info.project.name}/_topic-picker.png` });
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+
+  await page
+    .locator("main")
+    .getByRole("link", { name: /Începe evaluarea/ })
+    .first()
+    .click();
+  await dialog.getByRole("link", { name: /Căderea părului/ }).click();
+  await expect(page).toHaveURL(/\/evaluare$/);
+  await expect(page.getByRole("heading", { name: /câteva întrebări/ })).toBeVisible();
+});
+
+test("desktop mega-menu lists conditions and marks upcoming topics", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop-1280");
+  await page.goto("/");
+  await page.getByRole("button", { name: "Tratamente" }).hover();
+  const panel = page.locator("#mega-tratamente");
+  await expect(panel).toBeVisible();
+  await expect(panel.getByRole("link", { name: /Căderea părului/ })).toBeVisible();
+  await page.screenshot({ path: "artifacts/screenshots/desktop-1280/_mega-menu.png" });
 });

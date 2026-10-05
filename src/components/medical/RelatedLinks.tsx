@@ -14,7 +14,7 @@ export function RelatedLinks({
   if (links.length === 0) return null;
   return (
     <section aria-labelledby="legaturi" className={className}>
-      <h2 id="legaturi" className="font-serif text-2xl text-navy-950">
+      <h2 id="legaturi" className="text-display-3">
         {heading}
       </h2>
       <ul className="mt-4 divide-y divide-line border-y border-line">

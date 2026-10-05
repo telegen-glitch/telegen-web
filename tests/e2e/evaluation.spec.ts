@@ -7,7 +7,8 @@ test("evaluation keeps answers in memory only", async ({ page, context }, info) 
   const startUrl = page.url();
   page.on("request", (r) => requests.push(`${r.method()} ${r.url()}`));
 
-  await page.getByRole("button", { name: /Începe/ }).click();
+  await page.getByRole("button", { name: "Căderea părului" }).click();
+  await page.getByRole("button", { name: /^Începe/ }).click();
 
   // single-choice screens advance on click; multi-choice need "Continuă"
   const pick = async (label: string | RegExp) =>

@@ -48,6 +48,51 @@ MATCH closely: section order and page rhythm; condition-led navigation; assessme
 OWN: logo and wordmark, exact colour values, licensed typefaces, all copy, imagery, illustration and code. Never copy a competitor's text, images, icons, illustrations, fonts, logo or code.
 Visual loop: after each page, screenshot Telegen at 360px and 1280px, compare with the matching reference, list deviations in feel (density, whitespace, hierarchy, type weight, proportions), fix, repeat up to three passes.
 
+## 4c. FELLOS PARITY REBUILD (v2) — overrides earlier design direction where they conflict
+The current build is a good foundation but not close enough. Goal: a Telegen site whose UI, layout and motion are VERY CLOSE to fellos.nl, at the same premium level, with Telegen's own identity (logo, palette, licensed fonts, all copy and imagery). You may delete and rebuild any UI code. Keep: SEO/GEO infrastructure, schema, compliance rules, tests, CI, content model. Save this as section 4c of CLAUDE.md so future sessions follow it.
+
+### A. Reference capture (do first)
+Use Playwright at 360x780, 390x844 and 1280x800 on fellos.nl (and fellos.nl/en for meaning):
+- Full-page screenshots plus section-by-section crops of: home, /behandeling/haaruitval, /hoe-het-werkt, /over-ons/onze-zorgverleners, /kennisbank, /medicijn-informatie, /quiz/start (first screens only, submit nothing).
+- Screen recordings (recordVideo) of: slow full-page scroll, mobile menu open/close, desktop mega-menu, topic-picker modal, carousels being swiped, FAQ accordion, sticky header behaviour.
+- Measure computed styles: font size, line height, letter spacing per heading level and body; section padding; container widths; grid gaps; radius; button height/padding; header height; shadows. Record CSS transitions/keyframes where present; for scripted interactions, derive timing from the videos.
+Keep all of this in /reference (gitignored). If network blocks it, ask the owner for phone screenshots and list the exact screens.
+
+### B. Write two short specs
+- docs/token-map.md: each Fellos measurement mapped to a Telegen token, same scale and proportions, own colours and fonts.
+- docs/motion-spec.md: each animation with trigger, property, duration, easing, delay/stagger and distance.
+
+### C. Homepage — match this section order and component behaviour
+(Taken from the live page text; verify against the screenshots before building.)
+1. Thin announcement bar.
+2. Sticky header: logo, desktop mega-menu (Tratamente / Despre Telegen), primary CTA, full-screen mobile menu. No login or cart (no app or shop yet).
+3. Topic-picker modal ("Cu ce te putem ajuta?"): only published topics are selectable; others may show as non-clickable "în curând".
+4. Hero: two-part headline with the second phrase in an italic accent style, short subtext, condition chips, primary CTA, real photo or high-end typographic/diagram treatment (no stock doctors).
+5. Compact numbered 3-step strip (01 / 02 / 03).
+6. Value section with a two-CTA pair (start / how it works).
+7. Condition cards section.
+8. "How we help you" 4-step section with phone-mockup visuals of Telegen's own UI, animated on scroll as Fellos does.
+9. Medical team: swipe carousel plus grid plus credential badges.
+10. Reviews carousel.
+11. FAQ accordion with a link to the knowledge base.
+12. Footer: 4 link columns, socials, legal links, cookie preferences; plus a granular cookie banner.
+Sections that need assets Telegen does not have yet — press logos, star ratings, review counts, reviews, doctor photos and quotes, certification badges, refund promise — must be built as components but hidden behind feature flags (OFF) until real content and owner confirmation exist. Never fill them with placeholders that look real.
+
+### D. Motion
+Implement the motion spec with CSS plus a small IntersectionObserver utility. Add an animation library only if the spec genuinely needs it, and justify it. Respect prefers-reduced-motion. No layout shift. Do not delay the hero's LCP with entrance animations. Keep Lighthouse mobile performance at or above the current preview's score.
+
+### E. Acceptance per section
+Compare Telegen and Fellos side by side at 360/390 and 1280: same section order, component type, grid and interaction; type and spacing proportions within about 10%; motion durations within about 20%. Up to three fix passes per section, then move on and list any remaining gaps.
+
+### F. Then extend the same system to
+Hair-loss page (mirror /behandeling/haaruitval), how it works (/hoe-het-werkt), medical team (/over-ons/onze-zorgverleners), knowledge base (/kennisbank), medicine information (/medicijn-informatie), and the evaluation flow (structure of /quiz/start, still UI-only with answers kept in memory as per 7b).
+
+### G. Never copy
+No Fellos images, logos, icons, illustrations, fonts, exact colour values, code, or text — including translations of their sentences. All Romanian copy is original. All earlier compliance rules still apply (no invented doctors, reviews, ratings or statistics; no medicine names in hero/CTA/price blocks).
+
+### H. Report back (phone-sized)
+Preview link first, then at most 5 bullets on remaining gaps versus Fellos, then any batched blockers.
+
 ## 5. Design direction
 Premium Romanian digital clinic: credible, calm, precise, human, European. White, deep navy, restrained clinical blue. Distinctive licensed type with full Romanian diacritics (ă â î ș ț, comma-below), disciplined spacing, strong editorial hierarchy, restrained motion. Real photography only if real and licensed; otherwise typographic and diagrammatic design.
 Avoid: generic SaaS look, rows of identical cards, meaningless icons, gradients, glassmorphism, cartoon medicine, stock doctors, fake reviews/stats/doctors, fear marketing.

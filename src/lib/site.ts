@@ -14,10 +14,6 @@ export const siteConfig = {
   description: "Clinică dermatologică online, cu evaluare făcută de medici. Începem cu căderea părului.",
   /** Status shown on the site while the clinical service is not open. */
   launchState: "prelaunch" as "prelaunch" | "open",
-  features: {
-    /** Pricing appears after the education on condition pages. Owner decision; OFF. */
-    pricing: false,
-  },
   crawlers: {
     /**
      * GPTBot (OpenAI model training) is a separate owner decision.

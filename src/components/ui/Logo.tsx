@@ -12,7 +12,7 @@ export function Logo({ className = "", inverse = false }: { className?: string; 
         />
         <circle cx="20.4" cy="4.6" r="2.1" className="fill-blue-600" />
       </svg>
-      <span className="font-serif text-[1.5rem] leading-none font-medium tracking-[-0.02em]">telegen</span>
+      <span className="text-[1.4375rem] leading-none font-semibold tracking-[-0.04em]">telegen</span>
     </span>
   );
 }

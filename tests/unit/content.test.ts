@@ -49,6 +49,9 @@ describe("sources and citations", () => {
 
 describe("internal linking graph", () => {
   it("all internal links resolve to a route", () => {
+    for (const c of content.listConditions()) {
+      for (const a of c.approaches ?? []) expect(routes, `${c.slug} approach → ${a.href}`).toContain(a.href);
+    }
     for (const d of published) {
       const links = [
         ...textsOf(d).flatMap((t) => [...t.matchAll(/\]\((\/[^)\s#]*)/g)].map((m) => m[1])),

@@ -14,6 +14,26 @@ export const hairLoss: Condition = {
     "caderea-parului-intrebari-frecvente",
   ],
   treatmentSlugs: ["minoxidil", "finasterida"],
+  approaches: [
+    {
+      title: "Tratament topic",
+      text: "Se aplică pe scalp și prelungește faza de creștere a firului.",
+      href: "/tratamente/minoxidil",
+      linkLabel: "Informații despre tratamentul topic",
+    },
+    {
+      title: "Tratament oral",
+      text: "Reduce efectul hormonal asupra foliculului. Se eliberează doar pe rețetă, după evaluarea medicului.",
+      href: "/tratamente/finasterida",
+      linkLabel: "Informații despre tratamentul oral",
+    },
+    {
+      title: "Consult în persoană",
+      text: "Când semnele nu se potrivesc cu alopecia androgenetică, medicul îți recomandă un examen clinic.",
+      href: "/ghiduri/cauzele-caderii-parului",
+      linkLabel: "Alte cauze ale căderii părului",
+    },
+  ],
   doc: {
     kind: "condition",
     slug: "caderea-parului",

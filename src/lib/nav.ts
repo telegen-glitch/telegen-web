@@ -4,22 +4,77 @@ export interface NavLink {
   href: string;
   label: string;
   description?: string;
+  /** Shown but not clickable ("în curând"). */
+  upcoming?: boolean;
 }
 
-/** Condition-led navigation: conditions first, then how care works, education, trust. */
+export interface NavGroup {
+  id: string;
+  label: string;
+  columns: { heading: string; links: NavLink[] }[];
+}
+
+/** Condition-led navigation: published conditions, then modelled topics as "în curând". */
 export function conditionNav(): NavLink[] {
-  return content.listConditions().map((c) => ({
-    href: `/afectiuni/${c.slug}`,
-    label: c.name,
-    description: c.teaser,
-  }));
+  return [
+    ...content.listConditions().map((c) => ({
+      href: `/afectiuni/${c.slug}`,
+      label: c.name,
+      description: c.teaser,
+    })),
+    ...content.listUpcomingTopics().map((t) => ({ href: `#${t.slug}`, label: t.name, upcoming: true })),
+  ];
 }
 
-export const primaryNav: NavLink[] = [
-  { href: "/cum-functioneaza", label: "Cum funcționează" },
-  { href: "/ghiduri", label: "Ghiduri" },
-  { href: "/standarde-clinice", label: "Standarde clinice" },
-];
+/** Desktop mega-menu groups and mobile menu sections. */
+export function mainNav(): NavGroup[] {
+  return [
+    {
+      id: "tratamente",
+      label: "Tratamente",
+      columns: [
+        { heading: "Afecțiuni", links: conditionNav() },
+        {
+          heading: "Informații",
+          links: [
+            {
+              href: "/tratamente",
+              label: "Despre tratamente",
+              description: "Cum acționează, efecte adverse, limite.",
+            },
+            {
+              href: "/ghiduri",
+              label: "Ghiduri medicale",
+              description: "Semne, cauze și întrebări frecvente.",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: "despre",
+      label: "Despre Telegen",
+      columns: [
+        {
+          heading: "Telegen",
+          links: [
+            {
+              href: "/cum-functioneaza",
+              label: "Cum funcționează",
+              description: "De la evaluare la urmărire.",
+            },
+            { href: "/echipa-medicala", label: "Echipa medicală", description: "Medicii care evaluează." },
+            {
+              href: "/standarde-clinice",
+              label: "Standarde clinice",
+              description: "Regulile după care lucrăm.",
+            },
+          ],
+        },
+      ],
+    },
+  ];
+}
 
 export const evaluationCta = {
   href: "/evaluare",
@@ -29,23 +84,25 @@ export const evaluationCta = {
 
 export const footerNav: { heading: string; links: NavLink[] }[] = [
   {
-    heading: "Afecțiuni",
-    links: [{ href: "/afectiuni", label: "Toate afecțiunile" }],
+    heading: "Tratamente",
+    links: [
+      { href: "/afectiuni", label: "Toate afecțiunile" },
+      { href: "/tratamente", label: "Despre tratamente" },
+    ],
   },
   {
     heading: "Informații",
     links: [
       { href: "/ghiduri", label: "Ghiduri" },
-      { href: "/tratamente", label: "Despre tratamente" },
       { href: "/cum-functioneaza", label: "Cum funcționează" },
+      { href: "/evaluare", label: "Evaluare online" },
     ],
   },
   {
-    heading: "Telegen",
+    heading: "Despre Telegen",
     links: [
       { href: "/standarde-clinice", label: "Standarde clinice" },
       { href: "/echipa-medicala", label: "Echipa medicală" },
-      { href: "/evaluare", label: "Evaluare online" },
     ],
   },
   {

@@ -1,30 +1,31 @@
 import Link from "next/link";
 import type { ComponentProps } from "react";
 
-type Variant = "primary" | "secondary" | "quiet" | "inverse";
-type Size = "md" | "lg";
+export type ButtonVariant = "primary" | "secondary" | "quiet" | "inverse" | "ghost-inverse";
+export type ButtonSize = "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-pill text-center font-semibold transition-colors duration-200 ease-calm focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 rounded-pill text-center font-semibold transition-[background-color,border-color,color,transform] duration-200 ease-calm active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50";
 
-const variants: Record<Variant, string> = {
+const variants: Record<ButtonVariant, string> = {
   primary: "bg-navy-950 text-white hover:bg-navy-800",
-  secondary: "border border-navy-950/25 bg-white text-navy-950 hover:border-navy-950",
+  secondary: "border border-navy-950/20 bg-white text-navy-950 hover:border-navy-950",
   quiet: "text-navy-950 underline decoration-navy-950/30 underline-offset-4 hover:decoration-navy-950",
   inverse: "bg-white text-navy-950 hover:bg-blue-50",
+  "ghost-inverse": "border border-white/30 text-white hover:border-white",
 };
 
-const sizes: Record<Size, string> = {
+const sizes: Record<ButtonSize, string> = {
   md: "min-h-11 px-5 text-sm whitespace-nowrap",
   lg: "min-h-13 px-7 text-base",
 };
 
-export function buttonClasses(variant: Variant = "primary", size: Size = "lg", extra = "") {
+export function buttonClasses(variant: ButtonVariant = "primary", size: ButtonSize = "lg", extra = "") {
   const pad = variant === "quiet" ? "min-h-11 px-1 text-base" : sizes[size];
   return `${base} ${variants[variant]} ${pad} ${extra}`.trim();
 }
 
-type ButtonLinkProps = ComponentProps<typeof Link> & { variant?: Variant; size?: Size };
+type ButtonLinkProps = ComponentProps<typeof Link> & { variant?: ButtonVariant; size?: ButtonSize };
 
 export function ButtonLink({ variant, size, className = "", ...props }: ButtonLinkProps) {
   return <Link className={buttonClasses(variant, size, className)} {...props} />;

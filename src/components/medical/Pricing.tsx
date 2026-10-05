@@ -1,15 +1,15 @@
 import { TemporaryNote } from "@/components/ui/Temporary";
-import { siteConfig } from "@/lib/site";
+import { isEnabled } from "@/lib/flags";
 
 /**
  * Pricing block, shown after the education on condition pages. OFF by default
- * (siteConfig.features.pricing). Prices are an owner decision: none are invented here.
+ * (flags.pricing). Prices are an owner decision: none are invented here.
  */
 export function Pricing() {
-  if (!siteConfig.features.pricing) return null;
+  if (!isEnabled("pricing")) return null;
   return (
-    <section aria-labelledby="preturi" className="border-t border-line-soft">
-      <div className="container-page py-16 md:py-24">
+    <section aria-labelledby="preturi" className="border-t border-line-soft section-y">
+      <div className="container-page">
         <h2 id="preturi" className="text-display-2">
           Prețuri
         </h2>

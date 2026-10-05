@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { TemporaryNote } from "@/components/ui/Temporary";
-import { CtaBand } from "@/components/home/CtaBand";
+import { ClosingCta } from "@/components/home/ClosingCta";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -50,14 +50,15 @@ export default function ClinicalStandards() {
       <PageHeader
         crumbs={[{ name: "Standarde clinice", href: "/standarde-clinice" }]}
         eyebrow="Despre Telegen"
-        title="Standardele după care lucrăm"
+        title="Standardele"
+        accent="după care lucrăm."
         lead="Telegen este o clinică dermatologică online construită în România. Publicăm regulile după care funcționăm, ca să le poți verifica."
       />
-      <div className="container-page py-16 md:py-24">
-        <ol className="grid gap-x-16 md:grid-cols-2">
+      <div className="container-page section-y">
+        <ol data-reveal-group className="grid gap-x-16 md:grid-cols-2">
           {standards.map((s, i) => (
-            <li key={s.id} className="border-t border-line py-8">
-              <p className="font-serif text-xl text-blue-700" aria-hidden="true">
+            <li key={s.id} data-reveal className="border-t border-line py-8">
+              <p className="font-serif text-2xl text-blue-700 italic" aria-hidden="true">
                 {String(i + 1).padStart(2, "0")}
               </p>
               <h2 className="mt-3 text-display-3">{s.title}</h2>
@@ -86,7 +87,7 @@ export default function ClinicalStandards() {
           </p>
         </div>
       </div>
-      <CtaBand />
+      <ClosingCta />
     </>
   );
 }

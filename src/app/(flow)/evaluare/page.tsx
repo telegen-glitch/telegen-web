@@ -1,3 +1,4 @@
+import { content } from "@/content/source";
 import { EvaluationFlow } from "@/components/evaluation/EvaluationFlow";
 import { pageMetadata } from "@/lib/seo";
 
@@ -10,8 +11,9 @@ export const metadata = pageMetadata({
 
 export default function EvaluationPage() {
   return (
-    <div className="container-page py-10 md:py-16">
-      <EvaluationFlow />
-    </div>
+    <EvaluationFlow
+      topics={content.listConditions().map(({ slug, name }) => ({ slug, name }))}
+      upcoming={content.listUpcomingTopics()}
+    />
   );
 }

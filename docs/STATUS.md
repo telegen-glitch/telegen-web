@@ -1,6 +1,32 @@
 # Status
 
-_Last updated: 2026-10-05_
+_Last updated: 2026-10-05 (v2 rebuild)_
+
+## v2 Fellos-parity rebuild (CLAUDE.md §4c) — in progress
+
+DONE (verified locally, 2026-10-05):
+
+- Brief saved as CLAUDE.md §4c. Capture script ready: `scripts/capture-reference.mjs` (writes to gitignored /reference).
+- New UI system: sans display type with italic serif accent, mist surfaces, 24/32px card radii, `section-y` rhythm.
+- Homepage in §4c.C order: announcement bar, sticky header with mega-menus (Tratamente / Despre Telegen) and full-screen
+  mobile menu, topic-picker modal (published topics only; upcoming "în curând"), hero with accent headline + chips,
+  01/02/03 strip, value section with CTA pair, condition cards, 4-step "Cum te ajutăm" with phone mockups (desktop
+  pinned phone cross-fades per step; mobile reveal), team section, FAQ with knowledge-base link, 4-column footer.
+- Feature flags OFF (`src/lib/flags.ts`): pricing, press logos, ratings, reviews, doctor profiles, certification
+  badges, refund promise, social links. Components exist; render nothing while off; no sample data.
+- Motion: CSS + one IntersectionObserver (`RevealObserver`), reduced-motion respected, hero not animated.
+  `docs/motion-spec.md`, `docs/token-map.md` written (Fellos columns pending capture).
+- Same system on: hair-loss page, how it works, team, knowledge base (/ghiduri), medicine info (/tratamente),
+  evaluation flow (topic screen → intro → questions with sticky progress; focused layout without site chrome;
+  topic handed over from the picker in module memory only).
+- Gates: lint, typecheck, format, 17 unit tests, build, 68 Playwright tests (axe clean 360/1280, nav, topic picker,
+  mega-menu, evaluation privacy, SEO) all pass. Lighthouse mobile (local): Performance 95 / 95 / 96 / 98
+  (home / hair loss / guide / evaluare), Accessibility 100, Best Practices 100, SEO 66 (noindex by design), CLS 0.
+
+BLOCKED: reference capture (fellos.nl denied by network policy, also via web fetch). Therefore NOT done:
+measured token/motion mapping, side-by-side acceptance passes (§4c.E).
+
+## v1 foundation
 
 ## DONE (verified locally in the build container)
 

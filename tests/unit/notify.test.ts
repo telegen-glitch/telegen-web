@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { subscribeToLaunch } from "@/app/evaluare/actions";
+import { subscribeToLaunch } from "@/lib/notify/actions";
 import { getNotifyAdapter } from "@/lib/notify";
 
 describe("launch notification adapter", () => {

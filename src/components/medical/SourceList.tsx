@@ -4,7 +4,7 @@ export function SourceList({ sources }: { sources: Source[] }) {
   if (sources.length === 0) return null;
   return (
     <section aria-labelledby="surse" className="mt-14">
-      <h2 id="surse" className="font-serif text-2xl text-navy-950">
+      <h2 id="surse" className="text-display-3">
         Surse
       </h2>
       <ol className="mt-4 space-y-3 text-sm text-ink-soft">

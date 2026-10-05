@@ -95,6 +95,14 @@ export interface TimelineStep {
   text: RichText;
 }
 
+/** Treatment approach by category. Titles never name a medicine (section 9.4). */
+export interface Approach {
+  title: string;
+  text: string;
+  href: string;
+  linkLabel: string;
+}
+
 export interface Condition {
   slug: string;
   name: string;
@@ -107,6 +115,8 @@ export interface Condition {
   doc: MedicalDoc;
   /** Month-by-month expectations block on the condition page. */
   timeline?: { heading: string; intro: RichText; steps: TimelineStep[]; sourceIds: string[] };
+  /** Approaches section on the condition page. */
+  approaches?: Approach[];
   guideSlugs: string[];
   treatmentSlugs: string[];
 }

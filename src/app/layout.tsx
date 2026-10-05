@@ -1,24 +1,26 @@
 import type { Metadata, Viewport } from "next";
 import { Instrument_Sans, Newsreader } from "next/font/google";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { ConsentProvider } from "@/components/consent/ConsentProvider";
+import { RevealObserver } from "@/components/motion/RevealObserver";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { AnalyticsGate } from "@/lib/analytics";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 import { isSiteIndexable, siteConfig } from "@/lib/site";
 import "./globals.css";
 
-// Licensed under the SIL Open Font License; latin-ext covers ă â î ș ț (comma-below).
+// SIL Open Font License; latin-ext covers ă â î ș ț (comma-below).
 const sans = Instrument_Sans({
   subsets: ["latin", "latin-ext"],
   variable: "--font-instrument-sans",
   display: "swap",
 });
 
+// Used only for the italic accent phrase in headings.
 const serif = Newsreader({
   subsets: ["latin", "latin-ext"],
   variable: "--font-newsreader",
+  style: ["italic"],
+  weight: ["400"],
   display: "swap",
 });
 
@@ -40,7 +42,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ro" className={`${sans.variable} ${serif.variable}`}>
+    <html lang="ro" className={`${sans.variable} ${serif.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Enables reveal-on-scroll styles only when JS runs, so content is never hidden without it. */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+      </head>
       <body className="flex min-h-dvh flex-col">
         <a
           href="#continut"
@@ -49,13 +55,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Sari la conținut
         </a>
         <ConsentProvider>
-          <Header />
-          <main id="continut" className="flex-1">
-            {children}
-          </main>
-          <Footer />
+          {children}
           <AnalyticsGate />
         </ConsentProvider>
+        <RevealObserver />
         <JsonLd data={organizationJsonLd()} />
         <JsonLd data={websiteJsonLd()} />
       </body>

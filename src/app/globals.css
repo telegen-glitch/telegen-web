@@ -1,16 +1,17 @@
 @import "tailwindcss";
 
 /*
- * Telegen design tokens. Colour values, type pairing and scale are our own.
- * Palette: white, deep navy, one restrained clinical blue, a warm paper neutral.
+ * Telegen design tokens (v2). Proportions follow the reference category
+ * (docs/token-map.md); every colour, font and value here is Telegen's own.
  * No gradients, no glass effects.
  */
 @theme {
   --color-white: #ffffff;
-  --color-paper: #f6f4ef;
-  --color-paper-deep: #ece8df;
-  --color-line: #dcd8cf;
-  --color-line-soft: #e9e6df;
+  --color-mist: #f2f5fa;
+  --color-mist-deep: #e4eaf3;
+  --color-paper: #f7f6f2;
+  --color-line: #d9dfe9;
+  --color-line-soft: #e8ecf2;
 
   --color-navy-950: #0a1631;
   --color-navy-900: #10204a;
@@ -23,6 +24,7 @@
 
   --color-blue-700: #1f4bb0;
   --color-blue-600: #2a5cc8;
+  --color-blue-200: #c4d4f3;
   --color-blue-100: #dfe8f8;
   --color-blue-50: #eef3fb;
 
@@ -32,7 +34,6 @@
   --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
 
-  /* Type scale (mobile first; display sizes step up at md via utilities) */
   --text-xs: 0.8125rem;
   --text-xs--line-height: 1.25rem;
   --text-sm: 0.9375rem;
@@ -42,25 +43,31 @@
   --text-lg: 1.1875rem;
   --text-lg--line-height: 1.75rem;
 
-  --radius-card: 1.25rem;
+  --radius-card: 1.5rem;
+  --radius-card-lg: 2rem;
   --radius-pill: 999px;
 
-  --container-content: 76rem;
+  --container-content: 80rem;
   --container-prose: 42rem;
 
   --ease-calm: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --shadow-card: 0 1px 2px rgba(10, 22, 49, 0.04), 0 8px 24px -12px rgba(10, 22, 49, 0.12);
+  --shadow-float: 0 24px 60px -24px rgba(10, 22, 49, 0.28);
+  --shadow-header: 0 1px 0 rgba(10, 22, 49, 0.06), 0 6px 20px -12px rgba(10, 22, 49, 0.18);
 }
 
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
-    scroll-padding-top: 5rem;
+    scroll-padding-top: 6rem;
+    interpolate-size: allow-keywords;
   }
 
   body {
     @apply bg-white font-sans text-base text-ink antialiased;
     font-feature-settings: "kern", "liga";
-    text-rendering: optimizeLegibility;
   }
 
   h1,
@@ -77,21 +84,15 @@
   :focus-visible {
     outline: 2px solid var(--color-blue-600);
     outline-offset: 3px;
-    border-radius: 4px;
+    border-radius: 6px;
   }
 
   ::selection {
     background: var(--color-blue-100);
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
+  dialog::backdrop {
+    background: rgba(10, 22, 49, 0.45);
   }
 }
 
@@ -108,13 +109,24 @@
   }
 }
 
-/* Display type: editorial serif, tight but readable */
+/* Section rhythm */
+@utility section-y {
+  padding-block: 4rem;
+  @media (width >= 64rem) {
+    padding-block: 7rem;
+  }
+}
+
+/*
+ * Display type: a confident sans headline; the second phrase is set in the
+ * italic serif accent (`.accent`).
+ */
 @utility text-display-1 {
-  font-family: var(--font-serif);
-  font-weight: 420;
+  font-family: var(--font-sans);
+  font-weight: 600;
   font-size: 2.5rem;
-  line-height: 1.06;
-  letter-spacing: -0.02em;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
   @media (width >= 48rem) {
     font-size: 3.5rem;
   }
@@ -124,25 +136,36 @@
 }
 
 @utility text-display-2 {
-  font-family: var(--font-serif);
-  font-weight: 420;
+  font-family: var(--font-sans);
+  font-weight: 600;
   font-size: 2rem;
-  line-height: 1.1;
-  letter-spacing: -0.015em;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
   @media (width >= 48rem) {
     font-size: 2.75rem;
+  }
+  @media (width >= 80rem) {
+    font-size: 3.25rem;
   }
 }
 
 @utility text-display-3 {
-  font-family: var(--font-serif);
-  font-weight: 450;
+  font-family: var(--font-sans);
+  font-weight: 600;
   font-size: 1.5rem;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
   @media (width >= 48rem) {
     font-size: 1.875rem;
   }
+}
+
+@utility accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--color-blue-700);
 }
 
 @utility text-eyebrow {
@@ -154,6 +177,32 @@
   text-transform: uppercase;
 }
 
+@utility text-lead {
+  font-size: 1.125rem;
+  line-height: 1.7rem;
+  color: var(--color-ink-soft);
+  @media (width >= 48rem) {
+    font-size: 1.25rem;
+    line-height: 1.9rem;
+  }
+}
+
+/* Horizontal swipe track (carousels): native scroll + snap, no library. */
+@utility snap-track {
+  display: grid;
+  grid-auto-flow: column;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  & > * {
+    scroll-snap-align: start;
+  }
+}
+
 /* Long-form medical copy */
 @utility prose-telegen {
   max-width: var(--container-prose);
@@ -162,13 +211,12 @@
     margin-top: 1.1em;
   }
   & h2 {
-    font-family: var(--font-serif);
-    font-weight: 450;
+    font-weight: 600;
     font-size: 1.625rem;
     line-height: 1.2;
+    letter-spacing: -0.02em;
     color: var(--color-navy-950);
     margin-top: 2.2em;
-    letter-spacing: -0.01em;
   }
   & h3 {
     font-weight: 600;
@@ -199,5 +247,125 @@
   & strong {
     color: var(--color-ink);
     font-weight: 600;
+  }
+}
+
+/*
+ * Motion (docs/motion-spec.md). Elements marked [data-reveal] start hidden only
+ * when JS is running (html.js) and the visitor allows motion; RevealObserver adds
+ * [data-inview]. Transforms and opacity only: no layout shift.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 1.5rem, 0);
+    transition:
+      opacity 700ms var(--ease-out-soft),
+      transform 700ms var(--ease-out-soft);
+    transition-delay: calc(var(--reveal-i, 0) * 90ms);
+  }
+  html.js [data-reveal="fade"] {
+    transform: none;
+  }
+  html.js [data-reveal="scale"] {
+    transform: translate3d(0, 1rem, 0) scale(0.97);
+  }
+  html.js [data-reveal][data-inview] {
+    opacity: 1;
+    transform: none;
+  }
+
+  details.faq::details-content {
+    block-size: 0;
+    overflow-y: clip;
+    transition:
+      block-size 320ms var(--ease-calm),
+      content-visibility 320ms allow-discrete;
+  }
+  details.faq[open]::details-content {
+    block-size: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Interaction motion (docs/motion-spec.md) */
+@media (prefers-reduced-motion: no-preference) {
+  /* Topic picker: bottom sheet on mobile, centred card on larger screens. */
+  .topic-dialog {
+    transition:
+      opacity 320ms var(--ease-out-soft),
+      transform 420ms var(--ease-out-soft),
+      overlay 420ms allow-discrete,
+      display 420ms allow-discrete;
+  }
+  .topic-dialog:not([open]) {
+    opacity: 0;
+    transform: translateY(2.5rem);
+  }
+  @starting-style {
+    .topic-dialog[open] {
+      opacity: 0;
+      transform: translateY(2.5rem);
+    }
+  }
+  .topic-dialog::backdrop {
+    transition:
+      background-color 320ms var(--ease-calm),
+      overlay 320ms allow-discrete,
+      display 320ms allow-discrete;
+  }
+  @starting-style {
+    .topic-dialog[open]::backdrop {
+      background-color: transparent;
+    }
+  }
+
+  /* Mega-menu panel and mobile menu: short fade + slide when shown. */
+  .mega-panel:not([hidden]) {
+    animation: menu-in 260ms var(--ease-out-soft) both;
+  }
+  .mobile-menu:not([hidden]) {
+    animation: sheet-in 320ms var(--ease-out-soft) both;
+  }
+  .mobile-menu:not([hidden]) nav > * {
+    animation: menu-in 420ms var(--ease-out-soft) both;
+  }
+  .mobile-menu:not([hidden]) nav > *:nth-child(2) {
+    animation-delay: 60ms;
+  }
+  .mobile-menu:not([hidden]) nav > *:nth-child(3) {
+    animation-delay: 120ms;
+  }
+
+  /* Evaluation: each new question slides in. */
+  .flow-step {
+    animation: step-in 360ms var(--ease-out-soft) both;
+  }
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+}
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateX(1.25rem);
   }
 }

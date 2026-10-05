@@ -12,29 +12,32 @@ export const metadata = pageMetadata({
   path: "/tratamente",
 });
 
-/** Neutral educational index. No calls to action next to medicine names (section 9.4). */
+/** Neutral medicine information. No calls to action next to medicine names (section 9.4). */
 export default function TreatmentsIndex() {
   return (
     <>
       <PageHeader
         crumbs={[{ name: "Despre tratamente", href: "/tratamente" }]}
         eyebrow="Informații despre tratamente"
-        title="Ce trebuie să știi despre tratamente"
-        lead="Prezentăm substanțele active strict informativ: cum acționează, ce arată studiile, ce efecte adverse pot avea și unde sunt limitele. Ce ți se potrivește stabilește medicul."
+        title="Ce trebuie să știi"
+        accent="despre tratamente."
+        lead="Strict informativ: cum acționează, ce arată studiile, ce efecte adverse pot avea și unde sunt limitele. Ce ți se potrivește stabilește medicul."
       />
-      <div className="container-page py-14 md:py-20">
-        <ul className="divide-y divide-line border-y border-line">
+      <div className="container-page section-y">
+        <ul data-reveal-group className="grid gap-4 md:grid-cols-2">
           {content.listTreatments().map((t) => (
-            <li key={t.slug}>
+            <li key={t.slug} data-reveal>
               <Link
                 href={`/tratamente/${t.slug}`}
-                className="group grid gap-2 py-7 md:grid-cols-[16rem_1fr_auto] md:items-center md:gap-10"
+                className="group flex h-full flex-col rounded-card-lg border border-line p-7 transition-colors hover:border-navy-950 md:p-9"
               >
-                <span className="font-serif text-[1.75rem] text-navy-950 group-hover:underline">
+                <span className="text-[1.75rem] leading-tight font-semibold tracking-tight text-navy-950">
                   {t.title}
                 </span>
-                <span className="text-ink-soft">{plainText(t.summary)}</span>
-                <Arrow className="hidden text-blue-700 md:block" />
+                <span className="mt-3 text-ink-soft">{plainText(t.summary)}</span>
+                <span className="mt-auto inline-flex min-h-11 items-center gap-2 pt-6 text-sm font-semibold text-navy-950">
+                  Citește informațiile <Arrow className="transition-transform group-hover:translate-x-1" />
+                </span>
               </Link>
             </li>
           ))}
