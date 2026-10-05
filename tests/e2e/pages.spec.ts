@@ -5,6 +5,8 @@ import { routes, slug } from "./routes";
 for (const route of routes) {
   test.describe(route, () => {
     test("renders with one h1, metadata, no overflow and is axe clean", async ({ page }, info) => {
+      // Audit the settled page: reveal transitions would otherwise let axe sample half-faded text.
+      await page.emulateMedia({ reducedMotion: "reduce" });
       const res = await page.goto(route);
       expect(res?.status()).toBe(200);
       await expect(page.locator("h1")).toHaveCount(1);

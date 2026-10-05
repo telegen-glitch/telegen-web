@@ -82,3 +82,22 @@ test("desktop mega-menu lists conditions and marks upcoming topics", async ({ pa
   await expect(panel.getByRole("link", { name: /Căderea părului/ })).toBeVisible();
   await page.screenshot({ path: "artifacts/screenshots/desktop-1280/_mega-menu.png" });
 });
+
+test("scroll reveals settle to fully visible content", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop-1280");
+  await page.goto("/cum-functioneaza");
+  const items = page.locator("[data-reveal]");
+  expect(await items.count()).toBeGreaterThan(0);
+  // Scroll through the page so every reveal triggers.
+  const height = await page.evaluate(() => document.documentElement.scrollHeight);
+  for (let y = 0; y < height; y += 500) await page.mouse.wheel(0, 500);
+  // Only elements rendered at this breakpoint (mobile-only mockups are display:none here).
+  const stillHidden = () =>
+    items.evaluateAll(
+      (els) =>
+        els
+          .filter((el) => el.getClientRects().length > 0)
+          .filter((el) => !el.hasAttribute("data-inview") || getComputedStyle(el).opacity !== "1").length,
+    );
+  await expect.poll(stillHidden, { timeout: 8000 }).toBe(0);
+});

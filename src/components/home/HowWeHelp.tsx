@@ -60,13 +60,19 @@ export function HowWeHelp() {
             data-step={i}
             className="lg:flex lg:min-h-[70vh] lg:items-center"
           >
-            <div
-              data-reveal
-              className={`transition-opacity duration-500 lg:max-w-md ${active === i ? "lg:opacity-100" : "lg:opacity-35"}`}
-            >
-              <span className="text-eyebrow text-blue-700">Pasul {String(i + 1).padStart(2, "0")}</span>
-              <h3 className="mt-3 text-display-3">{s.title}</h3>
-              <p className="mt-3 text-lead">{s.text}</p>
+            <div data-reveal className="lg:max-w-md">
+              {/* Active step: accent rule + coloured number. Text keeps full contrast. */}
+              <div
+                className={`border-l-2 pl-5 transition-colors duration-500 lg:pl-7 ${active === i ? "border-blue-600" : "border-line-soft"}`}
+              >
+                <span
+                  className={`text-eyebrow transition-colors duration-500 ${active === i ? "text-blue-700" : "text-ink-muted"}`}
+                >
+                  Pasul {String(i + 1).padStart(2, "0")}
+                </span>
+                <h3 className="mt-3 text-display-3">{s.title}</h3>
+                <p className="mt-3 text-lead">{s.text}</p>
+              </div>
             </div>
             <div data-reveal="scale" className="mt-8 rounded-card-lg bg-mist py-10 lg:hidden">
               <PhoneMockup>
