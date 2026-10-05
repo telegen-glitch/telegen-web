@@ -29,6 +29,7 @@ _Last updated: 2026-10-05_
   TBT 45–61 ms, CLS 0.
 
 ## Links
+
 - PR: https://github.com/telegen-glitch/telegen-web/pull/1 (branch `claude/telegen-production-build-sv94k7`)
 - Preview: waiting for Vercel's first deployment on the PR.
 
