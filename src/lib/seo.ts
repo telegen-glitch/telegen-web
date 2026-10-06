@@ -110,8 +110,40 @@ export function medicalPageJsonLd(
 ): JsonLd {
   const about =
     doc.kind === "treatment"
-      ? { "@type": "Drug", name: doc.title }
-      : { "@type": "MedicalCondition", name: conditionMedicalName };
+      ? {
+          "@type": "Drug",
+          name: doc.title,
+          ...(doc.drug
+            ? {
+                activeIngredient: doc.drug.activeIngredient,
+                prescriptionStatus: `https://schema.org/${doc.drug.prescriptionStatus}`,
+              }
+            : {}),
+        }
+      : {
+          "@type": "MedicalCondition",
+          name: conditionMedicalName,
+          ...(doc.entity?.alternateName?.length ? { alternateName: doc.entity.alternateName } : {}),
+          ...(doc.entity?.signOrSymptom?.length
+            ? {
+                signOrSymptom: doc.entity.signOrSymptom.map((name) => ({
+                  "@type": "MedicalSignOrSymptom",
+                  name,
+                })),
+              }
+            : {}),
+          ...(doc.entity?.riskFactor?.length
+            ? { riskFactor: doc.entity.riskFactor.map((name) => ({ "@type": "MedicalRiskFactor", name })) }
+            : {}),
+          ...(doc.entity?.possibleTreatment?.length
+            ? {
+                possibleTreatment: doc.entity.possibleTreatment.map((name) => ({
+                  "@type": "MedicalTherapy",
+                  name,
+                })),
+              }
+            : {}),
+        };
   return {
     "@context": "https://schema.org",
     "@type": "MedicalWebPage",

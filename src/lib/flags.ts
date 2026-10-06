@@ -25,6 +25,21 @@ export const flags = {
 
 export type FlagName = keyof typeof flags;
 
+/**
+ * Per-condition service switch (CLAUDE.md 7c.D). While false, the evaluation ends
+ * on the honest "not open yet" screen with the launch-notification form.
+ * Turning one on requires the clinical app (app.telegen.ro) and owner approval.
+ */
+export const serviceOpen: Record<string, boolean> = {
+  "caderea-parului": false,
+  acnee: false,
+  "disfunctie-erectila": false,
+};
+
+export function isServiceOpen(topic: string): boolean {
+  return serviceOpen[topic] === true;
+}
+
 export function isEnabled(flag: FlagName): boolean {
   return flags[flag];
 }

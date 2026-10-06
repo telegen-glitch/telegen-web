@@ -19,6 +19,9 @@ const roleLabel = {
   questions: "Întrebări",
   condition: "Afecțiune",
   treatment: "Tratament",
+  types: "Tipuri",
+  scars: "Cicatrici",
+  heart: "Inimă",
 } as const;
 
 /** Knowledge base: articles grouped by condition, with links to treatment information. */
@@ -41,7 +44,7 @@ export default function GuidesIndex() {
                 {c.name}
               </h2>
               <Link
-                href={`/afectiuni/${c.slug}`}
+                href={c.basePath}
                 className="inline-flex min-h-11 items-center gap-2 font-semibold text-navy-950 hover:underline"
               >
                 Despre afecțiune <Arrow />

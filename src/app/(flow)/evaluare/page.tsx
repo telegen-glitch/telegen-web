@@ -1,19 +1,24 @@
 import { content } from "@/content/source";
+import { evaluations } from "@/content/evaluations";
 import { EvaluationFlow } from "@/components/evaluation/EvaluationFlow";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "Evaluare dermatologică online pentru căderea părului",
+  title: "Evaluare medicală online: căderea părului, acnee, disfuncție erectilă",
   description:
-    "Răspunde la câteva întrebări despre căderea părului. În pre-lansare, răspunsurile nu sunt trimise și nici salvate.",
+    "Răspunde la câteva întrebări despre căderea părului, acnee sau disfuncția erectilă. În pre-lansare, răspunsurile nu sunt trimise și nici salvate.",
   path: "/evaluare",
 });
 
 export default function EvaluationPage() {
   return (
     <EvaluationFlow
-      topics={content.listConditions().map(({ slug, name }) => ({ slug, name }))}
-      upcoming={content.listUpcomingTopics()}
+      topics={evaluations.map((e) => ({
+        slug: e.topic,
+        name: e.name,
+        href: content.getCondition(e.topic)?.basePath,
+      }))}
+      upcoming={[]}
     />
   );
 }

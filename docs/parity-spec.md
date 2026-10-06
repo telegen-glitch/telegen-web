@@ -21,3 +21,10 @@ committed or published). Telegen owns all copy, colours, type, imagery and code.
 
 **Design system proportions** (to verify against captures): content width 76rem; header 64/72px; buttons
 44–52px tall, pill radius; section rhythm 64px mobile / 96px desktop; display serif 40→68px; body 17px.
+
+## Acne and ED (CLAUDE.md §7c), pending capture
+
+| Reference page                                              | Telegen equivalent                                       | Status                                                                         |
+| ----------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Fellos /behandeling/acne + linked medicine pages            | /acnee hub + 4 subpages + 6 medicine pages               | Structure built (shared condition template); pages are drafts; capture blocked |
+| Fellos /behandeling/erectiestoornis + linked medicine pages | /disfunctie-erectila hub + 3 subpages + 2 medicine pages | Same                                                                           |

@@ -2,6 +2,7 @@ import type { Condition } from "../types";
 
 export const hairLoss: Condition = {
   slug: "caderea-parului",
+  basePath: "/afectiuni/caderea-parului",
   name: "Căderea părului",
   shortName: "Căderea părului",
   teaser:

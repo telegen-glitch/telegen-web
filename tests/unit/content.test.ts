@@ -26,6 +26,53 @@ function walk(dir: string): string[] {
   });
 }
 
+/**
+ * Source check (CLAUDE.md 7c.H): every published medical page cites a source in
+ * its answer-first summary and in every section. Sections written before this
+ * rule are listed here until their citations are verified against sources that
+ * can be fetched (see docs/open-items.md). Do not add new entries.
+ */
+const PENDING_CITATION = new Set([
+  "caderea-parului#cauze",
+  "semnele-alopeciei-androgenetice#alte-cauze",
+  "semnele-alopeciei-androgenetice#urmarire",
+  "cauzele-caderii-parului#temporare",
+  "cauzele-caderii-parului#medicale",
+  "cauzele-caderii-parului#mituri",
+  "caderea-parului-intrebari-frecvente#normal",
+  "caderea-parului-intrebari-frecvente#siguranta",
+]);
+
+describe("source check: every claim cited", () => {
+  const docs = [
+    ...content.listConditions().map((c) => c.doc),
+    ...content.listConditions().flatMap((c) => content.listSubpages(c.slug)),
+    ...content.listGuides(),
+    ...content.listTreatments(),
+  ];
+  it("summaries cite a source", () => {
+    for (const d of docs) expect(d.summary, d.slug).toMatch(/\{\{cite:/);
+  });
+  it("every section cites a source", () => {
+    for (const d of docs) {
+      for (const sec of d.sections) {
+        if (PENDING_CITATION.has(`${d.slug}#${sec.id}`)) continue;
+        expect(JSON.stringify(sec.blocks), `${d.slug}#${sec.id}`).toMatch(/\{\{cite:/);
+      }
+    }
+  });
+  it("the pending list only shrinks: entries must still exist and still lack citations", () => {
+    for (const key of PENDING_CITATION) {
+      const [slug, id] = key.split("#");
+      const sec = docs.find((d) => d.slug === slug)?.sections.find((x) => x.id === id);
+      expect(sec, key).toBeDefined();
+      expect(JSON.stringify(sec!.blocks), `${key} is cited now: remove it from PENDING_CITATION`).not.toMatch(
+        /\{\{cite:/,
+      );
+    }
+  });
+});
+
 describe("sources and citations", () => {
   it("every citation and listed source exists", () => {
     const ids = new Set(content.allSources().map((s) => s.id));
@@ -90,7 +137,8 @@ describe("internal linking graph", () => {
 });
 
 describe("prescription-medicine promotion rules (section 9.4)", () => {
-  const medicine = /minoxidil|finasterid|dutasterid/i;
+  const medicine =
+    /minoxidil|finasterid|dutasterid|sildenafil|tadalafil|isotretinoin|adapalen|tretinoin|benzoil|clindamicin|doxiciclin|limeciclin|nitroglicerin|riociguat|tamsulosin|doxazosin|alfuzosin|terazosin/i;
 
   it("medicine names appear only in neutral content data, never in page or component code", () => {
     const offenders = walk("src")
@@ -113,6 +161,27 @@ describe("prescription-medicine promotion rules (section 9.4)", () => {
 });
 
 describe("structured data mirrors visible content", () => {
+  it("entity and drug facts appear in the page's visible text", () => {
+    const docs = [
+      ...content.listConditions().map((c) => c.doc),
+      ...content.listConditions().flatMap((c) => content.listSubpages(c.slug)),
+      ...content.listTreatments(),
+    ];
+    for (const d of docs) {
+      const visible = [d.h1, d.title, ...textsOf(d), ...d.sections.map((x) => x.heading)]
+        .join(" ")
+        .toLowerCase();
+      const facts = [
+        ...(d.entity?.alternateName ?? []),
+        ...(d.entity?.signOrSymptom ?? []),
+        ...(d.entity?.riskFactor ?? []),
+        ...(d.entity?.possibleTreatment ?? []),
+        ...(d.drug ? [d.drug.activeIngredient] : []),
+      ];
+      for (const f of facts) expect(visible, `${d.slug}: "${f}" is schema-only`).toContain(f.toLowerCase());
+    }
+  });
+
   it("FAQPage questions equal the visible FAQs", () => {
     for (const d of published) {
       const ld = faqJsonLd(d.faqs) as { mainEntity: { name: string }[] } | null;

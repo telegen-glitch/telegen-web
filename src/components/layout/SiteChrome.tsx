@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { content } from "@/content/source";
+import { evaluations } from "@/content/evaluations";
 import { Footer } from "@/components/layout/Footer";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { TopicPickerProvider } from "@/components/topic/TopicPicker";
@@ -8,14 +9,19 @@ import { siteConfig } from "@/lib/site";
 
 /** Announcement bar, sticky header, topic picker and footer around site pages. */
 export function SiteChrome({ children }: { children: React.ReactNode }) {
-  const topics = content.listConditions().map((c) => ({
-    slug: c.slug,
-    name: c.name,
-    teaser: "Evaluare dermatologică online",
+  // Every condition with a questionnaire is selectable (CLAUDE.md 7c.B).
+  const topics = evaluations.map((e) => ({
+    slug: e.topic,
+    name: e.name,
+    teaser:
+      e.topic === "disfunctie-erectila"
+        ? "Evaluare medicală online, discretă"
+        : "Evaluare dermatologică online",
     href: "/evaluare",
   }));
+  const upcoming = content.listUpcomingTopics().filter((t) => !evaluations.some((e) => e.topic === t.slug));
   return (
-    <TopicPickerProvider topics={topics} upcoming={content.listUpcomingTopics()}>
+    <TopicPickerProvider topics={topics} upcoming={upcoming}>
       {siteConfig.launchState === "prelaunch" && (
         <div className="bg-navy-950 text-white">
           <p className="container-page flex min-h-9 items-center justify-center py-1.5 text-center text-xs leading-5 text-white/85">

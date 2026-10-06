@@ -1,3 +1,4 @@
+import { draftDoc } from "./drafts";
 import type { MedicalDoc } from "./types";
 
 /**
@@ -221,6 +222,73 @@ export const treatments: MedicalDoc[] = [
     status: "published",
   },
 ];
+
+/**
+ * Medicine information for acne and erectile dysfunction (CLAUDE.md 7c.B).
+ * Drafts until written from the EMA / ANMDM product information and guidelines.
+ */
+const medicine = (slug: string, conditionSlug: string, title: string, description: string) =>
+  draftDoc({
+    kind: "treatment",
+    slug,
+    conditionSlug,
+    graphRole: "treatment",
+    title,
+    metaTitle: `${title}: cum acționează, efecte adverse, precauții`,
+    metaDescription: description,
+    h1: `${title}: informații despre tratament`,
+  });
+
+treatments.push(
+  medicine(
+    "peroxid-de-benzoil",
+    "acnee",
+    "Peroxid de benzoil",
+    "Informații neutre despre peroxidul de benzoil în acnee: cum acționează, cum se folosește, iritație și precauții.",
+  ),
+  medicine(
+    "adapalen",
+    "acnee",
+    "Adapalen",
+    "Informații neutre despre adapalen, un retinoid topic folosit în acnee: mecanism, folosire, efecte adverse, sarcină.",
+  ),
+  medicine(
+    "tretinoin",
+    "acnee",
+    "Tretinoin",
+    "Informații neutre despre tretinoinul topic în acnee: cum acționează, iritație, protecție solară, sarcină.",
+  ),
+  medicine(
+    "clindamicina-topica",
+    "acnee",
+    "Clindamicină topică",
+    "Informații neutre despre clindamicina topică în acnee: de ce se folosește doar în combinație și cum se evită rezistența bacteriană.",
+  ),
+  medicine(
+    "doxiciclina-limeciclina",
+    "acnee",
+    "Doxiciclină și limeciclină",
+    "Informații neutre despre antibioticele orale doxiciclină și limeciclină în acnee: cât durează, cu ce se asociază, efecte adverse.",
+  ),
+  medicine(
+    "isotretinoin",
+    "acnee",
+    "Isotretinoin",
+    "Informații despre isotretinoin în acneea severă: prescris doar sub supravegherea dermatologului, programul de prevenire a sarcinii, efecte adverse.",
+  ),
+  medicine(
+    "sildenafil",
+    "disfunctie-erectila",
+    "Sildenafil",
+    "Informații neutre despre sildenafil în disfuncția erectilă: cum acționează, contraindicații (nitrați), interacțiuni, efecte adverse.",
+  ),
+  medicine(
+    "tadalafil",
+    "disfunctie-erectila",
+    "Tadalafil",
+    "Informații neutre despre tadalafil în disfuncția erectilă: cum acționează, durata efectului, contraindicații, efecte adverse.",
+  ),
+);
 
 export function getTreatment(slug: string): MedicalDoc | undefined {
   return treatments.find((t) => t.slug === slug && t.status === "published");

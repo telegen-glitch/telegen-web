@@ -15,6 +15,9 @@ export interface ContentSource {
   /** Modelled but unpublished topics, shown only as non-clickable "în curând". */
   listUpcomingTopics(): { slug: string; name: string }[];
   getCondition(slug: string): Condition | undefined;
+  /** Published subpages of a published condition. */
+  listSubpages(conditionSlug: string): MedicalDoc[];
+  getSubpage(conditionSlug: string, slug: string): MedicalDoc | undefined;
   listGuides(conditionSlug?: string): MedicalDoc[];
   getGuide(slug: string): MedicalDoc | undefined;
   listTreatments(conditionSlug?: string): MedicalDoc[];
@@ -32,6 +35,12 @@ export const localContent: ContentSource = {
   listUpcomingTopics: () =>
     conditions.filter((c) => c.status === "draft").map(({ slug, name }) => ({ slug, name })),
   getCondition: (slug) => published(conditions).find((c) => c.slug === slug),
+  listSubpages: (conditionSlug) =>
+    published(published(conditions).find((c) => c.slug === conditionSlug)?.subpages ?? []),
+  getSubpage: (conditionSlug, slug) =>
+    published(published(conditions).find((c) => c.slug === conditionSlug)?.subpages ?? []).find(
+      (d) => d.slug === slug,
+    ),
   listGuides: (conditionSlug) =>
     published(guides).filter((g) => !conditionSlug || g.conditionSlug === conditionSlug),
   getGuide: (slug) => published(guides).find((g) => g.slug === slug),
@@ -47,9 +56,11 @@ export const localContent: ContentSource = {
 /** The active content source. Phase 5 selects Sanity here when configured. */
 export const content: ContentSource = localContent;
 
-export function hrefForDoc(doc: Pick<MedicalDoc, "kind" | "slug">): string {
+export function hrefForDoc(doc: Pick<MedicalDoc, "kind" | "slug" | "path">): string {
+  if (doc.path) return doc.path;
   switch (doc.kind) {
     case "condition":
+    case "subpage":
       return `/afectiuni/${doc.slug}`;
     case "guide":
       return `/ghiduri/${doc.slug}`;

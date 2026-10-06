@@ -18,7 +18,7 @@ export interface NavGroup {
 export function conditionNav(): NavLink[] {
   return [
     ...content.listConditions().map((c) => ({
-      href: `/afectiuni/${c.slug}`,
+      href: c.basePath,
       label: c.name,
       description: c.teaser,
     })),

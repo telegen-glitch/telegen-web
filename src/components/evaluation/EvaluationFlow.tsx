@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { useActionState, useEffect, useId, useRef, useState } from "react";
-import { subscribeToLaunch } from "@/lib/notify/actions";
+import { getEvaluation } from "@/content/evaluations";
+import type { Answers, HardStop } from "@/content/evaluations/types";
+import { clearPendingTopic, peekPendingTopic } from "@/components/topic/pendingTopic";
 import { Arrow, buttonClasses } from "@/components/ui/Button";
 import { track } from "@/lib/analytics";
+import { stopFor, summaryNotes, visibleQuestions } from "@/lib/evaluation";
+import { isServiceOpen } from "@/lib/flags";
+import { subscribeToLaunch } from "@/lib/notify/actions";
 import { NOTIFY_CONSENT_TEXT } from "@/lib/notify/consent";
-import { clearPendingTopic, peekPendingTopic } from "@/components/topic/pendingTopic";
-import { type Answers, questions, summaryNotes } from "./questions";
 
 /**
  * Privacy contract (section 7b): answers exist only in this component's state.
@@ -18,19 +21,24 @@ type Stage =
   | { kind: "topic" }
   | { kind: "intro" }
   | { kind: "question"; index: number }
+  | { kind: "stop"; stop: HardStop }
   | { kind: "summary" }
   | { kind: "done" };
 
 export interface FlowTopic {
   slug: string;
   name: string;
+  /** Published condition page, if any. Drafts have none, so no link can 404. */
+  href?: string;
 }
 
 export function EvaluationFlow({ topics, upcoming }: { topics: FlowTopic[]; upcoming: FlowTopic[] }) {
-  // A topic chosen in the picker skips the topic screen (in-memory hand-over only).
-  const [stage, setStage] = useState<Stage>(() =>
-    peekPendingTopic() ? { kind: "intro" } : { kind: "topic" },
-  );
+  // A topic chosen in the topic picker skips the topic screen (in-memory hand-over only).
+  const [topic, setTopic] = useState<string | null>(() => {
+    const pending = peekPendingTopic();
+    return pending && getEvaluation(pending) ? pending : null;
+  });
+  const [stage, setStage] = useState<Stage>(() => (topic ? { kind: "intro" } : { kind: "topic" }));
   const [answers, setAnswers] = useState<Answers>({});
   const [returnToSummary, setReturnToSummary] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -48,25 +56,18 @@ export function EvaluationFlow({ topics, upcoming }: { topics: FlowTopic[]; upco
     window.scrollTo({ top: 0 });
   }, [stage]);
 
+  const def = topic ? getEvaluation(topic) : undefined;
+  const readMoreHref = topics.find((t) => t.slug === topic)?.href;
   const go = (s: Stage) => setStage(s);
-  const total = questions.length;
-
-  const next = (index: number) => {
-    if (returnToSummary || index + 1 >= total) {
-      setReturnToSummary(false);
-      go({ kind: "summary" });
-    } else {
-      go({ kind: "question", index: index + 1 });
-    }
-  };
 
   const reset = () => {
     setAnswers({});
     setReturnToSummary(false);
+    setTopic(null);
     go({ kind: "topic" });
   };
 
-  if (stage.kind === "topic") {
+  if (stage.kind === "topic" || !def) {
     return (
       <Screen>
         <p className="text-eyebrow text-blue-700">Evaluare online</p>
@@ -78,7 +79,11 @@ export function EvaluationFlow({ topics, upcoming }: { topics: FlowTopic[]; upco
             <li key={t.slug}>
               <button
                 type="button"
-                onClick={() => go({ kind: "intro" })}
+                onClick={() => {
+                  setTopic(t.slug);
+                  setAnswers({});
+                  go({ kind: "intro" });
+                }}
                 className="flex min-h-18 w-full items-center justify-between gap-4 rounded-2xl bg-white px-5 py-4 text-left shadow-[var(--shadow-card)] transition-transform duration-200 hover:-translate-y-0.5"
               >
                 <span className="text-lg font-semibold text-navy-950">{t.name}</span>
@@ -104,20 +109,37 @@ export function EvaluationFlow({ topics, upcoming }: { topics: FlowTopic[]; upco
     );
   }
 
+  const questions = visibleQuestions(def, answers);
+  const total = questions.length;
+
+  const next = (index: number, nextAnswers: Answers) => {
+    const list = visibleQuestions(def, nextAnswers);
+    const current = questions[index];
+    const pos = list.findIndex((q) => q.id === current.id);
+    if (returnToSummary || pos + 1 >= list.length) {
+      setReturnToSummary(false);
+      go({ kind: "summary" });
+    } else {
+      go({ kind: "question", index: pos + 1 });
+    }
+  };
+
   if (stage.kind === "intro") {
     return (
       <Screen>
         <BackButton onClick={() => go({ kind: "topic" })} />
         <h1 ref={headingRef} tabIndex={-1} className="mt-6 text-display-2 outline-none">
-          Căderea părului: <span className="accent">câteva întrebări.</span>
+          {def.introTitle} <span className="accent">{def.introAccent}</span>
         </h1>
         <p className="mt-4 text-lead">
-          {total} întrebări scurte, câteva minute. La final vezi un rezumat al răspunsurilor tale.
+          Câteva minute, o întrebare pe ecran. La final vezi un rezumat al răspunsurilor tale.
         </p>
         <div className="mt-6 rounded-card bg-white p-5 text-sm text-ink-soft shadow-[var(--shadow-card)]">
           <p className="font-semibold text-navy-950">Înainte să începi</p>
           <ul className="mt-2 list-disc space-y-1.5 pl-5">
-            <li>Serviciul medical nu este încă deschis. Acum poți vedea cum arată evaluarea.</li>
+            {!isServiceOpen(def.topic) && (
+              <li>Serviciul medical nu este încă deschis. Acum poți vedea cum arată evaluarea.</li>
+            )}
             <li>Răspunsurile nu sunt trimise și nu sunt salvate. Dispar când închizi pagina.</li>
             <li>Evaluarea nu pune un diagnostic. În caz de urgență, sună la 112.</li>
           </ul>
@@ -140,10 +162,21 @@ export function EvaluationFlow({ topics, upcoming }: { topics: FlowTopic[]; upco
     const q = questions[stage.index];
     const selected = answers[q.id] ?? [];
 
+    const commit = (values: string[]) => {
+      const nextAnswers = { ...answers, [q.id]: values };
+      setAnswers(nextAnswers);
+      const stop = stopFor(def, q, values);
+      if (stop) {
+        setReturnToSummary(false);
+        go({ kind: "stop", stop });
+        return;
+      }
+      next(stage.index, nextAnswers);
+    };
+
     const choose = (value: string) => {
       if (q.type === "single") {
-        setAnswers((a) => ({ ...a, [q.id]: [value] }));
-        next(stage.index);
+        commit([value]);
         return;
       }
       setAnswers((a) => {
@@ -219,7 +252,7 @@ export function EvaluationFlow({ topics, upcoming }: { topics: FlowTopic[]; upco
               type="button"
               className={buttonClasses("primary", "lg", "mt-8 w-full sm:w-auto")}
               disabled={selected.length === 0}
-              onClick={() => next(stage.index)}
+              onClick={() => commit(selected)}
             >
               Continuă <Arrow />
             </button>
@@ -229,8 +262,46 @@ export function EvaluationFlow({ topics, upcoming }: { topics: FlowTopic[]; upco
     );
   }
 
+  if (stage.kind === "stop") {
+    // Hard stop: no way to continue the evaluation (CLAUDE.md 7c.D).
+    return (
+      <Screen>
+        <div role="alert">
+          <p className="text-eyebrow text-amber-800">Recomandare</p>
+          <h1 ref={headingRef} tabIndex={-1} className="mt-3 text-display-2 outline-none">
+            {stage.stop.title}
+          </h1>
+          {stage.stop.urgent && (
+            <p className="mt-5 rounded-2xl border-l-4 border-amber-800/60 bg-amber-100/60 p-4 font-semibold text-navy-950">
+              Dacă ai acum durere în piept, lipsă de aer sau te simți foarte rău, sună la 112.
+            </p>
+          )}
+          <p className="mt-5 text-lead">{stage.stop.text}</p>
+        </div>
+        <p className="mt-5 text-sm text-ink-muted">
+          Evaluarea online se oprește aici, pentru siguranța ta. Răspunsurile nu au fost trimise și nu au fost
+          salvate.
+        </p>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          {readMoreHref && (
+            <Link href={readMoreHref} className={buttonClasses("primary", "lg", "w-full sm:w-auto")}>
+              Citește despre {def.name.toLowerCase()}
+            </Link>
+          )}
+          <button
+            type="button"
+            className={buttonClasses("secondary", "lg", "w-full sm:w-auto")}
+            onClick={reset}
+          >
+            Închide evaluarea
+          </button>
+        </div>
+      </Screen>
+    );
+  }
+
   if (stage.kind === "summary") {
-    const notes = summaryNotes(answers);
+    const notes = summaryNotes(def, answers);
     return (
       <>
         <Progress current={total} total={total} label="Rezumat" />
@@ -283,6 +354,13 @@ export function EvaluationFlow({ topics, upcoming }: { topics: FlowTopic[]; upco
               type="button"
               className={buttonClasses("primary", "lg", "w-full sm:w-auto")}
               onClick={() => {
+                // A question that became visible after an edit must be answered first.
+                const missing = questions.findIndex((q) => !answers[q.id]?.length);
+                if (missing >= 0) {
+                  setReturnToSummary(true);
+                  go({ kind: "question", index: missing });
+                  return;
+                }
                 track("evaluation_completed");
                 go({ kind: "done" });
               }}
@@ -302,6 +380,20 @@ export function EvaluationFlow({ topics, upcoming }: { topics: FlowTopic[]; upco
     );
   }
 
+  if (isServiceOpen(def.topic)) {
+    return (
+      <Screen>
+        <h1 ref={headingRef} tabIndex={-1} className="text-display-2 outline-none">
+          Mai e <span className="accent">un singur pas</span>
+        </h1>
+        <p className="mt-4 text-lead">
+          Continuarea evaluării, cu datele medicale, se face în aplicația clinică Telegen, separat de acest
+          site.
+        </p>
+      </Screen>
+    );
+  }
+
   return (
     <Screen>
       <h1 ref={headingRef} tabIndex={-1} className="text-display-2 outline-none">
@@ -311,13 +403,15 @@ export function EvaluationFlow({ topics, upcoming }: { topics: FlowTopic[]; upco
         Mulțumim că ai parcurs evaluarea. Telegen este în pre-lansare, așa că răspunsurile tale nu au fost
         trimise unui medic și nu au fost salvate. Când închizi pagina, ele dispar.
       </p>
-      <p className="mt-4 text-ink-soft">
-        Între timp, poți citi despre{" "}
-        <Link href="/afectiuni/caderea-parului" className="text-blue-700 underline underline-offset-2">
-          căderea părului
-        </Link>{" "}
-        sau te putem anunța când pornim.
-      </p>
+      {readMoreHref && (
+        <p className="mt-4 text-ink-soft">
+          Între timp, poți citi despre{" "}
+          <Link href={readMoreHref} className="text-blue-700 underline underline-offset-2">
+            {def.name.toLowerCase()}
+          </Link>{" "}
+          sau te putem anunța când pornim.
+        </p>
+      )}
       <NotifyForm />
       <button type="button" className={buttonClasses("quiet", "md", "mt-6")} onClick={reset}>
         Șterge răspunsurile și ia-o de la capăt

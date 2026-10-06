@@ -24,6 +24,7 @@ export function allRoutes(): RouteEntry[] {
 
   const docs = [
     ...content.listConditions().map((c) => c.doc),
+    ...content.listConditions().flatMap((c) => content.listSubpages(c.slug)),
     ...content.listGuides(),
     ...content.listTreatments(),
   ].map((d) => ({ path: hrefForDoc(d), indexable: reviewContext(d).indexable, lastModified: d.updatedAt }));

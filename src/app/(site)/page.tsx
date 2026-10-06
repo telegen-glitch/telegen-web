@@ -62,7 +62,7 @@ export default function HomePage() {
         accent="Cu un dermatolog alături."
         text="Evaluare online, un plan stabilit de medic și urmărire pe termen lung. Totul de pe telefon, fără drumuri la cabinet."
         chips={[
-          ...conditions.map((c) => ({ label: c.name, href: `/afectiuni/${c.slug}` })),
+          ...conditions.map((c) => ({ label: c.name, href: c.basePath })),
           ...upcoming.map((t) => ({ label: t.name })),
         ]}
       />
@@ -122,7 +122,7 @@ export default function HomePage() {
                   slug: c.slug,
                   name: c.name,
                   teaser: c.teaser,
-                  href: `/afectiuni/${c.slug}`,
+                  href: c.basePath,
                 })),
                 ...upcoming.map((t) => ({
                   slug: t.slug,

@@ -58,14 +58,38 @@ export interface RelatedLink {
   description?: string;
 }
 
-export type DocKind = "condition" | "guide" | "treatment";
+/**
+ * Structured-data facts for a page. Every value must also appear in the page's
+ * visible text (enforced by tests/unit/content.test.ts), never schema-only.
+ */
+export interface ConditionEntity {
+  alternateName?: string[];
+  signOrSymptom?: string[];
+  riskFactor?: string[];
+  possibleTreatment?: string[];
+}
+
+export interface DrugEntity {
+  activeIngredient: string;
+  /** schema.org DrugPrescriptionStatus */
+  prescriptionStatus: "PrescriptionOnly" | "OTC";
+}
+
+export type DocKind = "condition" | "guide" | "treatment" | "subpage";
 
 /** Role in the internal linking graph (section 8). */
-export type GraphRole = "condition" | "symptoms" | "causes" | "treatment" | "questions";
+export type GraphRole =
+  "condition" | "symptoms" | "causes" | "treatment" | "questions" | "types" | "scars" | "heart";
 
 export interface MedicalDoc {
   kind: DocKind;
   slug: string;
+  /** Explicit URL for condition hubs and their subpages (e.g. /acnee/cauze). */
+  path?: string;
+  /** MedicalCondition details for condition hubs (visible on the page). */
+  entity?: ConditionEntity;
+  /** Drug details for medicine pages (visible on the page). */
+  drug?: DrugEntity;
   graphRole: GraphRole;
   /** Taxonomy: which condition this belongs to. */
   conditionSlug: string;
@@ -105,6 +129,10 @@ export interface Approach {
 
 export interface Condition {
   slug: string;
+  /** Hub URL: /afectiuni/caderea-parului for hair loss, top-level (/acnee) for newer conditions. */
+  basePath: string;
+  /** Intent-specific subpages under basePath (types, causes, treatment...). */
+  subpages?: MedicalDoc[];
   name: string;
   shortName: string;
   /** Medical name used in structured data, e.g. "Alopecie androgenetică". */

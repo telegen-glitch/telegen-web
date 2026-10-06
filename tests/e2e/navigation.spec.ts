@@ -56,9 +56,10 @@ test("topic picker opens from the hero CTA and hands the topic to the flow in me
     .click();
   const dialog = page.getByRole("dialog", { name: "Cu ce te putem ajuta?" });
   await expect(dialog).toBeVisible();
-  // Upcoming topics are visible but not links.
-  await expect(dialog.getByText("în curând").first()).toBeVisible();
-  await expect(dialog.getByRole("link", { name: /Acnee/ })).toHaveCount(0);
+  // All three conditions with a questionnaire are selectable.
+  for (const name of ["Căderea părului", "Acnee", "Disfuncție erectilă"]) {
+    await expect(dialog.getByRole("link", { name: new RegExp(name) })).toBeVisible();
+  }
   await page.screenshot({ path: `artifacts/screenshots/${info.project.name}/_topic-picker.png` });
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();

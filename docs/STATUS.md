@@ -1,6 +1,28 @@
 # Status
 
-_Last updated: 2026-10-05 (v2 rebuild)_
+_Last updated: 2026-10-06 (v3 conditions expansion)_
+
+## v3 conditions expansion: acne + ED (CLAUDE.md §7c), in progress
+
+DONE (verified locally, 2026-10-06):
+
+- Brief saved as CLAUDE.md §7c.
+- IA modelled in content: /acnee (+ tipuri, cauze, tratament, cicatrici), /disfunctie-erectila (+ cauze, tratament,
+  sanatatea-inimii), 8 medicine pages under /tratamente. Routes `[condition]` and `[condition]/[sub]` built. All new
+  pages are DRAFTS (not routed, listed or in the sitemap) until their clinical text is written from fetched sources.
+- Evaluation engine is data-driven (`src/content/evaluations/`): hair loss, acne, ED. ED has the 6 mandatory safety
+  screens plus onset-after-injury and curvature/pain; acne red flags (nodules, scarring, sudden adult onset, systemic
+  symptoms, current isotretinoin, pregnancy). Every red flag ends on a hard stop with no continue option. Adults only.
+  Per-condition `serviceOpen` flags (all OFF). Topic picker and /evaluare offer all three.
+- Structured data: MedicalCondition (alternateName, signOrSymptom, riskFactor, possibleTreatment) and Drug
+  (activeIngredient, prescriptionStatus) supported; a test fails if any value is schema-only.
+- Source check: every published medical summary and section must cite a source (8 older hair-loss sections listed
+  as pending). Medicine-name compliance test extended to the new medicines.
+- Gates: lint, typecheck, 36 unit tests, build, 88 Playwright tests incl. 19 hard-stop paths.
+
+BLOCKED: guideline/EMA/ANMDM sources, Romanian keyword research and Fellos acne/ED capture all blocked by the network
+policy (container + web fetch); Semrush has no API units. Therefore NOT done: clinical text for the 16 new pages,
+docs/keywords-ro.md validation, Fellos parity for acne/ED.
 
 ## v2 Fellos-parity rebuild (CLAUDE.md §4c) — in progress
 

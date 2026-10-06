@@ -110,6 +110,69 @@ Home; conditions hub; hair-loss page; guide/article template; treatment-informat
 - The real intake (health data, photos, prescriptions) belongs in app.telegen.ro under a separate reviewed architecture (GDPR special-category data, explicit consent, EU hosting, encryption, processor agreements). Do not build it here.
 - Final screen says honestly that the service is not open yet and offers an email notification (email + consent checkbox only) through a storage adapter interface. Ship with the adapter disabled. Propose one EU-region processor and request the account/token as a batched blocker.
 
+## 7c. CONDITIONS EXPANSION v3: ACNEE + DISFUNCȚIE ERECTILĂ (overrides section 7 "acne not published")
+All earlier rules (parity, compliance, privacy, quality gates, phone-only owner) still apply.
+
+### A. Scope
+Publish two new conditions alongside hair loss, in the same system and at the same Fellos parity level: Acnee and Disfuncție erectilă.
+Capture fellos.nl/behandeling/acne and /behandeling/erectiestoornis (plus their linked medicine-info pages) at 360/390/1280 for structure and section order only. Never copy their text, images or claims.
+
+### B. Information architecture (verify the medical taxonomy, then finalise)
+Each URL must answer one distinct search intent. Merge anything that would be thin.
+Acnee:
+- /acnee (hub)
+- /acnee/tipuri (comedonal, papulo-pustular, nodular/nodulochistic, acnee la adult)
+- /acnee/cauze
+- /acnee/tratament (stepwise: topical, combined, oral; when specialist care is needed)
+- /acnee/cicatrici
+Disfuncție erectilă:
+- /disfunctie-erectila (hub)
+- /disfunctie-erectila/cauze (vascular, hormonal, neurological, psychological, medication, lifestyle)
+- /disfunctie-erectila/tratament (lifestyle, oral treatment, counselling, specialist options)
+- /disfunctie-erectila/sanatatea-inimii (ED as a cardiovascular warning sign; evidence-based)
+Medicine information (neutral education, under the existing treatment-info template): benzoyl peroxide, adapalene, tretinoin, topical clindamycin (in combination only), doxycycline/lymecycline, isotretinoin (education only, not prescribed via Telegen: EU specialist supervision and pregnancy-prevention programme), sildenafil, tadalafil.
+Update: conditions hub, header mega-menu, mobile menu, topic-picker (all three selectable), homepage condition cards, footer, breadcrumbs, sitemap.
+
+### C. Medical content standards
+- Write from primary or authoritative sources that you fetch and read, never from memory: EAU Guidelines on Sexual and Reproductive Health; the European (EuroGuiDerm/S3) acne guideline; NICE NG198 (acne); EMA product information / ANMDM RCP for every medicine; peer-reviewed reviews where needed.
+- Cite every clinical claim on the page with a linked reference list. No statistic without a source.
+- Correct Romanian medical terminology and diacritics. Calm, discreet, non-shaming tone.
+- Every page follows the section 8 medical template and includes a "Când ai nevoie de consult în persoană" block derived from the guidelines. Minimum:
+  - ED: chest pain or heart symptoms, erection lasting over 4 hours (emergency), sudden onset after injury, penile curvature or pain.
+  - Acne: nodular/scarring acne, fever with severe acne, sudden severe adult-onset acne.
+- ED copy: no sexual imagery, no performance or size claims, no "buy" language next to a medicine name. Acne: no "cure" claims, no before/after imagery.
+
+### D. Evaluation flows (UI only, answers in memory only, per 7b)
+Condition-specific questionnaires in the existing flow pattern.
+- ED: mandatory safety screens: nitrates or riociguat, recent heart attack or stroke, chest pain on exertion, uncontrolled blood pressure, severe liver/kidney disease, alpha-blockers. Any positive answer leads to a hard-stop screen recommending in-person care, with no continue option.
+- Acne: severity, duration, prior treatments, isotretinoin history, current medicines. No photo upload. Red flags lead to a hard-stop screen.
+- Do not reproduce validated questionnaires (e.g. IIEF-5) verbatim unless their licence is verified. Log it in docs/legal-review-needed.md.
+- Add a per-condition serviceOpen flag (default OFF). While OFF, the final screen shows the honest "not open yet" notification step.
+
+### E. SEO
+- Research Romanian search intent per condition: Google autocomplete, People Also Ask, related searches, and the top-ranking Romanian pages. Write docs/keywords-ro.md mapping keyword clusters to URLs, one primary intent per URL.
+- Unique title and meta description per page, canonicals, sitemap entries, lang="ro", descriptive alt text, descriptive internal anchor text.
+- Internal links: condition hub to subpages to medicine pages to evaluation, cross-links (acne with hair loss under dermatology; ED with heart health), related links at the end of each page.
+
+### F. GEO
+- A 40-60 word answer-first paragraph at the top of every page that can be quoted on its own.
+- Question-led H2s matching real queries, short definitions, sourced comparison tables (e.g. sildenafil vs tadalafil; topical options compared), clear entity naming.
+- JSON-LD only for visible content: MedicalWebPage with about: MedicalCondition (alternateName, signOrSymptom, riskFactor, possibleTreatment as shown on the page); Drug on medicine pages (activeIngredient, prescriptionStatus); FAQPage for visible FAQs; BreadcrumbList; dates; reviewedBy only when real.
+- All substantive content in server-rendered HTML. Crawler rules unchanged (OAI-SearchBot allowed).
+
+### G. Compliance additions
+- Medicine names never in hero, CTA, price or ad-landing blocks. Log Meta's sexual-health ad restrictions and Romanian Rx-advertising rules in docs/legal-review-needed.md.
+- Pages stay noindex until a real reviewer of the right specialty is attached (dermatology for acne; GP or urology for ED). List the required reviewers in docs/open-items.md.
+
+### H. QA
+All section 11 gates, plus:
+- a source check (every claim cited),
+- Playwright tests that each red-flag answer reaches a hard stop,
+- a parity comparison against the Fellos acne and ED pages.
+
+### I. Report (phone-sized)
+Preview link first, then the list of new URLs, then the reviewers and blockers needed, in at most 5 bullets.
+
 ## 8. GEO/SEO from the first commit
 - Semantic HTML, one H1, descriptive Romanian URLs, canonicals, title templates, meta descriptions, Open Graph, sitemap.xml, robots.txt, breadcrumbs, redirects, 404, alt text, responsive images.
 - JSON-LD generated from the same data as the visible page. Never fabricate schema. FAQPage only for visible FAQs; author/reviewer only when real.

@@ -26,7 +26,7 @@ export default function ConditionsHub() {
           items={[
             ...content
               .listConditions()
-              .map((c) => ({ slug: c.slug, name: c.name, teaser: c.teaser, href: `/afectiuni/${c.slug}` })),
+              .map((c) => ({ slug: c.slug, name: c.name, teaser: c.teaser, href: c.basePath })),
             ...content.listUpcomingTopics().map((t) => ({
               slug: t.slug,
               name: t.name,
