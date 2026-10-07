@@ -43,3 +43,28 @@ confirmed).
 10. **Minors**: every evaluation hard-stops under 18. Confirm this policy (acne is common in teenagers).
 11. **Isotretinoin**: information only; not prescribed via Telegen (EU pregnancy-prevention programme,
     specialist supervision). Confirm wording with the reviewer.
+
+## Added for the final build (CLAUDE.md §v4)
+
+12. **AI-assisted content (EU AI Act, Regulation (EU) 2024/1689, Art. 50).** /politica-editoriala states
+    that first drafts are prepared with AI assistance and then checked by a doctor of the right specialty.
+    Confirm whether Art. 50(4) (disclosure of AI-generated text published to inform the public, with the
+    exemption for content under human editorial review and responsibility) requires anything more than this
+    statement, and from which date the obligation applies to Telegen.
+13. **Consumer dispute links in the footer.** The footer links to ANPC's SAL page
+    (https://anpc.ro/ce-este-sal/). Not verified online (network blocked, 2026-10-07). To confirm:
+    (a) the current ANPC order on SAL/SOL pictograms and links for traders' websites;
+    (b) whether the EU ODR platform link is still required. Our understanding is that the EU ODR platform
+    was discontinued in July 2025 under Regulation (EU) 2024/3228, which would make the ODR/SOL link
+    obsolete; the lawyer should confirm and say what replaces it, if anything.
+14. **Company identity on the website.** Which identification data Romanian law requires on the site
+    (Legea 365/2002 on e-commerce, consumer law): legal name, CUI, Reg. Com. number, registered address,
+    contact email, and for a medical provider any authorisation number. Currently shown as TEMPORARY.
+15. **Anonymous doctors.** Doctors are not named publicly; patients receive the doctor's name and parafă
+    code in the clinical app before the consult (owner decision). Confirm this satisfies Romanian rules on
+    medical advertising, telemedicine and patient information, and that "Revizuit medical de un medic
+    [specialitate] din echipa Telegen" is an acceptable review statement.
+16. **Men's health positioning.** The site positions Telegen as an online clinic for men while the
+    hair-loss education also covers women. Confirm the positioning raises no consumer-law issue (no
+    misleading suggestion that women are treated, or vice versa), together with the owner's decision on
+    whether women are served.

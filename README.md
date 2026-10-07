@@ -17,6 +17,7 @@ Dependencies beyond the Next.js scaffold, and why:
 - `vitest` — fast unit/compliance tests that also gate the build (`prebuild`).
 - `@playwright/test`, `@axe-core/playwright` — e2e, accessibility and screenshot QA.
 - `prettier`, `prettier-plugin-tailwindcss` — consistent formatting and class order.
+- `tsx` — runs the TypeScript GEO report script (`pnpm geo:report`) with the app's path aliases.
 
 ## Commands
 
@@ -27,7 +28,10 @@ pnpm typecheck      # next typegen + tsc
 pnpm test           # unit + compliance tests (also run before every build)
 pnpm build          # production build
 pnpm e2e            # Playwright: pages, axe, nav, evaluation privacy, SEO; screenshots in artifacts/
+pnpm geo:report     # regenerate docs/geo-status.md from routes and content
 ```
+
+Owner docs: [`docs/LAUNCH.md`](docs/LAUNCH.md) (launch steps), [`docs/REVIEW.md`](docs/REVIEW.md) (recording medical reviews).
 
 ## Rules enforced in code
 
