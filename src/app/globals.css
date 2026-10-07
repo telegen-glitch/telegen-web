@@ -696,3 +696,29 @@
     opacity: 0;
   }
 }
+
+/* Realistic panel scenes (v4.5): poster first, the canvas fades in over it in the same box. */
+.cp-poster,
+.cp-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+.cp-poster {
+  object-fit: cover;
+}
+.cp-poster[data-kind="hair"] {
+  object-position: 50% 100%;
+}
+.cp-canvas {
+  opacity: 0;
+  transition: opacity 700ms var(--ease-calm);
+}
+.cp-canvas[data-live] {
+  opacity: 1;
+}
+.cp-panel:not([data-open]) .cp-canvas {
+  display: none;
+}
