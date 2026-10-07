@@ -7,6 +7,11 @@ for (const route of routes) {
     test("renders with one h1, metadata, no overflow and is axe clean", async ({ page }, info) => {
       // Audit the settled page: reveal transitions would otherwise let axe sample half-faded text.
       await page.emulateMedia({ reducedMotion: "reduce" });
+      const cspErrors: string[] = [];
+      page.on("console", (m) => {
+        if (/Content Security Policy|Refused to (load|execute|apply|connect)/i.test(m.text()))
+          cspErrors.push(m.text());
+      });
       const res = await page.goto(route);
       expect(res?.status()).toBe(200);
       await expect(page.locator("h1")).toHaveCount(1);
@@ -15,9 +20,16 @@ for (const route of routes) {
       expect(canonical).toBe(`https://telegen.ro${route === "/" ? "" : route}`);
       expect(await page.title()).toMatch(/Telegen/);
       expect(await page.locator('meta[name="description"]').getAttribute("content")).toBeTruthy();
+      expect(await page.locator('meta[property="og:image"]').getAttribute("content")).toMatch(
+        /opengraph-image/,
+      );
+      expect(await page.locator('meta[name="twitter:card"]').getAttribute("content")).toBe(
+        "summary_large_image",
+      );
       // Not launched: every page must be noindex.
       expect(await page.locator('meta[name="robots"]').getAttribute("content")).toContain("noindex");
       expect(res?.headers()["x-robots-tag"]).toContain("noindex");
+      expect(res?.headers()["content-security-policy"]).toContain("default-src 'self'");
 
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
       expect(overflow, "horizontal scroll").toBeLessThanOrEqual(0);
@@ -49,6 +61,7 @@ for (const route of routes) {
         path: `artifacts/screenshots/${info.project.name}/${slug(route)}.png`,
         fullPage: true,
       });
+      expect(cspErrors, "CSP violations").toEqual([]);
     });
   });
 }

@@ -32,6 +32,18 @@ export const metadata: Metadata = {
   openGraph: { siteName: siteConfig.name, locale: siteConfig.locale, type: "website" },
   robots: isSiteIndexable() ? { index: true, follow: true } : { index: false, follow: false },
   formatDetection: { telephone: false, email: false, address: false },
+  // Search Console / Bing verification: only in production and only when set (§v4.E5).
+  ...(process.env.VERCEL_ENV === "production" &&
+  (process.env.GOOGLE_SITE_VERIFICATION || process.env.BING_SITE_VERIFICATION)
+    ? {
+        verification: {
+          ...(process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : {}),
+          ...(process.env.BING_SITE_VERIFICATION
+            ? { other: { "msvalidate.01": process.env.BING_SITE_VERIFICATION } }
+            : {}),
+        },
+      }
+    : {}),
 };
 
 export const viewport: Viewport = {
