@@ -164,7 +164,7 @@ export function ConditionView({ condition }: { condition: Condition }) {
           </section>
         )}
 
-        <Pricing />
+        <Pricing conditionSlug={condition.slug} />
 
         {/* How care works */}
         <section aria-labelledby="cum-ajutam" className="border-t border-line-soft section-y">

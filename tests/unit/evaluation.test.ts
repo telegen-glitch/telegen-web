@@ -116,3 +116,14 @@ describe("service switch", () => {
     for (const def of evaluations) expect(serviceOpen[def.topic], def.topic).toBe(false);
   });
 });
+
+describe("pricing (§v4.E6)", () => {
+  it("ships with the flag off and no placeholder prices", async () => {
+    const { flags } = await import("@/lib/flags");
+    const { prices } = await import("@/lib/pricing");
+    expect(flags.pricing).toBe(false);
+    for (const [slug, list] of Object.entries(prices)) {
+      for (const p of list) expect(p.amount, slug).toBeGreaterThan(0);
+    }
+  });
+});
