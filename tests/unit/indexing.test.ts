@@ -89,13 +89,16 @@ describe("medical page noindex rule (§9.2, §v4.D)", () => {
     }
   });
 
-  it("no page is marked as reviewed in the repository yet (owner records reviews, docs/REVIEW.md)", () => {
+  it("any recorded review must be valid: known team member, right specialty, past date (docs/REVIEW.md)", () => {
     const docs = [
       ...content.listConditions().map((c) => c.doc),
+      ...content.listConditions().flatMap((c) => content.listSubpages(c.slug)),
       ...content.listGuides(),
       ...content.listTreatments(),
     ];
-    for (const d of docs) expect(d.review, d.slug).toBeUndefined();
+    for (const d of docs) {
+      if (d.review) expect(hasRealReview(d, content.getTeamMember), `${d.slug}: invalid review`).toBe(true);
+    }
   });
 });
 
