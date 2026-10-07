@@ -18,7 +18,7 @@ import {
  * Hero condition panels: an accordion of vertical doors (desktop) or stacked
  * cards (mobile). All content is server-rendered and passed in as nodes; this
  * component only switches the open panel, pauses the illustrations offscreen
- * and runs the pointer light. Exactly one panel is open at a time (APG
+ * and runs the pointer light (and the hair photo's parallax). Exactly one panel is open at a time (APG
  * accordion: the open header is aria-disabled because it cannot collapse).
  */
 
@@ -98,6 +98,9 @@ export function usePanelEffects(rootRef: RefObject<HTMLElement | null>) {
         const r = panel.getBoundingClientRect();
         panel.style.setProperty("--mx", `${e.clientX - r.left}px`);
         panel.style.setProperty("--my", `${e.clientY - r.top}px`);
+        // -1..1 from the centre, for the photo parallax.
+        panel.style.setProperty("--px", ((e.clientX - r.left) / r.width - 0.5) * 2 + "");
+        panel.style.setProperty("--py", ((e.clientY - r.top) / r.height - 0.5) * 2 + "");
         panel.setAttribute("data-lit", "");
       });
     };

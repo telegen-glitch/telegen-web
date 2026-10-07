@@ -1,6 +1,47 @@
 # Status
 
-_Last updated: 2026-10-07 (v4.5: realistic WebGL scenes for hair and acne, branch claude/hero-realistic)_
+_Last updated: 2026-10-07 (v4.6 photo in the hair-loss panel, merged into the v4.5 WebGL branch claude/hero-realistic)_
+
+## v4.6 animated photo in the hair-loss panel
+
+DONE (verified locally, 2026-10-07):
+
+- The Căderea părului panel (home hero and the /caderea-parului hub) shows the licensed Pexels photo of a
+  man styling his hair in a mirror (docs/media-credits.md). Acne and ED are unchanged; the doors keep the
+  same 39rem height budget.
+- Art direction: the wide crop (1600 × 1000) in every open band (mobile cards 14rem, desktop door 11.25rem,
+  hub 15rem), because the open band is a wide shape and the wide crop keeps the whole face, the mirror and
+  his shoulder; the portrait crop (1100 × 1375) in the tall, narrow closed desktop door, cropped to the
+  face, desaturated and dimmed, full colour when opened. AVIF → WebP → JPG, `alt=""` (decorative), same
+  inset frame and radius as the other panels. The panel title sits over the photo's lower edge on a navy
+  scrim (≥ 80% navy under the title); the rest of the text is on solid navy.
+- Caption, top right: "Imagine de prezentare. Persoana este model." No name, quote, patient or result.
+- Motion (CSS transforms and opacity, docs/motion-spec.md): reveal 1.08 → 1 with fade in 700ms when the
+  panel opens or when the photo arrives; breathing 1 → 1.05 toward the face over 15s, alternating, only
+  while open and on screen; one 12% white diagonal light sweep per opening (1.4s); desktop parallax ±8px
+  opposite the cursor with the existing pointer light on top, off on touch. Reduced motion: still.
+- Switch: `heroMedia.hair = "photo" | "illustration"` in `src/lib/flags.ts`. "photo" takes effect only
+  when all six files exist (checked at build in `src/lib/hero-media.ts`); otherwise the line drawing. If
+  the photo fails to load in the browser, the line drawing shows instead (`PhotoGuard`).
+- Performance: both images are lazy; on mobile only the 17 KB wide AVIF loads, at low priority, and the
+  portrait is never fetched. Reserved box sizes, CLS 0. The photo is not the LCP element (the H1 is on
+  home), so no preload was added.
+- Visual loop: 3 passes at 360 and 1280 (open, closed next to ED, timed frames, recordings). Fixed: the
+  portrait crop hid the eyes under the scrim in the wide desktop band, a hairline at the band's bottom
+  corners, the photo popping in after its reveal had already played, and a front-loaded light sweep.
+- Gates: format, lint, typecheck, 48 unit tests (new: the media switch and its file check), build, 171
+  Playwright tests (0 failed; new: photo and caption, fallback when the files return 404, reduced motion
+  still, closed-door portrait, axe on home and hub). Lighthouse mobile (local): home Perf 95, A11y 100,
+  CLS 0, TBT 53 ms, LCP 2.97 s (H1, same as before this change); /caderea-parului Perf 95, A11y 100,
+  CLS 0, LCP 2.93 s (text). SEO 66 locally only because of the intended noindex.
+
+NOT DONE / open:
+
+- The Pexels licence gives no model release; whether it covers a health topic is listed for the lawyer
+  (docs/legal-review-needed.md #19, docs/open-items.md).
+- Merged into PR #2 (claude/hero-realistic): there the hair panel shows this photo by default, the WebGL
+  hair scene is the switch's "illustration" option and its still poster is the photo's load fallback;
+  acne keeps its WebGL scene.
 
 ## v4.5 realistic WebGL scenes for hair and acne (branch claude/hero-realistic, separate PR, not merged)
 

@@ -81,3 +81,15 @@ confirmed).
     combination (or not at all) acceptable? Current choice: tretinoin is covered on the adapalen page,
     topical clindamycin on the benzoyl peroxide page, each page says plainly what is and is not confirmed
     in Romania, and `prescriptionStatus` is set only where a Romanian product was confirmed.
+
+## Added with the hair-loss hero photo (v4.6)
+
+19. **Stock photo of an identifiable person next to a medical condition.** The hair-loss hero panel shows
+    a Pexels photo (Ketut Subiyanto; docs/media-credits.md). The Pexels licence allows commercial use but
+    gives no model release and forbids showing identifiable people in a bad light or implying endorsement.
+    Showing him beside "Căderea părului" could be read as saying he has hair loss. Mitigations in place: a
+    visible caption "Imagine de prezentare. Persoana este model.", no name, quote, before/after or
+    result, and the photo is decorative. Question: is this enough under the Pexels terms and Romanian
+    image-rights rules (Codul civil art. 73, dreptul la propria imagine), or should we license a photo with a model release that
+    covers sensitive (health) use? The switch `heroMedia.hair` in `src/lib/flags.ts` turns it back to
+    the illustration with one line.

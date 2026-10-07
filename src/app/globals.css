@@ -722,3 +722,198 @@
 .cp-panel:not([data-open]) .cp-canvas {
   display: none;
 }
+
+/*
+ * Hair-loss hero photo (v4.6). The photo sits in the same inset, rounded frame
+ * as the line drawings, in a taller band; the panel title is laid over its lower
+ * edge on a navy scrim. Motion: transforms and opacity only, inside
+ * [data-open] (so it stops when the panel closes) and paused offscreen by the
+ * [data-playing] rule above. Reduced motion: nothing moves.
+ */
+.cp-photo {
+  background: var(--color-mist);
+}
+.cp-panel[data-open] .cp-photo {
+  background: var(--color-navy-950);
+}
+.cp-photo-door {
+  display: none;
+}
+.cp-photo-fallback,
+.cp-photo-parallax,
+.cp-photo-breathe,
+.cp-photo-img,
+.cp-photo-sweep,
+.cp-photo-scrim,
+.cp-photo-light {
+  position: absolute;
+  inset: 0;
+}
+.cp-photo-fallback {
+  display: none;
+}
+.cp-photo[data-failed] .cp-photo-fallback {
+  display: block;
+}
+/* Oversized by 10 px so the ±8 px parallax never shows an edge. */
+.cp-photo-parallax {
+  inset: -10px;
+}
+.cp-photo-breathe,
+.cp-photo-img {
+  transform-origin: 30% 35%;
+}
+.cp-photo-img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: 28% 32%;
+  transition: filter 520ms var(--ease-calm);
+}
+.cp-photo-sweep,
+.cp-photo-scrim,
+.cp-photo-light,
+.cp-photo-caption {
+  display: none;
+  pointer-events: none;
+}
+.cp-panel[data-open] .cp-photo:not([data-failed]) {
+  height: 14rem;
+  /* The scrim is solid navy at the bottom: square corners avoid a hairline there. */
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.cp-panel[data-open] .cp-photo-sweep,
+.cp-panel[data-open] .cp-photo-scrim,
+.cp-panel[data-open] .cp-photo-caption {
+  display: block;
+}
+.cp-photo-sweep {
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgb(255 255 255 / 0.12) 46%,
+    rgb(255 255 255 / 0.12) 54%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+}
+/* Navy scrim rising from the title side: the title always sits on ≥ 80% navy. */
+.cp-photo-scrim {
+  background: linear-gradient(
+    to top,
+    var(--color-navy-950) 0%,
+    rgb(10 22 49 / 0.8) 30%,
+    rgb(10 22 49 / 0.4) 44%,
+    rgb(10 22 49 / 0) 64%
+  );
+}
+.cp-photo-caption {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  margin: 0;
+  border-radius: 999px;
+  background: rgb(10 22 49 / 0.78);
+  padding: 0.1875rem 0.5625rem;
+  color: var(--color-white);
+  font-size: 0.6875rem;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+}
+/* The title over the photo's lower edge. */
+.cp-panel[data-open]:has(> .cp-photo:not([data-failed])) > .cp-heading {
+  position: relative;
+  z-index: 1;
+  margin-top: -3.75rem;
+}
+.cp-single .cp-panel[data-open] .cp-photo:not([data-failed]) {
+  height: 15rem;
+}
+.cp-single .cp-panel[data-open]:has(> .cp-photo:not([data-failed])) > .cp-heading {
+  margin-top: -2.75rem;
+}
+
+@media (min-width: 80rem) {
+  /* Same height budget as before: the band grows by exactly the title it carries. */
+  .cp-panels:not(.cp-single) .cp-panel[data-open] .cp-photo:not([data-failed]) {
+    height: 11.25rem;
+  }
+  /* Closed door: the photo cropped to the face, a little desaturated and dimmed. */
+  .cp-panels:not(.cp-single) .cp-panel:not([data-open]) .cp-photo {
+    opacity: 1;
+  }
+  .cp-panels:not(.cp-single) .cp-panel:not([data-open]) .cp-photo-door {
+    display: block;
+  }
+  .cp-panels:not(.cp-single) .cp-panel:not([data-open]) .cp-photo-parallax {
+    display: none;
+  }
+  .cp-panels:not(.cp-single) .cp-panel:not([data-open]) .cp-photo-img {
+    object-position: 14% 45%;
+    filter: grayscale(0.55) brightness(0.86);
+  }
+  .cp-panels:not(.cp-single) .cp-panel:not([data-open]):hover .cp-photo-img {
+    filter: grayscale(0.3) brightness(0.92);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cp-photo[data-photo-wait] .cp-photo-parallax .cp-photo-img {
+    opacity: 0;
+  }
+  .cp-panel[data-open] .cp-photo[data-photo-reveal] .cp-photo-img {
+    animation: cp-photo-reveal 700ms var(--ease-out-soft) both;
+  }
+  .cp-panel[data-open] .cp-photo-breathe {
+    animation: cp-photo-breathe 15s ease-in-out 700ms infinite alternate;
+  }
+  .cp-panel[data-open] .cp-photo[data-photo-reveal] .cp-photo-sweep {
+    animation: cp-photo-sweep 1.4s cubic-bezier(0.45, 0, 0.3, 1) 300ms both;
+  }
+}
+
+/* Desktop pointer: the photo shifts up to 8 px opposite the cursor, the soft light on top. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .cp-photo-parallax {
+    transition: translate 900ms var(--ease-out-soft);
+  }
+  .cp-panel[data-open][data-lit] .cp-photo-parallax {
+    translate: calc(var(--px, 0) * -8px) calc(var(--py, 0) * -8px);
+  }
+  .cp-panel[data-open] .cp-photo-light {
+    display: block;
+    background: radial-gradient(
+      18rem circle at calc(var(--mx, 50%) - 0.5rem) calc(var(--my, 50%) - 0.5rem),
+      rgb(255 255 255 / 0.14),
+      transparent 65%
+    );
+    opacity: 0;
+    transition: opacity 500ms var(--ease-calm);
+  }
+  .cp-panel[data-open][data-lit] .cp-photo-light {
+    opacity: 1;
+  }
+}
+
+/* The fallback wins over every state above (kept last on purpose). */
+.cp-panels .cp-panel .cp-photo[data-failed] > :not(.cp-photo-fallback) {
+  display: none;
+}
+
+@keyframes cp-photo-reveal {
+  from {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+}
+@keyframes cp-photo-breathe {
+  to {
+    transform: translate(4px, 3px) scale(1.05);
+  }
+}
+@keyframes cp-photo-sweep {
+  to {
+    transform: translateX(100%);
+  }
+}

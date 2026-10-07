@@ -1,8 +1,11 @@
 import type { Condition } from "@/content/types";
-import { SceneArt } from "./SceneArt";
+import { hairHeroMedia } from "@/lib/hero-media";
+import { HairPhoto } from "./HairPhoto";
+import { SceneArt, ScenePoster } from "./SceneArt";
 
 /**
- * Condition illustrations for the hero panels. Hair loss and acne are realistic
+ * Condition illustrations for the hero panels. Hair loss shows the photo by
+ * default (HairPhoto, v4.6); its "illustration" option and acne are realistic
  * WebGL scenes with a static poster (SceneArt); erectile dysfunction is the
  * traced line below, unchanged.
  */
@@ -47,7 +50,15 @@ function Pulse() {
   );
 }
 
+/**
+ * The art for a condition panel. Hair loss shows the photo when the hero media
+ * switch says so and the files exist (src/lib/hero-media.ts), with the hair
+ * scene's still poster as the fallback if the photo cannot load; otherwise the
+ * WebGL scene. Acne is its WebGL scene, ED the traced line.
+ */
 export function PanelIllustration({ kind }: { kind: Kind }) {
+  if (kind === "hair" && hairHeroMedia() === "photo")
+    return <HairPhoto fallback={<ScenePoster kind="hair" />} />;
   if (kind === "hair" || kind === "skin") return <SceneArt kind={kind} />;
   return (
     <div aria-hidden="true" className="cp-art">

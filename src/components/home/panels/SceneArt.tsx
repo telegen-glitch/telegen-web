@@ -198,20 +198,27 @@ export function SceneArt({ kind }: { kind: SceneKind }) {
 
   return (
     <div ref={box} aria-hidden="true" className="cp-art cp-art-scene">
-      <picture>
-        <source type="image/avif" srcSet={`/posters/${kind}.avif`} />
-        <img
-          src={`/posters/${kind}.webp`}
-          alt=""
-          width={1400}
-          height={560}
-          loading="lazy"
-          decoding="async"
-          className="cp-poster"
-          data-kind={kind}
-        />
-      </picture>
+      <ScenePoster kind={kind} />
       <canvas ref={canvas} className="cp-canvas" data-live={live ? "" : undefined} />
     </div>
+  );
+}
+
+/** The scene's still poster (also the fallback under the hair photo). */
+export function ScenePoster({ kind }: { kind: SceneKind }) {
+  return (
+    <picture>
+      <source type="image/avif" srcSet={`/posters/${kind}.avif`} />
+      <img
+        src={`/posters/${kind}.webp`}
+        alt=""
+        width={1400}
+        height={560}
+        loading="lazy"
+        decoding="async"
+        className="cp-poster"
+        data-kind={kind}
+      />
+    </picture>
   );
 }
