@@ -76,12 +76,6 @@ export function mainNav(): NavGroup[] {
   ];
 }
 
-export const evaluationCta = {
-  href: "/evaluare",
-  label: "Începe evaluarea",
-  longLabel: "Evaluare dermatologică online",
-} as const;
-
 export const footerNav: { heading: string; links: NavLink[] }[] = [
   {
     heading: "Tratamente",
@@ -103,6 +97,8 @@ export const footerNav: { heading: string; links: NavLink[] }[] = [
     links: [
       { href: "/standarde-clinice", label: "Standarde clinice" },
       { href: "/echipa-medicala", label: "Echipa medicală" },
+      { href: "/politica-editoriala", label: "Politica editorială" },
+      { href: "/contact", label: "Contact" },
     ],
   },
   {

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { CookieSettingsButton } from "@/components/consent/CookieSettingsButton";
 import { StartButton } from "@/components/topic/StartButton";
 import { Logo } from "@/components/ui/Logo";
-import { TemporaryBadge } from "@/components/ui/Temporary";
+import { CompanyIdentity } from "@/components/layout/CompanyIdentity";
 import { isEnabled } from "@/lib/flags";
 import { footerNav } from "@/lib/nav";
 
@@ -92,18 +92,14 @@ export function Footer() {
                 rel="noopener noreferrer"
                 className="inline-flex min-h-11 items-center gap-2 hover:text-white"
               >
-                ANPC – SAL <TemporaryBadge />
+                ANPC – Soluționarea alternativă a litigiilor
               </a>
             </li>
           </ul>
           <div className="mt-4 flex flex-col gap-4 md:flex-row md:justify-between">
-            <p className="flex max-w-xl flex-wrap items-center gap-2">
-              <TemporaryBadge />
-              <span>
-                Date de identificare ale societății (denumire, CUI, nr. Registrul Comerțului, sediu, contact)
-                se completează înainte de lansare.
-              </span>
-            </p>
+            <div className="max-w-xl">
+              <CompanyIdentity tone="dark" />
+            </div>
             <p className="max-w-md md:text-right">
               Informațiile de pe acest site au scop educativ și nu înlocuiesc consultul medical. În caz de
               urgență, sună la 112. © {new Date().getFullYear()} Telegen
