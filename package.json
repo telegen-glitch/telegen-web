@@ -14,7 +14,8 @@
     "check:content": "vitest run tests/unit",
     "prebuild": "pnpm run check:content",
     "e2e": "playwright test",
-    "geo:report": "tsx scripts/geo-report.ts && prettier --write docs/geo-status.md"
+    "geo:report": "tsx scripts/geo-report.ts && prettier --write docs/geo-status.md",
+    "render:posters": "node scripts/render-posters.mjs"
   },
   "dependencies": {
     "next": "16.3.8",
@@ -33,6 +34,7 @@
     "eslint-config-next": "16.3.8",
     "prettier": "^3.9.9",
     "prettier-plugin-tailwindcss": "^0.8.1",
+    "sharp": "0.35.5",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5",
