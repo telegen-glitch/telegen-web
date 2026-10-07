@@ -18,6 +18,18 @@ export const specialtyLabel: Record<TeamMember["specialty"], string> = {
   "medicina-de-familie": "de familie",
 };
 
+/**
+ * Who decides, as shown in the hero condition panels. A specialty is named only when it is
+ * certain: a team member of an allowed specialty exists, or the condition allows exactly one
+ * specialty. Otherwise "Un medic". Never a name or photo.
+ */
+export function decidingDoctor(conditionSlug: string): string {
+  const allowed = reviewerSpecialties[conditionSlug] ?? [];
+  const member = team.find((m) => allowed.includes(m.specialty));
+  const specialty = member?.specialty ?? (allowed.length === 1 ? allowed[0] : undefined);
+  return specialty ? `Un medic ${specialtyLabel[specialty]}` : "Un medic";
+}
+
 /** Specialty a reviewer must have for each condition (CLAUDE.md §7c.G). */
 export const reviewerSpecialties: Record<string, TeamMember["specialty"][]> = {
   "caderea-parului": ["dermatologie"],

@@ -164,6 +164,18 @@ export interface Condition {
       followUp: string;
     };
   };
+  /**
+   * Hero condition panel (home and hub). Written from the condition's own pages; no medicine
+   * names, numbers, prices or promises (tested).
+   */
+  panel: {
+    /** One line under the condition name. */
+    lead: string;
+    /** "Ce analizează medicul": three short points. */
+    analyses: [string, string, string];
+    /** Abstract illustration: rising strokes, settling dots or a steady line. */
+    illustration: "hair" | "skin" | "pulse";
+  };
   status: "published" | "draft";
   doc: MedicalDoc;
   /** Month-by-month expectations block on the condition page. */

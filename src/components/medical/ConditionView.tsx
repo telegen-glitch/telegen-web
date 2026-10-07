@@ -7,7 +7,11 @@ import { HowWeHelp } from "@/components/home/HowWeHelp";
 import { SectionHeading } from "@/components/home/SectionHeading";
 import { StepStrip } from "@/components/home/StepStrip";
 import { TeamSection } from "@/components/home/TeamSection";
-import { neutralMockup, PhoneMockup, ScreenQuestion } from "@/components/home/PhoneMockup";
+import { neutralMockup } from "@/components/home/PhoneMockup";
+import { SinglePanel } from "@/components/home/panels/ConditionPanels";
+import { PanelIllustration } from "@/components/home/panels/Illustrations";
+import { PanelBody } from "@/components/home/panels/PanelBody";
+import { decidingDoctor } from "@/content/clinicians";
 import { SectionView } from "@/components/medical/Blocks";
 import { FaqList } from "@/components/medical/Faq";
 import { Pricing } from "@/components/medical/Pricing";
@@ -58,11 +62,20 @@ export function ConditionView({ condition }: { condition: Condition }) {
                   </ButtonLink>
                 </div>
               </div>
-              <div className="hidden justify-center lg:flex">
-                <PhoneMockup>
-                  <ScreenQuestion question={mockup.question} options={mockup.options} />
-                </PhoneMockup>
-              </div>
+              <SinglePanel
+                art={<PanelIllustration kind={condition.panel.illustration} />}
+                label="Cum te evaluăm"
+              >
+                <PanelBody
+                  variant="hub"
+                  slug={condition.slug}
+                  name={condition.name}
+                  lead={condition.panel.lead}
+                  analyses={condition.panel.analyses}
+                  decider={decidingDoctor(condition.slug)}
+                  href={condition.basePath}
+                />
+              </SinglePanel>
             </div>
           </div>
         </header>

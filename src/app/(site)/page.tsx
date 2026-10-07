@@ -4,6 +4,7 @@ import type { Faq } from "@/content/types";
 import { ConditionCards } from "@/components/home/ConditionCards";
 import { PressLogos, ReviewsCarousel } from "@/components/home/FlaggedSections";
 import { Hero } from "@/components/home/Hero";
+import { panelViews } from "@/components/home/panels/panelViews";
 import { HowWeHelp } from "@/components/home/HowWeHelp";
 import { neutralMockup } from "@/components/home/PhoneMockup";
 import { SectionHeading } from "@/components/home/SectionHeading";
@@ -62,7 +63,8 @@ export default function HomePage() {
         title="Sănătatea ta, tratată discret."
         accent="Cu un medic alături."
         text={`Evaluare online pentru ${publishedConditionList()}, un plan stabilit de medic și urmărire pe termen lung. De pe telefon, fără drumuri la cabinet.`}
-        chips={conditions.map((c) => ({ label: c.name, href: c.basePath }))}
+        chips={conditions.map((c) => ({ label: c.name, slug: c.slug, href: c.basePath }))}
+        panels={panelViews(conditions)}
       />
 
       <StepStrip />

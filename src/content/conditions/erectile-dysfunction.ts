@@ -489,6 +489,15 @@ export const erectileDysfunction: Condition = {
       followUp: "Mulțumesc. Îți trimit și lista analizelor de verificat la medicul de familie.",
     },
   },
+  panel: {
+    lead: "Dificultăți de erecție, evaluate discret, cu atenție la inimă.",
+    analyses: [
+      "Cum și de când au apărut dificultățile",
+      "Istoricul inimii și tensiunea arterială",
+      "Medicamentele pe care le iei acum",
+    ],
+    illustration: "pulse",
+  },
   status: "published",
   guideSlugs: [],
   treatmentSlugs: ["sildenafil", "tadalafil"],

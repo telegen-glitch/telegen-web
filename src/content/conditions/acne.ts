@@ -597,6 +597,15 @@ export const acne: Condition = {
       followUp: "Perfect. În luna 3 facem împreună prima reevaluare.",
     },
   },
+  panel: {
+    lead: "Puncte negre, coșuri și inflamație pe față, spate sau piept.",
+    analyses: [
+      "Tipul leziunilor și unde apar",
+      "De cât timp ai acnee și ce ai încercat",
+      "Semnele care cer un consult în persoană",
+    ],
+    illustration: "skin",
+  },
   status: "published",
   guideSlugs: [],
   treatmentSlugs: ["adapalen", "peroxid-de-benzoil", "doxiciclina-limeciclina", "isotretinoin"],

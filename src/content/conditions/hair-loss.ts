@@ -22,6 +22,15 @@ export const hairLoss: Condition = {
       followUp: "Perfect. În luna 3 îți cer fotografiile de control.",
     },
   },
+  panel: {
+    lead: "Subțierea treptată a părului la tâmple, pe creștet sau pe cărare.",
+    analyses: [
+      "Tiparul căderii: tâmple, creștet sau cărare",
+      "De când a început și cum a evoluat",
+      "Semnele unei alte cauze și medicamentele actuale",
+    ],
+    illustration: "hair",
+  },
   status: "published",
   guideSlugs: [
     "semnele-alopeciei-androgenetice",

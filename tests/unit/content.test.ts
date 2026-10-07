@@ -11,6 +11,7 @@ import { docTexts } from "@/lib/medical";
 import { allRoutes } from "@/lib/routes";
 import { faqJsonLd } from "@/lib/seo";
 import { routes as e2eRoutes } from "../e2e/routes";
+import { MEDICINE_NAMES } from "./compliance";
 
 const published = [
   ...content.listConditions().map((c) => c.doc),
@@ -147,8 +148,7 @@ describe("internal linking graph", () => {
 });
 
 describe("prescription-medicine promotion rules (section 9.4)", () => {
-  const medicine =
-    /minoxidil|finasterid|dutasterid|sildenafil|tadalafil|isotretinoin|adapalen|tretinoin|benzoil|clindamicin|doxiciclin|limeciclin|nitroglicerin|riociguat|tamsulosin|doxazosin|alfuzosin|terazosin/i;
+  const medicine = MEDICINE_NAMES;
 
   it("medicine names appear only in neutral content data, never in page or component code", () => {
     const offenders = walk("src")
