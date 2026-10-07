@@ -1,4 +1,6 @@
 import type { Condition } from "@/content/types";
+import { hairHeroMedia } from "@/lib/hero-media";
+import { HairPhoto } from "./HairPhoto";
 
 /**
  * Condition illustrations for the hero panels: one continuous line per condition,
@@ -164,10 +166,21 @@ function Pulse() {
   );
 }
 
+/** The bare line for a condition (also the fallback under the hair photo). */
+export function IllustrationLines({ kind }: { kind: Kind }) {
+  return kind === "hair" ? <Hair /> : kind === "skin" ? <Skin /> : <Pulse />;
+}
+
+/**
+ * The art for a condition panel. Hair loss shows the photo when the hero media
+ * switch says so and the files exist (src/lib/hero-media.ts); otherwise, and
+ * for the other conditions, the traced line.
+ */
 export function PanelIllustration({ kind }: { kind: Kind }) {
+  if (kind === "hair" && hairHeroMedia() === "photo") return <HairPhoto fallback={<Hair />} />;
   return (
     <div aria-hidden="true" className="cp-art">
-      {kind === "hair" ? <Hair /> : kind === "skin" ? <Skin /> : <Pulse />}
+      <IllustrationLines kind={kind} />
     </div>
   );
 }

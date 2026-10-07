@@ -23,6 +23,17 @@ export const flags = {
 
 export type FlagName = keyof typeof flags;
 
+export type HeroMedia = "photo" | "illustration";
+
+/**
+ * What each hero condition panel shows (A/B switch for after launch). "photo"
+ * only takes effect when every photo file exists in public/media/hero/; until
+ * then the illustration is used automatically (see src/lib/hero-media.ts).
+ */
+export const heroMedia: { hair: HeroMedia } = {
+  hair: "photo",
+};
+
 /**
  * Per-condition service switch (CLAUDE.md 7c.D). While false, the evaluation ends
  * on the honest "not open yet" screen with the launch-notification form.
