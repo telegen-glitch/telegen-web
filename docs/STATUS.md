@@ -1,6 +1,42 @@
 # Status
 
-_Last updated: 2026-10-07 (v4.2: acne + ED published from the source pack)_
+_Last updated: 2026-10-07 (v4.3: hero condition panels)_
+
+## v4.3 hero condition panels
+
+DONE (verified locally, 2026-10-07):
+
+- Hero: the phone mockup, the plan screen and the "Interfață ilustrativă" caption are gone. In their place are
+  condition panels (`src/components/home/panels/`), one per published condition and generated from content.
+  From 1280 px they are vertical doors: one open, the others narrow strips with a vertical name; flex-grow
+  opens a door in 520 ms (ease-out-soft) on click, hover (140 ms intent delay) or keyboard. Below 1280 px they
+  are stacked cards, one open, the others a single row each. The first condition is open by default; nothing
+  auto-rotates.
+- The open panel shows: name, one-line lead, "Ce analizează medicul" (3 points from a new `panel` field on each
+  condition), "Cine decide" (`decidingDoctor()`: a specialty only when certain, else "Un medic"; no names),
+  the 4-node care route (line draws via stroke-dashoffset in 700 ms, nodes staggered 75 ms), "Începe
+  evaluarea" (topic handed to the flow in module memory, never in the URL) and "Află mai multe".
+- Illustrations: inline SVG, seeded and deterministic. Hair: rising strokes in 3 layers swaying over 7, 9 and
+  11 s. Acne: an irregular dot field fading into an even grid over 10 s. ED: a steady beat drawn into a calm
+  curve over 9 s. They play only on the open panel while it is on screen (IntersectionObserver); collapsed
+  panels are static and dimmed; reduced motion is fully static. Strokes do not scale, so the look stays the
+  same from the 72 px door to the full-width card.
+- Pointer light: a faint radial highlight follows the pointer inside the open panel (fine pointers only, off
+  with reduced motion). Hero chips open their panel; without JS they are plain links to the hub.
+- Condition hubs: the phone is replaced by that condition's panel (illustration, what the doctor analyses,
+  who decides, route), shown on mobile too.
+- Accessibility: APG accordion (button `aria-expanded`/`aria-controls`; the open header is `aria-disabled`);
+  arrow keys, Home and End move focus and open, Enter and Space open; 44 px targets; all content is in the
+  server HTML.
+- Visual loop: 6 screenshot passes at 360, 768 and 1280, plus recordings and timed frames of a door opening.
+  Fixed along the way: names rendering navy on navy, content clipped by the height budget, a broken route
+  line, illustrations ballooning on wide tiles, the collapsed ED crop missing the beat, and a muddy colour
+  crossfade (now 220 ms).
+- Gates: format, lint, typecheck, 46 unit tests (new: one panel per condition, no medicine names, no figures
+  or prices, who decides), build, 156 Playwright tests (0 failed; new: click, keyboard, chip, topic hand-over,
+  reduced motion, axe with another panel open at 360/1280, hub panel). Lighthouse mobile (local, idle): home 95,
+  /acnee 95–99, /disfunctie-erectila 95, /caderea-parului 95–98; Accessibility 100 on all; CLS 0; LCP element
+  is the H1. No animation had to be removed.
 
 ## v4.2 acne + ED from the source pack
 
