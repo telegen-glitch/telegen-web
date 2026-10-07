@@ -1,0 +1,893 @@
+@import "tailwindcss";
+
+/*
+ * Telegen design tokens (v2). Proportions follow the reference category
+ * (docs/token-map.md); every colour, font and value here is Telegen's own.
+ * No gradients, no glass effects.
+ */
+@theme {
+  --color-white: #ffffff;
+  --color-mist: #f2f5fa;
+  --color-mist-deep: #e4eaf3;
+  --color-paper: #f7f6f2;
+  --color-line: #d9dfe9;
+  --color-line-soft: #e8ecf2;
+
+  --color-navy-950: #0a1631;
+  --color-navy-900: #10204a;
+  --color-navy-800: #1b2e5e;
+  --color-navy-700: #2c4073;
+
+  --color-ink: #0f1a33;
+  --color-ink-soft: #3d475e;
+  --color-ink-muted: #5d6679;
+
+  --color-blue-700: #1f4bb0;
+  --color-blue-600: #2a5cc8;
+  --color-blue-200: #c4d4f3;
+  --color-blue-100: #dfe8f8;
+  --color-blue-50: #eef3fb;
+
+  --color-amber-100: #fbefd2;
+  --color-amber-800: #6e4a05;
+
+  --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
+
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.25rem;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.4rem;
+  --text-base: 1.0625rem;
+  --text-base--line-height: 1.65rem;
+  --text-lg: 1.1875rem;
+  --text-lg--line-height: 1.75rem;
+
+  --radius-card: 1.5rem;
+  --radius-card-lg: 2rem;
+  --radius-pill: 999px;
+
+  --container-content: 80rem;
+  --container-prose: 42rem;
+
+  --ease-calm: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --shadow-card: 0 1px 2px rgba(10, 22, 49, 0.04), 0 8px 24px -12px rgba(10, 22, 49, 0.12);
+  --shadow-float: 0 24px 60px -24px rgba(10, 22, 49, 0.28);
+  --shadow-header: 0 1px 0 rgba(10, 22, 49, 0.06), 0 6px 20px -12px rgba(10, 22, 49, 0.18);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6rem;
+    interpolate-size: allow-keywords;
+  }
+
+  body {
+    @apply bg-white font-sans text-base text-ink antialiased;
+    font-feature-settings: "kern", "liga";
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply text-navy-950;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-blue-600);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: var(--color-blue-100);
+  }
+
+  dialog::backdrop {
+    background: rgba(10, 22, 49, 0.45);
+  }
+}
+
+@utility container-page {
+  width: 100%;
+  max-width: var(--container-content);
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  @media (width >= 48rem) {
+    padding-inline: 2rem;
+  }
+  @media (width >= 80rem) {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* Section rhythm */
+@utility section-y {
+  padding-block: 4rem;
+  @media (width >= 64rem) {
+    padding-block: 7rem;
+  }
+}
+
+/*
+ * Display type: a confident sans headline; the second phrase is set in the
+ * italic serif accent (`.accent`).
+ */
+@utility text-display-1 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 2.5rem;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  @media (width >= 48rem) {
+    font-size: 3.5rem;
+  }
+  @media (width >= 80rem) {
+    font-size: 4.25rem;
+  }
+}
+
+@utility text-display-2 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 2rem;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  @media (width >= 48rem) {
+    font-size: 2.75rem;
+  }
+  @media (width >= 80rem) {
+    font-size: 3.25rem;
+  }
+}
+
+@utility text-display-3 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  @media (width >= 48rem) {
+    font-size: 1.875rem;
+  }
+}
+
+@utility accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--color-blue-700);
+}
+
+@utility text-eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+@utility text-lead {
+  font-size: 1.125rem;
+  line-height: 1.7rem;
+  color: var(--color-ink-soft);
+  @media (width >= 48rem) {
+    font-size: 1.25rem;
+    line-height: 1.9rem;
+  }
+}
+
+/* Horizontal swipe track (carousels): native scroll + snap, no library. */
+@utility snap-track {
+  display: grid;
+  grid-auto-flow: column;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  & > * {
+    scroll-snap-align: start;
+  }
+}
+
+/* Long-form medical copy */
+@utility prose-telegen {
+  max-width: var(--container-prose);
+  color: var(--color-ink-soft);
+  & > * + * {
+    margin-top: 1.1em;
+  }
+  & h2 {
+    font-weight: 600;
+    font-size: 1.625rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--color-navy-950);
+    margin-top: 2.2em;
+  }
+  & h3 {
+    font-weight: 600;
+    font-size: 1.1875rem;
+    color: var(--color-navy-950);
+    margin-top: 1.8em;
+  }
+  & a {
+    color: var(--color-blue-700);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  & a:hover {
+    text-decoration-thickness: 2px;
+  }
+  & ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+  & ol {
+    list-style: decimal;
+    padding-left: 1.25rem;
+  }
+  & li + li {
+    margin-top: 0.45em;
+  }
+  & strong {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+}
+
+/*
+ * Motion (docs/motion-spec.md). Elements marked [data-reveal] start hidden only
+ * when JS is running (html.js) and the visitor allows motion; RevealObserver adds
+ * [data-inview]. Transforms and opacity only: no layout shift.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 1.5rem, 0);
+    transition:
+      opacity 700ms var(--ease-out-soft),
+      transform 700ms var(--ease-out-soft);
+    transition-delay: calc(var(--reveal-i, 0) * 90ms);
+  }
+  html.js [data-reveal="fade"] {
+    transform: none;
+  }
+  html.js [data-reveal="scale"] {
+    transform: translate3d(0, 1rem, 0) scale(0.97);
+  }
+  html.js [data-reveal][data-inview] {
+    opacity: 1;
+    transform: none;
+  }
+
+  details.faq::details-content {
+    block-size: 0;
+    overflow-y: clip;
+    transition:
+      block-size 320ms var(--ease-calm),
+      content-visibility 320ms allow-discrete;
+  }
+  details.faq[open]::details-content {
+    block-size: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Interaction motion (docs/motion-spec.md) */
+@media (prefers-reduced-motion: no-preference) {
+  /* Topic picker: bottom sheet on mobile, centred card on larger screens. */
+  .topic-dialog {
+    transition:
+      opacity 320ms var(--ease-out-soft),
+      transform 420ms var(--ease-out-soft),
+      overlay 420ms allow-discrete,
+      display 420ms allow-discrete;
+  }
+  .topic-dialog:not([open]) {
+    opacity: 0;
+    transform: translateY(2.5rem);
+  }
+  @starting-style {
+    .topic-dialog[open] {
+      opacity: 0;
+      transform: translateY(2.5rem);
+    }
+  }
+  .topic-dialog::backdrop {
+    transition:
+      background-color 320ms var(--ease-calm),
+      overlay 320ms allow-discrete,
+      display 320ms allow-discrete;
+  }
+  @starting-style {
+    .topic-dialog[open]::backdrop {
+      background-color: transparent;
+    }
+  }
+
+  /* Mega-menu panel and mobile menu: short fade + slide when shown. */
+  .mega-panel:not([hidden]) {
+    animation: menu-in 260ms var(--ease-out-soft) both;
+  }
+  .mobile-menu:not([hidden]) {
+    animation: sheet-in 320ms var(--ease-out-soft) both;
+  }
+  .mobile-menu:not([hidden]) nav > * {
+    animation: menu-in 420ms var(--ease-out-soft) both;
+  }
+  .mobile-menu:not([hidden]) nav > *:nth-child(2) {
+    animation-delay: 60ms;
+  }
+  .mobile-menu:not([hidden]) nav > *:nth-child(3) {
+    animation-delay: 120ms;
+  }
+
+  /* Evaluation: each new question slides in. */
+  .flow-step {
+    animation: step-in 360ms var(--ease-out-soft) both;
+  }
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+}
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateX(1.25rem);
+  }
+}
+
+/*
+ * Hero condition panels (v4.3). Mobile first: stacked cards, one open. From
+ * 80rem: vertical doors whose flex-grow opens one at a time. Motion is limited
+ * to opacity, transform and stroke-dashoffset; the illustration line is traced
+ * only on the open panel while it is on screen ([data-playing]) and is drawn in
+ * full and static with reduced motion or when its panel is closed.
+ */
+.cp-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+.cp-panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: var(--radius-card-lg);
+  background: var(--color-mist);
+  color: var(--color-navy-950);
+  transition:
+    background-color 220ms var(--ease-calm),
+    box-shadow 220ms var(--ease-calm);
+}
+.cp-panel:not([data-open]):hover {
+  background: var(--color-mist-deep);
+}
+.cp-panel[data-open] {
+  background: var(--color-navy-950);
+  color: var(--color-white);
+  box-shadow: var(--shadow-card);
+}
+.cp-art {
+  position: relative;
+  display: none;
+  overflow: hidden;
+  border-radius: calc(var(--radius-card-lg) - 0.5rem);
+  background: var(--color-mist);
+}
+.cp-panel[data-open] .cp-art {
+  display: block;
+  height: 8rem;
+  margin: 0.5rem 0.5rem 0;
+}
+.cp-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.cp-heading,
+.cp-button {
+  margin: 0;
+  color: var(--color-navy-950);
+}
+.cp-panel[data-open] .cp-heading,
+.cp-panel[data-open] .cp-button {
+  color: var(--color-white);
+}
+.cp-button {
+  display: flex;
+  width: 100%;
+  min-height: 3.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-radius: inherit;
+  padding: 0.75rem 1rem 0.75rem 1.25rem;
+  text-align: left;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+}
+.cp-button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -4px;
+}
+.cp-plus {
+  display: flex;
+  height: 2rem;
+  width: 2rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--color-white);
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1;
+}
+.cp-panel[data-open] .cp-button {
+  min-height: 0;
+  cursor: default;
+  padding: 1.125rem 1.25rem 0.25rem;
+  font-size: 1.875rem;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+.cp-panel[data-open] .cp-plus {
+  display: none;
+}
+.cp-single .cp-heading {
+  padding: 1.125rem 1.25rem 0;
+}
+.cp-region {
+  container-type: inline-size;
+  padding: 0.5rem 1.25rem 1.375rem;
+}
+.cp-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.cp-facts {
+  display: grid;
+  gap: 1rem;
+}
+.cp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
+/* Care route: vertical in narrow panels, horizontal when there is room. */
+.cp-route {
+  position: relative;
+  display: grid;
+  gap: 0.75rem;
+  padding-left: 1.5rem;
+}
+.cp-route-svg {
+  position: absolute;
+  top: 0.45rem;
+  left: 0.27rem;
+  width: 2px;
+  height: calc(100% - 2.3rem);
+  overflow: visible;
+}
+.cp-route-line {
+  stroke: rgb(196 212 243 / 0.5);
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.cp-route-h {
+  display: none;
+}
+.cp-node {
+  position: relative;
+}
+.cp-node-dot {
+  position: absolute;
+  top: 0.3rem;
+  left: -1.5rem;
+  height: 0.625rem;
+  width: 0.625rem;
+  border-radius: 999px;
+  background: var(--color-blue-200);
+  box-shadow: 0 0 0 3px var(--color-navy-950);
+}
+@container (min-width: 22rem) {
+  .cp-facts {
+    grid-template-columns: 1.6fr 1fr;
+  }
+  .cp-route {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.875rem;
+    padding-left: 0;
+  }
+  .cp-route-svg {
+    top: 0.3rem;
+    left: 0.31rem;
+    width: calc(75% + 0.66rem);
+    height: 2px;
+  }
+  .cp-route-h {
+    display: inline;
+  }
+  .cp-route-v {
+    display: none;
+  }
+  .cp-node {
+    padding-top: 1.25rem;
+  }
+  .cp-node-dot {
+    top: 0;
+    left: 0;
+  }
+}
+
+/* Illustrations at rest (also the reduced-motion and collapsed state). */
+.cp-trace {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+/* Desktop: vertical doors. */
+@media (min-width: 80rem) {
+  .cp-panels:not(.cp-single) {
+    height: 39rem;
+    flex-direction: row;
+    gap: 0.75rem;
+  }
+  .cp-panels:not(.cp-single) .cp-panel {
+    display: flex;
+    flex: 0 0 4.5rem;
+    flex-direction: column;
+    transition:
+      flex-grow 520ms var(--ease-out-soft),
+      background-color 220ms var(--ease-calm),
+      box-shadow 220ms var(--ease-calm);
+  }
+  .cp-panels:not(.cp-single) .cp-panel[data-open] {
+    flex-grow: 1;
+  }
+  .cp-panels:not(.cp-single) .cp-panel:not([data-open]) .cp-art {
+    position: absolute;
+    display: block;
+    top: 4rem;
+    right: 0.5rem;
+    bottom: 13.5rem;
+    left: 0.5rem;
+    margin: 0;
+    opacity: 0.45;
+  }
+  .cp-panels:not(.cp-single) .cp-panel[data-open] .cp-art {
+    height: 7.5rem;
+    flex-shrink: 0;
+  }
+  .cp-panels:not(.cp-single) .cp-panel:not([data-open]) .cp-heading {
+    position: absolute;
+    inset: 0;
+  }
+  .cp-panels:not(.cp-single) .cp-panel:not([data-open]) .cp-button {
+    height: 100%;
+    flex-direction: column-reverse;
+    padding: 1rem 0 1.5rem;
+  }
+  .cp-panels:not(.cp-single) .cp-panel:not([data-open]) .cp-name {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 1.25rem;
+    white-space: nowrap;
+  }
+  .cp-panels:not(.cp-single) .cp-panel[data-open] .cp-region {
+    min-width: 24rem;
+    flex: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cp-panel[data-open] .cp-region {
+    animation: cp-region-in 520ms var(--ease-out-soft) 120ms both;
+  }
+  .cp-panel[data-open] .cp-route-line {
+    animation: cp-draw 700ms var(--ease-out-soft) 260ms both;
+  }
+  .cp-panel[data-open] .cp-node {
+    animation: cp-node-in 380ms var(--ease-out-soft) both;
+    animation-delay: calc(320ms + var(--i, 0) * 75ms);
+  }
+  .cp-panel[data-open] .cp-trace {
+    animation: cp-trace 9s var(--ease-calm) infinite;
+  }
+  .cp-panels:not([data-playing]) .cp-art * {
+    animation-play-state: paused;
+  }
+}
+
+/* Soft pointer light inside the open panel (fine pointers only). */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .cp-panel[data-open]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+      26rem circle at var(--mx, 50%) var(--my, 50%),
+      rgb(196 212 243 / 0.11),
+      transparent 65%
+    );
+    opacity: 0;
+    transition: opacity 500ms var(--ease-calm);
+  }
+  .cp-panel[data-open][data-lit]::before {
+    opacity: 1;
+  }
+}
+
+@keyframes cp-region-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes cp-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes cp-node-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@keyframes cp-trace {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+  }
+  55%,
+  85% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+/*
+ * Hair-loss hero photo (v4.6). The photo sits in the same inset, rounded frame
+ * as the line drawings, in a taller band; the panel title is laid over its lower
+ * edge on a navy scrim. Motion: transforms and opacity only, inside
+ * [data-open] (so it stops when the panel closes) and paused offscreen by the
+ * [data-playing] rule above. Reduced motion: nothing moves.
+ */
+.cp-photo {
+  background: var(--color-mist);
+}
+.cp-panel[data-open] .cp-photo {
+  background: var(--color-navy-950);
+}
+.cp-photo-door {
+  display: none;
+}
+.cp-photo-fallback,
+.cp-photo-parallax,
+.cp-photo-breathe,
+.cp-photo-img,
+.cp-photo-sweep,
+.cp-photo-scrim,
+.cp-photo-light {
+  position: absolute;
+  inset: 0;
+}
+.cp-photo-fallback {
+  display: none;
+}
+.cp-photo[data-failed] .cp-photo-fallback {
+  display: block;
+}
+/* Oversized by 10 px so the ±8 px parallax never shows an edge. */
+.cp-photo-parallax {
+  inset: -10px;
+}
+.cp-photo-breathe,
+.cp-photo-img {
+  transform-origin: 30% 35%;
+}
+.cp-photo-img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: 28% 32%;
+  transition: filter 520ms var(--ease-calm);
+}
+.cp-photo-sweep,
+.cp-photo-scrim,
+.cp-photo-light,
+.cp-photo-caption {
+  display: none;
+  pointer-events: none;
+}
+.cp-panel[data-open] .cp-photo:not([data-failed]) {
+  height: 14rem;
+  /* The scrim is solid navy at the bottom: square corners avoid a hairline there. */
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.cp-panel[data-open] .cp-photo-sweep,
+.cp-panel[data-open] .cp-photo-scrim,
+.cp-panel[data-open] .cp-photo-caption {
+  display: block;
+}
+.cp-photo-sweep {
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgb(255 255 255 / 0.12) 46%,
+    rgb(255 255 255 / 0.12) 54%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+}
+/* Navy scrim rising from the title side: the title always sits on ≥ 80% navy. */
+.cp-photo-scrim {
+  background: linear-gradient(
+    to top,
+    var(--color-navy-950) 0%,
+    rgb(10 22 49 / 0.8) 30%,
+    rgb(10 22 49 / 0.4) 44%,
+    rgb(10 22 49 / 0) 64%
+  );
+}
+.cp-photo-caption {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  margin: 0;
+  border-radius: 999px;
+  background: rgb(10 22 49 / 0.78);
+  padding: 0.1875rem 0.5625rem;
+  color: var(--color-white);
+  font-size: 0.6875rem;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+}
+/* The title over the photo's lower edge. */
+.cp-panel[data-open]:has(> .cp-photo:not([data-failed])) > .cp-heading {
+  position: relative;
+  z-index: 1;
+  margin-top: -3.75rem;
+}
+.cp-single .cp-panel[data-open] .cp-photo:not([data-failed]) {
+  height: 15rem;
+}
+.cp-single .cp-panel[data-open]:has(> .cp-photo:not([data-failed])) > .cp-heading {
+  margin-top: -2.75rem;
+}
+
+@media (min-width: 80rem) {
+  /* Same height budget as before: the band grows by exactly the title it carries. */
+  .cp-panels:not(.cp-single) .cp-panel[data-open] .cp-photo:not([data-failed]) {
+    height: 11.25rem;
+  }
+  /* Closed door: the photo cropped to the face, a little desaturated and dimmed. */
+  .cp-panels:not(.cp-single) .cp-panel:not([data-open]) .cp-photo {
+    opacity: 1;
+  }
+  .cp-panels:not(.cp-single) .cp-panel:not([data-open]) .cp-photo-door {
+    display: block;
+  }
+  .cp-panels:not(.cp-single) .cp-panel:not([data-open]) .cp-photo-parallax {
+    display: none;
+  }
+  .cp-panels:not(.cp-single) .cp-panel:not([data-open]) .cp-photo-img {
+    object-position: 14% 45%;
+    filter: grayscale(0.55) brightness(0.86);
+  }
+  .cp-panels:not(.cp-single) .cp-panel:not([data-open]):hover .cp-photo-img {
+    filter: grayscale(0.3) brightness(0.92);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cp-photo[data-photo-wait] .cp-photo-parallax .cp-photo-img {
+    opacity: 0;
+  }
+  .cp-panel[data-open] .cp-photo[data-photo-reveal] .cp-photo-img {
+    animation: cp-photo-reveal 700ms var(--ease-out-soft) both;
+  }
+  .cp-panel[data-open] .cp-photo-breathe {
+    animation: cp-photo-breathe 15s ease-in-out 700ms infinite alternate;
+  }
+  .cp-panel[data-open] .cp-photo[data-photo-reveal] .cp-photo-sweep {
+    animation: cp-photo-sweep 1.4s cubic-bezier(0.45, 0, 0.3, 1) 300ms both;
+  }
+}
+
+/* Desktop pointer: the photo shifts up to 8 px opposite the cursor, the soft light on top. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .cp-photo-parallax {
+    transition: translate 900ms var(--ease-out-soft);
+  }
+  .cp-panel[data-open][data-lit] .cp-photo-parallax {
+    translate: calc(var(--px, 0) * -8px) calc(var(--py, 0) * -8px);
+  }
+  .cp-panel[data-open] .cp-photo-light {
+    display: block;
+    background: radial-gradient(
+      18rem circle at calc(var(--mx, 50%) - 0.5rem) calc(var(--my, 50%) - 0.5rem),
+      rgb(255 255 255 / 0.14),
+      transparent 65%
+    );
+    opacity: 0;
+    transition: opacity 500ms var(--ease-calm);
+  }
+  .cp-panel[data-open][data-lit] .cp-photo-light {
+    opacity: 1;
+  }
+}
+
+/* The fallback wins over every state above (kept last on purpose). */
+.cp-panels .cp-panel .cp-photo[data-failed] > :not(.cp-photo-fallback) {
+  display: none;
+}
+
+@keyframes cp-photo-reveal {
+  from {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+}
+@keyframes cp-photo-breathe {
+  to {
+    transform: translate(4px, 3px) scale(1.05);
+  }
+}
+@keyframes cp-photo-sweep {
+  to {
+    transform: translateX(100%);
+  }
+}

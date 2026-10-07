@@ -1,0 +1,11 @@
+.next
+node_modules
+pnpm-lock.yaml
+reference
+test-results
+playwright-report
+artifacts
+lighthouse
+next-env.d.ts
+CLAUDE.md
+AGENTS.md
