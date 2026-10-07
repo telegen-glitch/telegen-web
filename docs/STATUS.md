@@ -1,6 +1,52 @@
 # Status
 
-_Last updated: 2026-10-07 (v4 final build)_
+_Last updated: 2026-10-07 (v4.2: acne + ED published from the source pack)_
+
+## v4.2 acne + ED from the source pack
+
+Sources were fetched and read in a separate session with web access (this environment blocks every
+external host) and committed as docs/sources/. Pages were written only from that pack.
+
+DONE (verified locally, 2026-10-07):
+
+- Step 1 Sources: 20 entries added to `src/content/sources.ts` (EuroGuiDerm 2025, AAD 2024, EMA retinoids
+  2018, NHS, DermNet, EAU SRH, EMA Viagra/Cialis, ANMDM/Mediately labels, StatPearls TE, AAD hair). StatPearls
+  AGA date and the EMA 2025 finasteride citation corrected.
+- Step 2 Pages published (15): /acnee, /acnee/tipuri, /acnee/cauze, /acnee/tratament, /acnee/cicatrici,
+  /disfunctie-erectila, /disfunctie-erectila/cauze, /disfunctie-erectila/tratament,
+  /disfunctie-erectila/sanatatea-inimii, /tratamente/adapalen, /tratamente/peroxid-de-benzoil,
+  /tratamente/doxiciclina-limeciclina, /tratamente/isotretinoin, /tratamente/sildenafil, /tratamente/tadalafil.
+  Each: answer-first summary 45–58 words, every section cited, 4–5 FAQs (FAQPage), limitations box,
+  ≥ 3 related links in and out, review meta "în așteptare", MedicalCondition entity on hubs, Drug on
+  medicine pages. No doses, no efficacy percentages on medicine pages.
+- MERGED (never live, no redirect): /tratamente/tretinoin → /tratamente/adapalen (topical retinoids);
+  /tratamente/clindamicina-topica → /tratamente/peroxid-de-benzoil (combination only). Reason: too little
+  sourced material for separate pages and no Romanian product confirmed on its own.
+- prescriptionStatus: minoxidil OTC; finasteride, sildenafil, tadalafil, isotretinoin, doxycycline
+  PrescriptionOnly. Left out (unconfirmed in Romania): adapalen, peroxid de benzoil; lymecycline noted.
+- Step 3 Everywhere: hero chips, condition cards, topic picker, /evaluare topic screen, mega-menu, mobile
+  menu, footer hubs, /afectiuni, /ghiduri (subpages listed), /tratamente (grouped by condition), home FAQ,
+  how-it-works copy, 404. Removed: "în curând", dashed upcoming style, "Pregătim protocolul clinic…",
+  `listUpcomingTopics`, the draft helper. Phone mockups are per condition (no photos for ED). serviceOpen OFF.
+- Step 4 Hair loss: the 8 sections fixed per docs/sources/hair-loss-citations.md; PENDING_CITATION deleted
+  (every section of every medical page must cite). Finasteride page dates the EMA 2025 decision.
+- Step 5 Conflicts: all items copied to docs/open-items.md and docs/legal-review-needed.md (§17–18).
+  Alpha-blocker hard stop kept. Evaluation texts rechecked; 3 rewordings, 1 summary note added.
+- Gates: format, lint, typecheck, 42 unit tests, build, 136 Playwright tests (0 failed; every route at
+  360/768/1280, axe AA at 360/1280, 19 hard-stop paths, CSP). Lighthouse mobile (local, idle): home 96,
+  /caderea-parului 99, /acnee 95, /disfunctie-erectila 96, /tratamente/sildenafil 99; Accessibility 100,
+  Best Practices 100; SEO 66 only from the intended noindex. docs/geo-status.md regenerated.
+
+NOT DONE:
+
+- Romanian keyword research and Fellos capture/parity: network blocked (docs/keywords-ro.md).
+- Length guide: pages are shorter than the brief's ranges (hubs ~680–780 body words, subpages ~520–840,
+  medicine pages ~420–525) because only pack-supported claims were written. Topics the pack does not cover
+  (acne hormones/genetics, hygiene myths, isotretinoin side effects beyond pregnancy and mood) are listed in
+  docs/open-items.md.
+
+NEXT: owner decisions in docs/open-items.md; doctor review per docs/REVIEW.md; keyword research and Fellos
+parity in a session with network access.
 
 ## v4 final build (CLAUDE.md §v4)
 

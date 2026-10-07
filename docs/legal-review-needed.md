@@ -68,3 +68,16 @@ confirmed).
     hair-loss education also covers women. Confirm the positioning raises no consumer-law issue (no
     misleading suggestion that women are treated, or vice versa), together with the owner's decision on
     whether women are served.
+
+## Added when acne and ED were published (source pack, docs/sources/conflicts-and-decisions.md)
+
+17. **Efficacy percentages on prescription-medicine pages.** The EAU guideline gives response rates for
+    sildenafil and tadalafil. Printing them on a site that also offers an ED service could be read as
+    promoting a prescription medicine. Until answered, medicine pages explain how the medicine works,
+    when it must not be used and its side effects, with no efficacy percentages and no doses.
+18. **Medicines not authorised on their own in Romania.** No Romanian-authorised product was confirmed
+    for adapalene alone, benzoyl peroxide alone, topical tretinoin, topical clindamycin alone or
+    lymecycline. Is a neutral information page about a substance that is available here only in a fixed
+    combination (or not at all) acceptable? Current choice: tretinoin is covered on the adapalen page,
+    topical clindamycin on the benzoyl peroxide page, each page says plainly what is and is not confirmed
+    in Romania, and `prescriptionStatus` is set only where a Romanian product was confirmed.
