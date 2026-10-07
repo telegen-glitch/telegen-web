@@ -100,7 +100,7 @@ export const hairLoss: Condition = {
             type: "callout",
             tone: "caution",
             title: "Semne care cer un consult în persoană",
-            text: "Pete rotunde fără păr apărute brusc, roșeață, cruste, durere sau usturime pe scalp, ori căderea părului însoțită de alte simptome (oboseală marcată, scădere în greutate, menstruații neregulate) pot avea alte cauze decât alopecia androgenetică. În aceste situații, mergi la un medic dermatolog pentru un examen clinic.",
+            text: "Pete fără păr apărute brusc, zone cu scuame sau inflamate pe scalp, ori o cădere bruscă și abundentă pot avea alte cauze decât alopecia androgenetică {{cite:aad-hair-loss-causes}}. În aceste situații, mergi la un medic dermatolog pentru un examen clinic.",
           },
         ],
       },
@@ -110,7 +110,7 @@ export const hairLoss: Condition = {
         blocks: [
           {
             type: "p",
-            text: "Alopecia androgenetică ține de predispoziția genetică și de felul în care foliculii reacționează la hormonii androgeni. Nu este provocată de spălatul frecvent, de purtarea șepcii sau de produsele de styling. Alte tipuri de cădere a părului au însă cauze diferite: o boală cu febră, o naștere, o perioadă de stres intens, deficitul de fier sau problemele tiroidiene pot declanșa o cădere difuză, de obicei temporară. Le explicăm pe rând în ghidul despre [cauzele căderii părului](/ghiduri/cauzele-caderii-parului).",
+            text: "Alopecia androgenetică ține de predispoziția genetică și de felul în care foliculii reacționează la hormonii androgeni {{cite:statpearls-aga}}. Alte tipuri de cădere a părului au cauze diferite: o boală cu febră, o naștere, deficitul de fier sau o tiroidă care funcționează prea încet pot declanșa o cădere difuză, de obicei temporară {{cite:statpearls-te}}, la fel ca o perioadă de stres intens {{cite:aad-hair-shedding}}. Le explicăm pe rând în ghidul despre [cauzele căderii părului](/ghiduri/cauzele-caderii-parului).",
           },
         ],
       },
@@ -160,11 +160,20 @@ export const hairLoss: Condition = {
           "Da. La femei, alopecia androgenetică apare de obicei ca o subțiere difuză pe creștet, cu linia frunții păstrată. Opțiunile de tratament diferă față de bărbați, mai ales la vârsta fertilă.",
       },
     ],
-    sourceIds: ["kanti-2018", "statpearls-aga", "hamilton-1951", "norwood-1975", "ludwig-1977"],
+    sourceIds: [
+      "kanti-2018",
+      "statpearls-aga",
+      "hamilton-1951",
+      "norwood-1975",
+      "ludwig-1977",
+      "statpearls-te",
+      "aad-hair-shedding",
+      "aad-hair-loss-causes",
+    ],
     limitations:
       "Informațiile de pe această pagină au scop educativ și nu înlocuiesc un diagnostic pus de medic. Nu începe și nu opri un tratament fără recomandarea unui medic.",
     publishedAt: "2026-10-05",
-    updatedAt: "2026-10-05",
+    updatedAt: "2026-10-07",
     related: [
       {
         href: "/ghiduri/semnele-alopeciei-androgenetice",

@@ -84,11 +84,11 @@ export const guides: MedicalDoc[] = [
           {
             type: "list",
             items: [
-              "pete rotunde, bine delimitate, fără păr, apărute în câteva săptămâni;",
-              "cădere bruscă, în smocuri, pe tot scalpul;",
-              "roșeață, cruste, descuamare, durere sau usturime pe scalp;",
-              "fire rupte la mică distanță de scalp;",
-              "căderea părului însoțită de alte simptome: oboseală marcată, scădere în greutate, menstruații neregulate, acnee sau păr în exces pe față și corp.",
+              "pete fără păr, apărute în câteva săptămâni: pot fi alopecie areata, o afecțiune în care sistemul imunitar atacă foliculii {{cite:aad-hair-loss-causes}};",
+              "fire scurte, rupte la mică distanță de scalp (descrise ca fire „în semn de exclamare”), un semn al alopeciei areata {{cite:statpearls-aga}};",
+              "zone cu scuame, uneori inflamate, care pot semnala o infecție a scalpului {{cite:aad-hair-loss-causes}};",
+              "o cădere bruscă și abundentă, pe tot scalpul, care poate fi o cădere temporară după un factor declanșator (efluviu telogen) {{cite:aad-hair-shedding}};",
+              "căderea părului împreună cu semne ale unei probleme tiroidiene sau ale sindromului ovarelor polichistice {{cite:aad-hair-loss-causes}}.",
             ],
           },
           {
@@ -103,7 +103,7 @@ export const guides: MedicalDoc[] = [
         blocks: [
           {
             type: "p",
-            text: "Fotografiile făcute regulat sunt cel mai bun instrument, pentru că schimbările sunt lente și greu de observat zi de zi.",
+            text: "Schimbările sunt lente: orice evoluție a părului se judecă în luni, nu în zile {{cite:statpearls-te}}. Și medicii urmăresc evoluția în timp, cu ajutorul scalelor de stadializare {{cite:statpearls-aga}}. Fotografiile făcute regulat te ajută să vezi diferențele pe care oglinda nu le arată de la o zi la alta.",
           },
           {
             type: "list",
@@ -129,10 +129,18 @@ export const guides: MedicalDoc[] = [
           "Da. Predispoziția se moștenește de la ambii părinți, iar tiparul poate fi diferit de la o generație la alta. Lipsa cazurilor în familie nu exclude diagnosticul.",
       },
     ],
-    sourceIds: ["statpearls-aga", "hamilton-1951", "norwood-1975", "ludwig-1977"],
+    sourceIds: [
+      "statpearls-aga",
+      "hamilton-1951",
+      "norwood-1975",
+      "ludwig-1977",
+      "aad-hair-loss-causes",
+      "aad-hair-shedding",
+      "statpearls-te",
+    ],
     limitations: disclaimer,
     publishedAt: "2026-10-05",
-    updatedAt: "2026-10-05",
+    updatedAt: "2026-10-07",
     related: [
       conditionLink,
       {
@@ -185,21 +193,21 @@ export const guides: MedicalDoc[] = [
         blocks: [
           {
             type: "p",
-            text: "Un șoc pentru organism poate trimite simultan multe fire în faza de repaus. Ele cad împreună, de obicei la câteva luni după eveniment, așa că legătura nu e întotdeauna evidentă. Medicii numesc această situație efluviu telogen. Cauze frecvente:",
+            text: "Un șoc pentru organism poate trimite simultan multe fire în faza de repaus. Ele cad împreună, de obicei la aproximativ trei luni după eveniment (între una și șase luni), așa că legătura nu e întotdeauna evidentă. Medicii numesc această situație efluviu telogen {{cite:statpearls-te}}. Cauze frecvente:",
           },
           {
             type: "list",
             items: [
-              "o boală cu febră mare sau o intervenție chirurgicală;",
-              "nașterea și lunile de după;",
-              "o perioadă de stres intens;",
-              "o dietă foarte restrictivă sau o scădere rapidă în greutate;",
-              "începerea sau oprirea unor medicamente.",
+              "o boală cu febră, o infecție severă, o intervenție chirurgicală majoră sau un traumatism sever {{cite:statpearls-te}};",
+              "nașterea: căderea atinge adesea un maxim în jurul lunii a patra și se liniștește în 6–9 luni {{cite:aad-hair-shedding}};",
+              "o perioadă de stres intens {{cite:aad-hair-shedding}};",
+              "o dietă foarte restrictivă, prea puține proteine sau o scădere importantă în greutate {{cite:statpearls-te}};",
+              "unele medicamente (de exemplu betablocantele sau retinoizii) ori oprirea pilulelor contraceptive {{cite:statpearls-te}} {{cite:aad-hair-shedding}}.",
             ],
           },
           {
             type: "p",
-            text: "Căderea este difuză, pe tot scalpul, iar după îndepărtarea cauzei părul crește de obicei la loc în lunile următoare. Uneori, un efluviu telogen scoate la iveală o alopecie androgenetică existentă, iar cele două se suprapun.",
+            text: "Căderea este difuză, pe tot scalpul, și temporară. După îndepărtarea cauzei, creșterea poate avea nevoie de până la șase luni ca să reînceapă, iar rezultatul se vede și mai târziu {{cite:statpearls-te}}.",
           },
         ],
       },
@@ -210,11 +218,12 @@ export const guides: MedicalDoc[] = [
           {
             type: "list",
             items: [
-              "**Deficitul de fier** și feritina scăzută, mai frecvente la femeile cu menstruații abundente.",
-              "**Afecțiunile tiroidiene**, atât funcția scăzută, cât și cea crescută.",
-              "**Dezechilibrele hormonale**, de exemplu sindromul ovarelor polichistice, care pot asocia acnee, păr în exces și menstruații neregulate.",
-              "**Alopecia areata**, o afecțiune autoimună care produce pete rotunde fără păr.",
-              "**Afecțiunile scalpului**, cum ar fi infecțiile fungice sau formele de alopecie cu cicatrice, care pot da roșeață, cruste sau durere.",
+              "**Deficitul de fier** sau aportul prea mic de proteine; când există o suspiciune, medicul poate cere analize, de exemplu fierul și feritina {{cite:statpearls-te}}.",
+              "**Afecțiunile tiroidiene**, care pot subția părul; tratarea lor poate opri căderea {{cite:aad-hair-loss-causes}}.",
+              "**Sindromul ovarelor polichistice**, care poate include căderea părului {{cite:aad-hair-loss-causes}}.",
+              "**Alopecia areata**, în care sistemul imunitar atacă foliculii și apar zone fără păr {{cite:aad-hair-loss-causes}}.",
+              "**Infecțiile scalpului**, cu zone cu scuame, uneori inflamate {{cite:aad-hair-loss-causes}}, și formele de alopecie cu cicatrice, pe care medicul le deosebește la examen {{cite:statpearls-aga}}.",
+              "**Unele medicamente**, care pot provoca căderea părului. Nu opri un medicament înainte să vorbești cu medicul care ți l-a prescris {{cite:aad-hair-loss-causes}}.",
             ],
           },
           {
@@ -226,12 +235,12 @@ export const guides: MedicalDoc[] = [
         ],
       },
       {
-        id: "mituri",
-        heading: "Ce nu provoacă alopecia androgenetică",
+        id: "tractiune",
+        heading: "Coafurile care trag de păr",
         blocks: [
           {
             type: "p",
-            text: "Spălatul frecvent, purtarea șepcii, uscătorul de păr sau gelul nu provoacă alopecie androgenetică. Coafurile care trag constant de păr (cozi strânse, împletituri) pot însă produce o altă formă de cădere, prin tracțiune, mai ales la tâmple.",
+            text: "Coafurile care trag constant de păr, cum sunt cozile strânse sau împletiturile, pot produce o formă de cădere diferită de alopecia androgenetică, numită alopecie de tracțiune. Dacă tracțiunea continuă, pierderea părului poate deveni definitivă {{cite:aad-hair-loss-causes}}. De aceea merită să slăbești coafura la primele semne.",
           },
         ],
       },
@@ -240,7 +249,7 @@ export const guides: MedicalDoc[] = [
       {
         question: "Stresul poate provoca alopecie androgenetică?",
         answer:
-          "Stresul intens poate declanșa o cădere temporară (efluviu telogen), dar nu provoacă alopecia androgenetică. Poate face însă vizibilă mai devreme o subțiere care exista deja.",
+          "Stresul intens poate declanșa o cădere temporară (efluviu telogen), observată de obicei la câteva luni după perioada stresantă {{cite:aad-hair-shedding}}. Alopecia androgenetică ține însă de predispoziția genetică și de hormonii androgeni {{cite:statpearls-aga}}.",
       },
       {
         question: "Vitaminele pot opri căderea părului?",
@@ -248,10 +257,10 @@ export const guides: MedicalDoc[] = [
           "Suplimentele ajută când există un deficit real, de exemplu de fier. Fără deficit, nu există dovezi solide că ar opri alopecia androgenetică {{cite:kanti-2018}}.",
       },
     ],
-    sourceIds: ["statpearls-aga", "kanti-2018"],
+    sourceIds: ["statpearls-aga", "kanti-2018", "statpearls-te", "aad-hair-shedding", "aad-hair-loss-causes"],
     limitations: disclaimer,
     publishedAt: "2026-10-05",
-    updatedAt: "2026-10-05",
+    updatedAt: "2026-10-07",
     related: [
       conditionLink,
       {
@@ -289,7 +298,7 @@ export const guides: MedicalDoc[] = [
         blocks: [
           {
             type: "p",
-            text: "Fiecare fir are o durată de viață limitată. După ani de creștere, intră în repaus și cade, iar în locul lui începe să crească altul. De aceea, câteva fire pe perie sau în cadă sunt normale. Unele perioade, de exemplu sfârșitul verii sau lunile de după o boală, aduc temporar o cădere mai vizibilă.",
+            text: "Fiecare fir are o durată de viață limitată: un folicul produce păr timp de aproape patru ani, apoi se odihnește aproximativ patru luni, iar firul cade și în locul lui începe să crească altul {{cite:statpearls-te}}. De aceea, pierderea a 50–100 de fire pe zi este normală {{cite:aad-hair-shedding}}. După o boală cu febră, o naștere sau o perioadă de stres, căderea poate crește temporar, cu un decalaj de câteva luni {{cite:aad-hair-shedding}}.",
           },
           {
             type: "p",
@@ -336,7 +345,7 @@ export const guides: MedicalDoc[] = [
         blocks: [
           {
             type: "p",
-            text: "Tratamentele recomandate în ghiduri au fost studiate pe termen lung, dar, ca orice medicament, pot avea efecte adverse. Le prezentăm onest pe paginile despre [minoxidil](/tratamente/minoxidil) și [finasteridă](/tratamente/finasterida). Medicul ține cont de istoricul tău medical, de celelalte medicamente pe care le iei și, la femei, de planurile de sarcină.",
+            text: "Tratamentele recomandate în ghidul european au eficacitate demonstrată în studii {{cite:kanti-2018}}, dar, ca orice medicament, pot avea efecte adverse: mâncărime și iritație a scalpului în cazul minoxidilului, efecte sexuale în cazul finasteridei {{cite:statpearls-aga}}. În 2025, Agenția Europeană a Medicamentului a confirmat gândurile suicidare ca posibil efect advers al finasteridei {{cite:ema-finasteride-2025}}. Le prezentăm onest pe paginile despre [minoxidil](/tratamente/minoxidil) și [finasteridă](/tratamente/finasterida). Medicul ține cont de istoricul tău medical, de celelalte medicamente pe care le iei și, la femei, de planurile de sarcină.",
           },
         ],
       },
@@ -358,10 +367,10 @@ export const guides: MedicalDoc[] = [
           "Nu este recomandat. Unele tratamente se eliberează doar pe bază de rețetă, au contraindicații și efecte adverse, iar căderea poate avea alte cauze care cer altă abordare. Un medic poate stabili ce ți se potrivește.",
       },
     ],
-    sourceIds: ["statpearls-aga", "kanti-2018"],
+    sourceIds: ["statpearls-aga", "kanti-2018", "statpearls-te", "aad-hair-shedding", "ema-finasteride-2025"],
     limitations: disclaimer,
     publishedAt: "2026-10-05",
-    updatedAt: "2026-10-05",
+    updatedAt: "2026-10-07",
     related: [
       conditionLink,
       {

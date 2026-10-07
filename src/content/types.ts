@@ -73,8 +73,11 @@ export interface ConditionEntity {
 
 export interface DrugEntity {
   activeIngredient: string;
-  /** schema.org DrugPrescriptionStatus */
-  prescriptionStatus: "PrescriptionOnly" | "OTC";
+  /**
+   * schema.org DrugPrescriptionStatus, from the Romanian dispensing status (ANMDM). Left out when
+   * no Romanian-authorised product was confirmed (docs/sources/romania-prescription-status.md).
+   */
+  prescriptionStatus?: "PrescriptionOnly" | "OTC";
 }
 
 export type DocKind = "condition" | "guide" | "treatment" | "subpage";

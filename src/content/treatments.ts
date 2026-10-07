@@ -17,6 +17,7 @@ export const treatments: MedicalDoc[] = [
   {
     kind: "treatment",
     slug: "minoxidil",
+    drug: { activeIngredient: "minoxidil", prescriptionStatus: "OTC" },
     graphRole: "treatment",
     conditionSlug: "caderea-parului",
     title: "Minoxidil",
@@ -62,7 +63,7 @@ export const treatments: MedicalDoc[] = [
           {
             type: "list",
             items: [
-              "iritație, mâncărime sau descuamare a scalpului, uneori din cauza excipienților soluției;",
+              "mâncărime, iritație și descuamare a scalpului, cele mai frecvente efecte adverse {{cite:statpearls-aga}};",
               "o cădere temporară mai accentuată în primele săptămâni de utilizare {{cite:statpearls-aga}};",
               "creșterea nedorită a părului pe față, mai ales la femei, dacă soluția ajunge pe piele în afara scalpului;",
               "rar, amețeală sau palpitații; acestea trebuie raportate medicului.",
@@ -84,6 +85,7 @@ export const treatments: MedicalDoc[] = [
               "Efectul se evaluează după câteva luni de aplicare constantă, nu după câteva săptămâni {{cite:kanti-2018}}.",
               "Dacă aplicarea se oprește, câștigul se pierde treptat în lunile următoare.",
               "Nu înlocuiește evaluarea: căderea părului poate avea alte cauze, care cer alt tratament.",
+              "În România, soluția de minoxidil pentru uz cutanat se eliberează fără prescripție medicală {{cite:anmdm-alopexy}}. Asta nu înseamnă că se potrivește oricui: discută cu medicul sau cu farmacistul înainte să o folosești.",
             ],
           },
         ],
@@ -101,11 +103,11 @@ export const treatments: MedicalDoc[] = [
           "Întreabă cât timp trebuie folosit înainte de o evaluare, cum se aplică, ce faci dacă apare iritație și cum se combină cu alte tratamente pe care le folosești.",
       },
     ],
-    sourceIds: ["kanti-2018", "olsen-2002", "statpearls-aga"],
+    sourceIds: ["kanti-2018", "olsen-2002", "statpearls-aga", "anmdm-alopexy"],
     limitations:
       "Pagina are scop exclusiv informativ și nu reprezintă o recomandare de tratament. Citește prospectul și discută cu un medic sau farmacist înainte de utilizare.",
     publishedAt: "2026-10-05",
-    updatedAt: "2026-10-05",
+    updatedAt: "2026-10-07",
     related: [
       conditionLink,
       { href: "/tratamente/finasterida", label: "Finasteridă: informații" },
@@ -123,6 +125,7 @@ export const treatments: MedicalDoc[] = [
   {
     kind: "treatment",
     slug: "finasterida",
+    drug: { activeIngredient: "finasteridă", prescriptionStatus: "PrescriptionOnly" },
     graphRole: "treatment",
     conditionSlug: "caderea-parului",
     title: "Finasteridă",
@@ -165,7 +168,7 @@ export const treatments: MedicalDoc[] = [
             type: "list",
             items: [
               "efecte sexuale: scăderea libidoului, dificultăți de erecție, tulburări de ejaculare;",
-              "modificări ale dispoziției, inclusiv depresie; în 2025, Agenția Europeană a Medicamentului a confirmat ideația suicidară ca posibil efect advers și a cerut avertizări în prospect {{cite:ema-finasteride-2025}};",
+              "modificări ale dispoziției, inclusiv depresie și gânduri suicidare (vezi mai jos decizia europeană din 2025) {{cite:ema-finasteride-2025}};",
               "sensibilitate sau mărire a sânilor;",
               "scade valoarea PSA din analize; spune medicului că o iei dacă faci acest test.",
             ],
@@ -174,7 +177,27 @@ export const treatments: MedicalDoc[] = [
             type: "callout",
             tone: "caution",
             title: "Important",
-            text: "Finasterida nu se folosește la femeile însărcinate sau care pot rămâne însărcinate, pentru că poate afecta dezvoltarea unui făt de sex masculin. Comprimatele sparte sau zdrobite nu trebuie atinse de acestea. Orice schimbare a dispoziției sau gânduri negative trebuie semnalate imediat medicului.",
+            text: "Finasterida nu se folosește la femeile însărcinate sau care pot rămâne însărcinate, pentru că poate afecta dezvoltarea unui făt de sex masculin {{cite:statpearls-aga}}. Comprimatele sparte sau zdrobite nu trebuie atinse de acestea.",
+          },
+        ],
+      },
+      {
+        id: "decizia-ema-2025",
+        heading: "Ce a decis Agenția Europeană a Medicamentului în 2025",
+        blocks: [
+          {
+            type: "p",
+            text: "Agenția Europeană a Medicamentului a reevaluat medicamentele cu finasteridă și dutasteridă într-o procedură începută la 3 octombrie 2024. Concluzia, devenită decizie a Comisiei Europene la 22 august 2025, confirmă gândurile suicidare ca efect advers al finasteridei, atât în doza de 1 mg, cât și în cea de 5 mg, cu o frecvență necunoscută {{cite:ema-finasteride-2025}}.",
+          },
+          {
+            type: "p",
+            text: "Ambalajul finasteridei de 1 mg conține acum un card pentru pacient. Dacă observi schimbări ale dispoziției, stare depresivă sau gânduri suicidare, cere imediat sfatul unui medic {{cite:ema-finasteride-2025}}.",
+          },
+          {
+            type: "callout",
+            tone: "caution",
+            title: "Nu aștepta următoarea programare",
+            text: "Orice schimbare a dispoziției, tristețe persistentă sau gânduri de a-ți face rău trebuie spuse imediat unui medic {{cite:ema-finasteride-2025}}. Dacă ești în pericol imediat, sună la 112.",
           },
         ],
       },
@@ -185,7 +208,7 @@ export const treatments: MedicalDoc[] = [
           {
             type: "list",
             items: [
-              "Se eliberează doar pe bază de rețetă, după evaluarea medicului.",
+              "În România se eliberează doar pe bază de prescripție medicală {{cite:mediately-propecia}}, după evaluarea medicului.",
               "Este studiată și recomandată pentru bărbați; la femei, opțiunile sunt diferite {{cite:kanti-2018}}.",
               "Nu este potrivită pentru toată lumea: istoricul medical, celelalte medicamente și preferințele tale contează.",
             ],
@@ -205,11 +228,11 @@ export const treatments: MedicalDoc[] = [
           "Întreabă care sunt alternativele, cum vei fi urmărit, ce faci dacă apar efecte adverse și cum influențează tratamentul analizele de sânge sau planurile de a avea copii.",
       },
     ],
-    sourceIds: ["kanti-2018", "kaufman-1998", "statpearls-aga", "ema-finasteride-2025"],
+    sourceIds: ["kanti-2018", "kaufman-1998", "statpearls-aga", "ema-finasteride-2025", "mediately-propecia"],
     limitations:
       "Pagina are scop exclusiv informativ și nu reprezintă o recomandare sau promovare a unui medicament. Finasterida se eliberează doar pe bază de prescripție medicală.",
     publishedAt: "2026-10-05",
-    updatedAt: "2026-10-05",
+    updatedAt: "2026-10-07",
     related: [
       conditionLink,
       { href: "/tratamente/minoxidil", label: "Minoxidil: informații" },

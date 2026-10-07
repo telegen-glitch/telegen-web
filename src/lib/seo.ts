@@ -124,11 +124,9 @@ export function medicalPageJsonLd(
       ? {
           "@type": "Drug",
           name: doc.title,
-          ...(doc.drug
-            ? {
-                activeIngredient: doc.drug.activeIngredient,
-                prescriptionStatus: `https://schema.org/${doc.drug.prescriptionStatus}`,
-              }
+          ...(doc.drug ? { activeIngredient: doc.drug.activeIngredient } : {}),
+          ...(doc.drug?.prescriptionStatus
+            ? { prescriptionStatus: `https://schema.org/${doc.drug.prescriptionStatus}` }
             : {}),
         }
       : {

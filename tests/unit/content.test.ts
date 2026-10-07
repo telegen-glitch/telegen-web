@@ -31,21 +31,8 @@ function walk(dir: string): string[] {
 
 /**
  * Source check (CLAUDE.md 7c.H): every published medical page cites a source in
- * its answer-first summary and in every section. Sections written before this
- * rule are listed here until their citations are verified against sources that
- * can be fetched (see docs/open-items.md). Do not add new entries.
+ * its answer-first summary and in every section. No exceptions.
  */
-const PENDING_CITATION = new Set([
-  "caderea-parului#cauze",
-  "semnele-alopeciei-androgenetice#alte-cauze",
-  "semnele-alopeciei-androgenetice#urmarire",
-  "cauzele-caderii-parului#temporare",
-  "cauzele-caderii-parului#medicale",
-  "cauzele-caderii-parului#mituri",
-  "caderea-parului-intrebari-frecvente#normal",
-  "caderea-parului-intrebari-frecvente#siguranta",
-]);
-
 describe("source check: every claim cited", () => {
   const docs = [
     ...content.listConditions().map((c) => c.doc),
@@ -59,19 +46,8 @@ describe("source check: every claim cited", () => {
   it("every section cites a source", () => {
     for (const d of docs) {
       for (const sec of d.sections) {
-        if (PENDING_CITATION.has(`${d.slug}#${sec.id}`)) continue;
         expect(JSON.stringify(sec.blocks), `${d.slug}#${sec.id}`).toMatch(/\{\{cite:/);
       }
-    }
-  });
-  it("the pending list only shrinks: entries must still exist and still lack citations", () => {
-    for (const key of PENDING_CITATION) {
-      const [slug, id] = key.split("#");
-      const sec = docs.find((d) => d.slug === slug)?.sections.find((x) => x.id === id);
-      expect(sec, key).toBeDefined();
-      expect(JSON.stringify(sec!.blocks), `${key} is cited now: remove it from PENDING_CITATION`).not.toMatch(
-        /\{\{cite:/,
-      );
     }
   });
 });
