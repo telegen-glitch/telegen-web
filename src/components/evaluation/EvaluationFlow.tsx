@@ -28,11 +28,11 @@ type Stage =
 export interface FlowTopic {
   slug: string;
   name: string;
-  /** Published condition page, if any. Drafts have none, so no link can 404. */
+  /** Published condition page, if any. */
   href?: string;
 }
 
-export function EvaluationFlow({ topics, upcoming }: { topics: FlowTopic[]; upcoming: FlowTopic[] }) {
+export function EvaluationFlow({ topics }: { topics: FlowTopic[] }) {
   // A topic chosen in the topic picker skips the topic screen (in-memory hand-over only).
   const [topic, setTopic] = useState<string | null>(() => {
     const pending = peekPendingTopic();
@@ -91,17 +91,6 @@ export function EvaluationFlow({ topics, upcoming }: { topics: FlowTopic[]; upco
                   <Arrow />
                 </span>
               </button>
-            </li>
-          ))}
-          {upcoming.map((t) => (
-            <li key={t.slug}>
-              <div
-                aria-disabled="true"
-                className="flex min-h-16 items-center justify-between gap-4 rounded-2xl border border-dashed border-line px-5 py-4 text-ink-muted"
-              >
-                <span className="text-lg font-medium">{t.name}</span>
-                <span className="rounded-pill bg-white px-3 py-1 text-xs font-semibold">în curând</span>
-              </div>
             </li>
           ))}
         </ul>

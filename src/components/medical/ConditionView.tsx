@@ -7,7 +7,7 @@ import { HowWeHelp } from "@/components/home/HowWeHelp";
 import { SectionHeading } from "@/components/home/SectionHeading";
 import { StepStrip } from "@/components/home/StepStrip";
 import { TeamSection } from "@/components/home/TeamSection";
-import { PhoneMockup, ScreenQuestion } from "@/components/home/PhoneMockup";
+import { neutralMockup, PhoneMockup, ScreenQuestion } from "@/components/home/PhoneMockup";
 import { SectionView } from "@/components/medical/Blocks";
 import { FaqList } from "@/components/medical/Faq";
 import { Pricing } from "@/components/medical/Pricing";
@@ -28,6 +28,7 @@ export function ConditionView({ condition }: { condition: Condition }) {
   const path = condition.basePath;
   const order = sourceOrderFor(doc, condition);
   const { reviewer, reviewedAt } = reviewContext(doc);
+  const mockup = condition.presentation.mockup ?? neutralMockup([condition.name]);
 
   return (
     <>
@@ -59,7 +60,7 @@ export function ConditionView({ condition }: { condition: Condition }) {
               </div>
               <div className="hidden justify-center lg:flex">
                 <PhoneMockup>
-                  <ScreenQuestion />
+                  <ScreenQuestion question={mockup.question} options={mockup.options} />
                 </PhoneMockup>
               </div>
             </div>
@@ -72,7 +73,7 @@ export function ConditionView({ condition }: { condition: Condition }) {
         {content.listSubpages(condition.slug).length > 0 && (
           <nav aria-labelledby="subpagini" className="container-page pt-12">
             <h2 id="subpagini" className="text-display-3">
-              Despre {condition.shortName.toLowerCase()}, pe rând
+              {condition.name}, <span className="accent">pe rând</span>
             </h2>
             <ul data-reveal-group className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {content.listSubpages(condition.slug).map((d) => (
@@ -176,7 +177,7 @@ export function ConditionView({ condition }: { condition: Condition }) {
               accent="un singur medic responsabil."
             />
             <div className="mt-12 lg:mt-4">
-              <HowWeHelp />
+              <HowWeHelp mockup={mockup} />
             </div>
           </div>
         </section>

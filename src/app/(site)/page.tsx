@@ -5,6 +5,7 @@ import { ConditionCards } from "@/components/home/ConditionCards";
 import { PressLogos, ReviewsCarousel } from "@/components/home/FlaggedSections";
 import { Hero } from "@/components/home/Hero";
 import { HowWeHelp } from "@/components/home/HowWeHelp";
+import { neutralMockup } from "@/components/home/PhoneMockup";
 import { SectionHeading } from "@/components/home/SectionHeading";
 import { StepStrip } from "@/components/home/StepStrip";
 import { TeamSection } from "@/components/home/TeamSection";
@@ -18,7 +19,11 @@ import { faqJsonLd } from "@/lib/seo";
 
 export const metadata = staticPageMetadata("/");
 
-const homeFaqs: Faq[] = [
+const homeFaqs = (): Faq[] => [
+  {
+    question: "Ce afecțiuni evaluați?",
+    answer: `În prezent: ${publishedConditionList()}. Pentru fiecare există un ghid medical pe site și o evaluare online. Căderea părului și acneea sunt evaluate de un medic dermatolog, iar disfuncția erectilă de un medic urolog sau de familie.`,
+  },
   {
     question: "Telegen funcționează deja?",
     answer:
@@ -48,7 +53,7 @@ const homeFaqs: Faq[] = [
 
 export default function HomePage() {
   const conditions = content.listConditions();
-  const upcoming = content.listUpcomingTopics();
+  const faqs = homeFaqs();
 
   return (
     <>
@@ -57,10 +62,7 @@ export default function HomePage() {
         title="Sănătatea ta, tratată discret."
         accent="Cu un medic alături."
         text={`Evaluare online pentru ${publishedConditionList()}, un plan stabilit de medic și urmărire pe termen lung. De pe telefon, fără drumuri la cabinet.`}
-        chips={[
-          ...conditions.map((c) => ({ label: c.name, href: c.basePath })),
-          ...upcoming.map((t) => ({ label: t.name })),
-        ]}
+        chips={conditions.map((c) => ({ label: c.name, href: c.basePath }))}
       />
 
       <StepStrip />
@@ -116,24 +118,12 @@ export default function HomePage() {
           </div>
           <div className="mt-10">
             <ConditionCards
-              items={[
-                ...conditions.map((c) => ({
-                  slug: c.slug,
-                  name: c.name,
-                  teaser: c.teaser,
-                  href: c.basePath,
-                })),
-                ...upcoming.map((t) => ({
-                  slug: t.slug,
-                  name: t.name,
-                  teaser: "Pregătim protocolul clinic și ghidurile medicale.",
-                })),
-                {
-                  slug: "altele",
-                  name: "Alte afecțiuni",
-                  teaser: "Adăugăm o afecțiune doar după ce protocolul e revizuit de medici.",
-                },
-              ]}
+              items={conditions.map((c) => ({
+                slug: c.slug,
+                name: c.name,
+                teaser: c.teaser,
+                href: c.basePath,
+              }))}
             />
           </div>
         </div>
@@ -149,7 +139,7 @@ export default function HomePage() {
             accent="la rezultate pe termen lung."
           />
           <div className="mt-12 lg:mt-4">
-            <HowWeHelp />
+            <HowWeHelp mockup={neutralMockup(conditions.map((c) => c.name))} />
           </div>
         </div>
       </section>
@@ -170,12 +160,12 @@ export default function HomePage() {
             </Link>
           </SectionHeading>
           <div data-reveal>
-            <FaqList faqs={homeFaqs} />
+            <FaqList faqs={faqs} />
           </div>
         </div>
       </section>
 
-      <JsonLd data={faqJsonLd(homeFaqs)} />
+      <JsonLd data={faqJsonLd(faqs)} />
     </>
   );
 }

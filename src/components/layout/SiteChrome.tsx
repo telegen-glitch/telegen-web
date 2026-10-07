@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { content } from "@/content/source";
 import { evaluations } from "@/content/evaluations";
 import { Footer } from "@/components/layout/Footer";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -16,14 +15,13 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
     teaser: e.label,
     href: "/evaluare",
   }));
-  const upcoming = content.listUpcomingTopics().filter((t) => !evaluations.some((e) => e.topic === t.slug));
   return (
-    <TopicPickerProvider topics={topics} upcoming={upcoming}>
+    <TopicPickerProvider topics={topics}>
       {siteConfig.launchState === "prelaunch" && (
         <div className="bg-navy-950 text-white">
           <p className="container-page flex min-h-9 items-center justify-center py-1.5 text-center text-xs leading-5 text-white/85">
             <span>
-              Telegen este în pre-lansare: serviciul medical se deschide în curând.{" "}
+              Telegen este în pre-lansare: serviciul medical nu este încă deschis.{" "}
               <Link
                 href="/evaluare"
                 className="font-semibold whitespace-nowrap text-white underline underline-offset-2"

@@ -1,5 +1,7 @@
 import { ClosingCta } from "@/components/home/ClosingCta";
 import { HowWeHelp } from "@/components/home/HowWeHelp";
+import { neutralMockup } from "@/components/home/PhoneMockup";
+import { content } from "@/content/source";
 import { SectionHeading } from "@/components/home/SectionHeading";
 import { StepStrip } from "@/components/home/StepStrip";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -28,7 +30,7 @@ export default function HowItWorks() {
         <div className="container-page">
           <SectionHeading id="pasii" eyebrow="Pas cu pas" title="Ce se întâmplă" accent="la fiecare pas." />
           <div className="mt-12 lg:mt-4">
-            <HowWeHelp />
+            <HowWeHelp mockup={neutralMockup(content.listConditions().map((c) => c.name))} />
           </div>
         </div>
       </section>
@@ -40,11 +42,11 @@ export default function HowItWorks() {
             eyebrow="După evaluare"
             title="Urmărirea face parte"
             accent="din tratament."
-            text="Afecțiunile de lungă durată, cum este alopecia androgenetică, se judecă în luni. De aceea, planul include reevaluări la intervale stabilite de medic."
+            text="Căderea părului și acneea se judecă în luni, iar la disfuncția erectilă contează și sănătatea inimii. De aceea, planul include reevaluări la intervale stabilite de medic."
           />
           <ul data-reveal-group className="space-y-3">
             {[
-              "Reevaluări periodice, cu fotografii comparabile.",
+              "Reevaluări periodice; pentru piele și păr, cu fotografii comparabile.",
               "Întrebări despre efecte adverse oricând, în aplicația clinică.",
               "Planul se ajustează sau se oprește când medicul consideră necesar.",
               "Dacă apare ceva neobișnuit, îți recomandăm un consult în persoană.",

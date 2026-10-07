@@ -1,5 +1,25 @@
 import type { ReactNode } from "react";
 
+/** Screen content for one condition (from content data) or the neutral home version. */
+export interface MockupContent {
+  question: string;
+  options: string[];
+  goal: string;
+  checkIn: string;
+  followUp: string;
+}
+
+const neutral = {
+  goal: "Un obiectiv clar, stabilit cu medicul",
+  checkIn: "Stabilită de medic",
+  followUp: "Perfect. Ne auzim la reevaluare. Până atunci, îmi poți scrie oricând.",
+};
+
+/** Neutral screens for pages that are not about one condition (home, how it works). */
+export function neutralMockup(conditionNames: string[]): MockupContent {
+  return { question: "Cu ce te putem ajuta?", options: conditionNames, ...neutral };
+}
+
 /**
  * Device frame for illustrative screens of Telegen's own interface. Built in
  * HTML/CSS (no images): crisp at any size, no LCP cost. Decorative: the
@@ -40,18 +60,16 @@ function MiniHeader({ title }: { title: string }) {
   );
 }
 
-export function ScreenQuestion() {
+export function ScreenQuestion({ question, options }: Pick<MockupContent, "question" | "options">) {
   return (
     <>
       <MiniHeader title="4 din 10" />
       <div className="mt-2 h-1 rounded-full bg-line-soft">
         <div className="h-full w-2/5 rounded-full bg-navy-950" />
       </div>
-      <p className="mt-5 text-[0.9375rem] leading-tight font-semibold text-navy-950">
-        Unde observi cel mai mult schimbarea?
-      </p>
+      <p className="mt-5 text-[0.9375rem] leading-tight font-semibold text-navy-950">{question}</p>
       <div className="mt-4 space-y-1.5">
-        {["La tâmple", "Pe creștet", "Pe cărare", "Pe tot scalpul"].map((o, i) => (
+        {options.map((o, i) => (
           <div
             key={o}
             className={`flex items-center justify-between rounded-xl border px-3 py-2.5 ${i === 1 ? "border-navy-950 bg-navy-950 text-white" : "border-line"}`}
@@ -103,7 +121,10 @@ export function ScreenReview() {
   );
 }
 
-export function ScreenPlan() {
+export function ScreenPlan({
+  goal = neutral.goal,
+  checkIn = neutral.checkIn,
+}: Partial<Pick<MockupContent, "goal" | "checkIn">>) {
   return (
     <>
       <MiniHeader title="Planul tău" />
@@ -112,10 +133,10 @@ export function ScreenPlan() {
       </p>
       <div className="mt-4 space-y-2">
         {[
-          ["Ce urmărim", "Să încetinim căderea"],
+          ["Ce urmărim", goal],
           ["Tratament", "Ales de medic, explicat pas cu pas"],
-          ["Fotografii de control", "Luna 3 și luna 6"],
-          ["Reevaluare", "Luna 6"],
+          ["Prima reevaluare", checkIn],
+          ["Întrebări", "Oricând, prin mesaje"],
         ].map(([k, v]) => (
           <div key={k} className="rounded-xl bg-mist px-3 py-2.5">
             <p className="text-[0.625rem] font-semibold tracking-wide text-ink-muted uppercase">{k}</p>
@@ -130,20 +151,18 @@ export function ScreenPlan() {
   );
 }
 
-export function ScreenFollowUp() {
+export function ScreenFollowUp({ followUp = neutral.followUp }: Partial<Pick<MockupContent, "followUp">>) {
   return (
     <>
       <MiniHeader title="Mesaje" />
       <div className="mt-5 space-y-2.5">
         <div className="max-w-[85%] rounded-2xl rounded-tl-md bg-mist px-3 py-2">
-          A trecut o lună. Cum merge? Ai observat iritații?
+          A trecut o lună. Cum merge? Ai observat efecte nedorite?
         </div>
         <div className="ml-auto max-w-[80%] rounded-2xl rounded-tr-md bg-navy-950 px-3 py-2 text-white">
-          Totul bine, fără iritații.
+          Totul bine, nimic deosebit.
         </div>
-        <div className="max-w-[85%] rounded-2xl rounded-tl-md bg-mist px-3 py-2">
-          Perfect. În luna 3 îți cer fotografiile de control.
-        </div>
+        <div className="max-w-[85%] rounded-2xl rounded-tl-md bg-mist px-3 py-2">{followUp}</div>
       </div>
       <div className="mt-auto flex items-center gap-2 rounded-pill border border-line px-3 py-2 text-ink-muted">
         Scrie un mesaj…

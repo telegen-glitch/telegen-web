@@ -4,7 +4,7 @@ import { PhoneMockup, ScreenPlan } from "./PhoneMockup";
 
 export interface Chip {
   label: string;
-  href?: string;
+  href: string;
 }
 
 /**
@@ -37,22 +37,13 @@ export function Hero({
           <ul className="mt-7 flex flex-wrap gap-2" aria-label="Afecțiuni">
             {chips.map((c) => (
               <li key={c.label}>
-                {c.href ? (
-                  <Link
-                    href={c.href}
-                    className="inline-flex min-h-11 items-center gap-2 rounded-pill border border-navy-950/15 bg-white px-4 text-sm font-medium text-navy-950 transition-colors hover:border-navy-950"
-                  >
-                    <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-blue-600" />
-                    {c.label}
-                  </Link>
-                ) : (
-                  <span
-                    aria-disabled="true"
-                    className="inline-flex min-h-11 items-center gap-2 rounded-pill border border-dashed border-line px-4 text-sm text-ink-muted"
-                  >
-                    {c.label} <span className="text-xs font-semibold">· în curând</span>
-                  </span>
-                )}
+                <Link
+                  href={c.href}
+                  className="inline-flex min-h-11 items-center gap-2 rounded-pill border border-navy-950/15 bg-white px-4 text-sm font-medium text-navy-950 transition-colors hover:border-navy-950"
+                >
+                  <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-blue-600" />
+                  {c.label}
+                </Link>
               </li>
             ))}
           </ul>
@@ -80,8 +71,8 @@ export function Hero({
               <p className="text-sm font-semibold text-navy-950">un medic</p>
             </div>
             <div className="absolute right-4 bottom-8 hidden rounded-2xl bg-white px-4 py-3 shadow-[var(--shadow-card)] sm:block">
-              <p className="text-xs text-ink-muted">Reevaluare</p>
-              <p className="text-sm font-semibold text-navy-950">în luna 6</p>
+              <p className="text-xs text-ink-muted">Urmărire</p>
+              <p className="text-sm font-semibold text-navy-950">pe tot parcursul</p>
             </div>
           </div>
           <p className="mt-3 text-center text-xs text-ink-muted">Interfață ilustrativă</p>

@@ -3,7 +3,9 @@
  * content, so it always reflects what the site would render.
  */
 import { writeFileSync } from "node:fs";
+import { conditions } from "../src/content/conditions";
 import { content, hrefForDoc } from "../src/content/source";
+import { treatments } from "../src/content/treatments";
 import type { MedicalDoc } from "../src/content/types";
 import { hasRealReview } from "../src/lib/indexing";
 import { staticPages } from "../src/lib/page-meta";
@@ -82,10 +84,12 @@ const rows = allRoutes().map((r) => {
 });
 
 const drafts = [
-  ...["acnee", "disfunctie-erectila"].flatMap((slug) => {
-    const c = content.listUpcomingTopics().find((t) => t.slug === slug);
-    return c ? [c.name] : [];
-  }),
+  ...conditions.filter((c) => c.status === "draft").map((c) => c.name),
+  ...conditions
+    .flatMap((c) => c.subpages ?? [])
+    .filter((d) => d.status === "draft")
+    .map((d) => d.title),
+  ...treatments.filter((d) => d.status === "draft").map((d) => d.title),
 ];
 
 const md = `# GEO / SEO status
@@ -100,7 +104,7 @@ summary 40–60 words, every section cited, ≥ 3 internal links in and out.
 |---|---|---|---|---|---|---|---|---|---|---|---|
 ${rows.map((r) => `| ${r.path} | ${r.index} | ${r.reason} | ${r.title} | ${r.description} | ${r.answer} | ${r.body} | ${r.faqs} | ${r.sources} | ${r.linksIn} | ${r.linksOut} | ${r.schema} |`).join("\n")}
 
-Unpublished (drafts, not routed): ${drafts.length ? drafts.join(", ") + " and their subpages and medicine pages" : "none"}.
+Unpublished (drafts, not routed): ${drafts.length ? drafts.join(", ") : "none"}.
 `;
 
 writeFileSync("docs/geo-status.md", md);

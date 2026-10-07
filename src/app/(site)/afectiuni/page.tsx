@@ -14,20 +14,13 @@ export default function ConditionsHub() {
         eyebrow="Afecțiuni"
         title="Ce evaluăm"
         accent="online."
-        lead="Lucrăm pe rând, câte o afecțiune, fiecare cu protocol clinic scris și revizuit de medici cu specialitatea potrivită."
+        lead="Fiecare afecțiune are ghiduri medicale scrise din surse citate și o evaluare online. Medicii cu specialitatea potrivită revizuiesc conținutul înainte de lansare."
       />
       <div className="container-page section-y">
         <ConditionCards
-          items={[
-            ...content
-              .listConditions()
-              .map((c) => ({ slug: c.slug, name: c.name, teaser: c.teaser, href: c.basePath })),
-            ...content.listUpcomingTopics().map((t) => ({
-              slug: t.slug,
-              name: t.name,
-              teaser: "Pregătim protocolul clinic și ghidurile medicale.",
-            })),
-          ]}
+          items={content
+            .listConditions()
+            .map((c) => ({ slug: c.slug, name: c.name, teaser: c.teaser, href: c.basePath }))}
         />
       </div>
       <ClosingCta />

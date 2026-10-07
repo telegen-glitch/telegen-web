@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { content } from "@/content/source";
+import { content, hrefForDoc } from "@/content/source";
 import { ClosingCta } from "@/components/home/ClosingCta";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Arrow } from "@/components/ui/Button";
@@ -46,10 +46,10 @@ export default function GuidesIndex() {
               </Link>
             </div>
             <ul data-reveal-group className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {content.listGuides(c.slug).map((g) => (
+              {[...content.listSubpages(c.slug), ...content.listGuides(c.slug)].map((g) => (
                 <li key={g.slug} data-reveal>
                   <Link
-                    href={`/ghiduri/${g.slug}`}
+                    href={hrefForDoc(g)}
                     className="group flex h-full flex-col rounded-card-lg bg-mist p-7 transition-colors hover:bg-mist-deep"
                   >
                     <span className="self-start rounded-pill bg-white px-3 py-1 text-xs font-semibold text-blue-700">
@@ -76,8 +76,8 @@ export default function GuidesIndex() {
             Informații despre tratamente
           </h2>
           <p className="mt-2 max-w-2xl text-ink-soft">
-            Cum acționează substanțele folosite în alopecia androgenetică, ce arată studiile și ce efecte
-            adverse pot avea.
+            Cum acționează substanțele folosite pentru afecțiunile pe care le evaluăm, ce spun ghidurile și ce
+            efecte adverse pot avea.
           </p>
           <Link
             href="/tratamente"

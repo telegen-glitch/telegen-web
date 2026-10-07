@@ -4,8 +4,6 @@ export interface NavLink {
   href: string;
   label: string;
   description?: string;
-  /** Shown but not clickable ("în curând"). */
-  upcoming?: boolean;
 }
 
 export interface NavGroup {
@@ -14,16 +12,13 @@ export interface NavGroup {
   columns: { heading: string; links: NavLink[] }[];
 }
 
-/** Condition-led navigation: published conditions, then modelled topics as "în curând". */
+/** Condition-led navigation: every published condition. */
 export function conditionNav(): NavLink[] {
-  return [
-    ...content.listConditions().map((c) => ({
-      href: c.basePath,
-      label: c.name,
-      description: c.teaser,
-    })),
-    ...content.listUpcomingTopics().map((t) => ({ href: `#${t.slug}`, label: t.name, upcoming: true })),
-  ];
+  return content.listConditions().map((c) => ({
+    href: c.basePath,
+    label: c.name,
+    description: c.teaser,
+  }));
 }
 
 /** Desktop mega-menu groups and mobile menu sections. */
@@ -45,7 +40,7 @@ export function mainNav(): NavGroup[] {
             {
               href: "/ghiduri",
               label: "Ghiduri medicale",
-              description: "Semne, cauze și întrebări frecvente.",
+              description: "Semne, cauze, tratament și întrebări frecvente.",
             },
           ],
         },

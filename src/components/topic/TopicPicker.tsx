@@ -19,19 +19,10 @@ interface TopicPickerValue {
 const Ctx = createContext<TopicPickerValue | null>(null);
 
 /**
- * "Cu ce te putem ajuta?" modal. Only published topics are links; upcoming ones
- * are shown as non-clickable "în curând". Native <dialog>: focus trap, Escape
- * and inert background come from the platform.
+ * "Cu ce te putem ajuta?" modal listing every condition with an evaluation.
+ * Native <dialog>: focus trap, Escape and inert background come from the platform.
  */
-export function TopicPickerProvider({
-  topics,
-  upcoming,
-  children,
-}: {
-  topics: Topic[];
-  upcoming: Topic[];
-  children: React.ReactNode;
-}) {
+export function TopicPickerProvider({ topics, children }: { topics: Topic[]; children: React.ReactNode }) {
   const ref = useRef<HTMLDialogElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -119,17 +110,6 @@ export function TopicPickerProvider({
                   <Arrow />
                 </span>
               </Link>
-            </li>
-          ))}
-          {upcoming.map((t) => (
-            <li key={t.slug}>
-              <div
-                aria-disabled="true"
-                className="flex min-h-16 items-center justify-between gap-4 rounded-2xl border border-dashed border-line px-5 py-4 text-ink-muted"
-              >
-                <span className="text-lg font-medium">{t.name}</span>
-                <span className="rounded-pill bg-mist px-3 py-1 text-xs font-semibold">în curând</span>
-              </div>
             </li>
           ))}
         </ul>

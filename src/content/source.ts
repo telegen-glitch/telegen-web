@@ -12,8 +12,6 @@ import type { Condition, MedicalDoc, Source, TeamMember } from "./types";
 
 export interface ContentSource {
   listConditions(): Condition[];
-  /** Modelled but unpublished topics, shown only as non-clickable "în curând". */
-  listUpcomingTopics(): { slug: string; name: string }[];
   getCondition(slug: string): Condition | undefined;
   /** Published subpages of a published condition. */
   listSubpages(conditionSlug: string): MedicalDoc[];
@@ -33,8 +31,6 @@ const published = <T extends { status: string }>(items: T[]) => items.filter((i)
 
 export const localContent: ContentSource = {
   listConditions: () => published(conditions),
-  listUpcomingTopics: () =>
-    conditions.filter((c) => c.status === "draft").map(({ slug, name }) => ({ slug, name })),
   getCondition: (slug) => published(conditions).find((c) => c.slug === slug),
   listSubpages: (conditionSlug) =>
     published(published(conditions).find((c) => c.slug === conditionSlug)?.subpages ?? []),

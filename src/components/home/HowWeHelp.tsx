@@ -1,28 +1,35 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { PhoneMockup, ScreenFollowUp, ScreenPlan, ScreenQuestion, ScreenReview } from "./PhoneMockup";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  PhoneMockup,
+  ScreenFollowUp,
+  ScreenPlan,
+  ScreenQuestion,
+  ScreenReview,
+  type MockupContent,
+} from "./PhoneMockup";
 
-const steps = [
+const steps: { title: string; text: string; Screen: (m: MockupContent) => ReactNode }[] = [
   {
     title: "Spui ce observi",
     text: "Răspunzi la întrebări clare despre ce s-a schimbat, de când și ce ai încercat. Durează câteva minute, de pe telefon.",
-    Screen: ScreenQuestion,
+    Screen: (m) => <ScreenQuestion question={m.question} options={m.options} />,
   },
   {
     title: "Un medic analizează",
     text: "Medicul, cu specialitatea potrivită afecțiunii tale, citește evaluarea, îți poate pune întrebări și decide dacă tratamentul la distanță ți se potrivește.",
-    Screen: ScreenReview,
+    Screen: () => <ScreenReview />,
   },
   {
     title: "Primești un plan clar",
     text: "Ce ai, ce opțiuni există, la ce să te aștepți și când reevaluăm. Fără termeni greu de înțeles.",
-    Screen: ScreenPlan,
+    Screen: (m) => <ScreenPlan goal={m.goal} checkIn={m.checkIn} />,
   },
   {
     title: "Rămânem alături",
     text: "Verificări periodice și întrebări oricând. Planul se ajustează în funcție de cum evoluezi.",
-    Screen: ScreenFollowUp,
+    Screen: (m) => <ScreenFollowUp followUp={m.followUp} />,
   },
 ];
 
@@ -31,7 +38,7 @@ const steps = [
  * scroll past and its screen cross-fades to the active step. Mobile: each step
  * carries its own phone, revealed on scroll.
  */
-export function HowWeHelp() {
+export function HowWeHelp({ mockup }: { mockup: MockupContent }) {
   const [active, setActive] = useState(0);
   const refs = useRef<(HTMLLIElement | null)[]>([]);
 
@@ -75,9 +82,7 @@ export function HowWeHelp() {
               </div>
             </div>
             <div data-reveal="scale" className="mt-8 rounded-card-lg bg-mist py-10 lg:hidden">
-              <PhoneMockup>
-                <s.Screen />
-              </PhoneMockup>
+              <PhoneMockup>{s.Screen(mockup)}</PhoneMockup>
             </div>
           </li>
         ))}
@@ -93,9 +98,7 @@ export function HowWeHelp() {
                   active === i ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
                 }`}
               >
-                <PhoneMockup>
-                  <s.Screen />
-                </PhoneMockup>
+                <PhoneMockup>{s.Screen(mockup)}</PhoneMockup>
               </div>
             ))}
           </div>

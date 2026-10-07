@@ -17,8 +17,8 @@ export default function NotFound() {
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <ButtonLink href="/">Pagina principală</ButtonLink>
-          <ButtonLink href="/caderea-parului" variant="secondary">
-            Căderea părului
+          <ButtonLink href="/afectiuni" variant="secondary">
+            Toate afecțiunile
           </ButtonLink>
         </div>
         <p className="mt-8 text-sm text-ink-muted">

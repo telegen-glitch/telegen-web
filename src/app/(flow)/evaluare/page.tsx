@@ -13,7 +13,6 @@ export default function EvaluationPage() {
         name: e.name,
         href: content.getCondition(e.topic)?.basePath,
       }))}
-      upcoming={[]}
     />
   );
 }

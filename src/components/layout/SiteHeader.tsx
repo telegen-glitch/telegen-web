@@ -23,17 +23,6 @@ function Chevron({ open }: { open: boolean }) {
 }
 
 function MegaLink({ link, onNavigate }: { link: NavLink; onNavigate: () => void }) {
-  if (link.upcoming) {
-    return (
-      <span
-        aria-disabled="true"
-        className="flex items-center justify-between gap-3 rounded-2xl px-4 py-3 text-ink-muted"
-      >
-        <span className="font-medium">{link.label}</span>
-        <span className="rounded-pill bg-mist px-2.5 py-0.5 text-xs font-semibold">în curând</span>
-      </span>
-    );
-  }
   return (
     <Link
       href={link.href}
@@ -265,30 +254,18 @@ export function SiteHeader({ groups }: { groups: NavGroup[] }) {
               <ul className="mt-2">
                 {g.columns
                   .flatMap((c) => c.links)
-                  .map((l) =>
-                    l.upcoming ? (
-                      <li
-                        key={l.href}
-                        className="flex min-h-12 items-center justify-between text-xl font-medium text-ink-muted"
+                  .map((l) => (
+                    <li key={l.href}>
+                      <Link
+                        href={l.href}
+                        onClick={() => setMobileOpen(false)}
+                        className="flex min-h-12 items-center justify-between text-xl font-semibold tracking-tight text-navy-950"
                       >
                         {l.label}
-                        <span className="rounded-pill bg-mist px-2.5 py-0.5 text-xs font-semibold">
-                          în curând
-                        </span>
-                      </li>
-                    ) : (
-                      <li key={l.href}>
-                        <Link
-                          href={l.href}
-                          onClick={() => setMobileOpen(false)}
-                          className="flex min-h-12 items-center justify-between text-xl font-semibold tracking-tight text-navy-950"
-                        >
-                          {l.label}
-                          <Arrow className="text-blue-700" />
-                        </Link>
-                      </li>
-                    ),
-                  )}
+                        <Arrow className="text-blue-700" />
+                      </Link>
+                    </li>
+                  ))}
               </ul>
             </div>
           ))}

@@ -14,6 +14,13 @@ export const hairLoss: Condition = {
     asideTitle: "Nu știi dacă e alopecie androgenetică?",
     asideAccent: "Un dermatolog îți poate spune.",
     evaluationLabel: "Evaluare dermatologică online",
+    mockup: {
+      question: "Unde observi cel mai mult schimbarea?",
+      options: ["La tâmple", "Pe creștet", "Pe cărare", "Pe tot scalpul"],
+      goal: "Să încetinim căderea",
+      checkIn: "Luna 6",
+      followUp: "Perfect. În luna 3 îți cer fotografiile de control.",
+    },
   },
   status: "published",
   guideSlugs: [

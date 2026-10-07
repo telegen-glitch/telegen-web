@@ -483,7 +483,7 @@ export const erectileDysfunction: Condition = {
     evaluationLabel: "Evaluare medicală online",
     mockup: {
       question: "De cât timp ai dificultăți cu erecția?",
-      options: ["De mai puțin de 3 luni", "De 3–12 luni", "De mai mult de un an", "Nu sunt sigur"],
+      options: ["De mai puțin de 3 luni", "De 3–12 luni", "De mai mult de un an"],
       goal: "Să aflăm cauza și să avem grijă și de inimă",
       checkIn: "După primele săptămâni",
       followUp: "Mulțumesc. Îți trimit și lista analizelor de verificat la medicul de familie.",
