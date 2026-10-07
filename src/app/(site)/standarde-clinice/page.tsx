@@ -15,12 +15,12 @@ const standards = [
   {
     id: "medici",
     title: "Medici cu drept de liberă practică",
-    text: "Evaluările sunt analizate de medici dermatologi înscriși în Colegiul Medicilor din România, cu aviz de liberă practică valabil. Documentele fiecărui medic sunt verificate înainte de colaborare.",
+    text: "Evaluările sunt analizate de medici cu specialitatea potrivită afecțiunii, înscriși în Colegiul Medicilor din România, cu aviz de liberă practică valabil. Documentele fiecărui medic sunt verificate înainte de colaborare.",
   },
   {
     id: "protocoale",
     title: "Protocoale clinice scrise",
-    text: "Pentru fiecare afecțiune există un protocol scris, bazat pe ghiduri clinice actuale, aprobat de medicul coordonator. Protocolul stabilește ce întrebări punem, când recomandăm un consult în persoană și cum urmărim tratamentul.",
+    text: "Pentru fiecare afecțiune există un protocol scris, bazat pe ghiduri clinice actuale, aprobat de echipa medicală. Protocolul stabilește ce întrebări punem, când recomandăm un consult în persoană și cum urmărim tratamentul.",
   },
   {
     id: "limite",
@@ -30,7 +30,7 @@ const standards = [
   {
     id: "continut",
     title: "Conținut medical cu surse și revizuire",
-    text: "Ghidurile de pe site citează surse primare. O pagină medicală apare în motoarele de căutare doar după ce un medic a revizuit-o, cu numele și data revizuirii afișate.",
+    text: "Ghidurile de pe site citează surse primare. O pagină medicală apare în motoarele de căutare doar după ce un medic din echipă a revizuit-o, cu specialitatea lui și data revizuirii afișate.",
   },
   {
     id: "promovare",
@@ -68,8 +68,8 @@ export default function ClinicalStandards() {
         </ol>
         <div className="mt-10 max-w-2xl space-y-3">
           <TemporaryNote>
-            Standardele de mai sus sunt în curs de confirmare de către medicul coordonator. Datele de
-            identificare ale societății și autorizațiile se publică înainte de lansare.
+            Standardele de mai sus sunt în curs de confirmare de către echipa medicală. Datele de identificare
+            ale societății și autorizațiile se publică înainte de lansare.
           </TemporaryNote>
           <p className="text-sm text-ink-soft">
             Vezi și{" "}

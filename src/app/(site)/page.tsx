@@ -31,7 +31,7 @@ const homeFaqs: Faq[] = [
   {
     question: "Cine îmi va analiza evaluarea?",
     answer:
-      "Un medic dermatolog cu drept de liberă practică în România. Înainte de lansare, medicii vor fi prezentați pe site cu nume, grad profesional și cod de parafă.",
+      "Un medic cu drept de liberă practică în România și cu specialitatea potrivită afecțiunii tale. Înainte de consult afli numele medicului și codul lui de parafă.",
   },
   {
     question: "Primesc tratament fără să vorbesc cu un medic?",
@@ -155,7 +155,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <TeamSection clinicians={content.listClinicians()} />
+      <TeamSection />
 
       <ReviewsCarousel reviews={[]} />
 

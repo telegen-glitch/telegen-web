@@ -1,24 +1,32 @@
 import { describe, expect, it } from "vitest";
+import { team } from "@/content/clinicians";
 import { content } from "@/content/source";
-import type { Clinician, MedicalDoc } from "@/content/types";
+import type { MedicalDoc, TeamMember } from "@/content/types";
 import { hasRealReview, isMedicalDocIndexable } from "@/lib/indexing";
 import { isSiteIndexable } from "@/lib/site";
 import { medicalPageJsonLd } from "@/lib/seo";
 
 const prodOn = { SITE_INDEXING: "on", VERCEL_ENV: "production" } as unknown as NodeJS.ProcessEnv;
 
-const real: Clinician = {
-  slug: "real",
-  name: "Dr. Test Real",
-  role: "r",
-  credential: "Medic primar dermatovenerolog",
-  bio: [],
-  temporary: false,
+const derm: TeamMember = {
+  kind: "team-member",
+  id: "derm-1",
+  specialty: "dermatologie",
+  credentialType: "medic-specialist",
 };
-const temp: Clinician = { ...real, slug: "temp", temporary: true };
-const noCred: Clinician = { ...real, slug: "nocred", credential: undefined };
-const find = (s: string) => [real, temp, noCred].find((c) => c.slug === s);
-const doc = (review?: MedicalDoc["review"]) => ({ review, status: "published" as const });
+const uro: TeamMember = {
+  kind: "team-member",
+  id: "uro-1",
+  specialty: "urologie",
+  credentialType: "medic-primar",
+};
+const find = (id: string) => [derm, uro].find((m) => m.id === id);
+const doc = (conditionSlug: string, review?: MedicalDoc["review"]) => ({
+  review,
+  conditionSlug,
+  status: "published" as const,
+});
+const today = new Date("2026-10-07T12:00:00Z");
 
 describe("site-level indexing switch", () => {
   it("is off unless SITE_INDEXING=on and VERCEL_ENV=production", () => {
@@ -32,14 +40,38 @@ describe("site-level indexing switch", () => {
   });
 });
 
-describe("medical page noindex rule (section 9.2)", () => {
-  it("requires a real reviewer with name, credential and a valid review date", () => {
-    expect(hasRealReview(doc(), find)).toBe(false);
-    expect(hasRealReview(doc({ reviewerSlug: "temp", reviewedAt: "2026-10-01" }), find)).toBe(false);
-    expect(hasRealReview(doc({ reviewerSlug: "nocred", reviewedAt: "2026-10-01" }), find)).toBe(false);
-    expect(hasRealReview(doc({ reviewerSlug: "missing", reviewedAt: "2026-10-01" }), find)).toBe(false);
-    expect(hasRealReview(doc({ reviewerSlug: "real", reviewedAt: "2026-13-45" }), find)).toBe(false);
-    expect(hasRealReview(doc({ reviewerSlug: "real", reviewedAt: "2026-10-01" }), find)).toBe(true);
+describe("medical page noindex rule (§9.2, §v4.D)", () => {
+  it("requires a real team member of the right specialty and a valid, past review date", () => {
+    expect(hasRealReview(doc("acnee"), find, today)).toBe(false);
+    expect(
+      hasRealReview(doc("acnee", { reviewerId: "missing", reviewedAt: "2026-10-01" }), find, today),
+    ).toBe(false);
+    expect(hasRealReview(doc("acnee", { reviewerId: "derm-1", reviewedAt: "2026-13-45" }), find, today)).toBe(
+      false,
+    );
+    expect(hasRealReview(doc("acnee", { reviewerId: "derm-1", reviewedAt: "2027-01-01" }), find, today)).toBe(
+      false,
+    );
+    expect(hasRealReview(doc("acnee", { reviewerId: "uro-1", reviewedAt: "2026-10-01" }), find, today)).toBe(
+      false,
+    );
+    expect(hasRealReview(doc("acnee", { reviewerId: "derm-1", reviewedAt: "2026-10-01" }), find, today)).toBe(
+      true,
+    );
+    expect(
+      hasRealReview(
+        doc("disfunctie-erectila", { reviewerId: "uro-1", reviewedAt: "2026-10-01" }),
+        find,
+        today,
+      ),
+    ).toBe(true);
+    expect(
+      hasRealReview(
+        doc("disfunctie-erectila", { reviewerId: "derm-1", reviewedAt: "2026-10-01" }),
+        find,
+        today,
+      ),
+    ).toBe(false);
   });
 
   it("never indexes a medical page without a real review, even in launched production", () => {
@@ -50,29 +82,42 @@ describe("medical page noindex rule (section 9.2)", () => {
     ];
     expect(docs.length).toBeGreaterThan(0);
     for (const d of docs) {
-      expect(isMedicalDocIndexable(d, content.getClinician, prodOn)).toBe(
-        hasRealReview(d, content.getClinician),
+      expect(isMedicalDocIndexable(d, content.getTeamMember, prodOn)).toBe(
+        hasRealReview(d, content.getTeamMember),
       );
-      expect(isMedicalDocIndexable(d, content.getClinician, {} as NodeJS.ProcessEnv)).toBe(false);
+      expect(isMedicalDocIndexable(d, content.getTeamMember, {} as NodeJS.ProcessEnv)).toBe(false);
     }
   });
 
-  it("emits reviewedBy in structured data only for a real reviewer", () => {
+  it("no page is marked as reviewed in the repository yet (owner records reviews, docs/REVIEW.md)", () => {
+    const docs = [
+      ...content.listConditions().map((c) => c.doc),
+      ...content.listGuides(),
+      ...content.listTreatments(),
+    ];
+    for (const d of docs) expect(d.review, d.slug).toBeUndefined();
+  });
+});
+
+describe("clinician privacy (§v4.D)", () => {
+  it("team members carry only an opaque id, specialty and credential type", () => {
+    for (const m of team) {
+      expect(Object.keys(m).sort()).toEqual(["credentialType", "id", "kind", "specialty"]);
+      expect(m.id).toMatch(/^[a-z]+-\d+$/);
+    }
+  });
+
+  it("reviewedBy is the organisation (never a Person) and only with a visible review", () => {
     const d = content.getGuide("cauzele-caderii-parului")!;
-    expect(medicalPageJsonLd(d, "/x", "Alopecie androgenetică")).not.toHaveProperty("reviewedBy");
-    const withReviewer = medicalPageJsonLd(d, "/x", "Alopecie androgenetică", {
-      name: "Dr. A",
-      credential: "c",
-      reviewedAt: "2026-10-01",
-    });
-    expect(withReviewer).toHaveProperty("reviewedBy.name", "Dr. A");
-  });
-
-  it("does not count temporary clinicians as reviewers", () => {
-    for (const c of content.listClinicians().filter((c) => c.temporary)) {
-      expect(
-        hasRealReview(doc({ reviewerSlug: c.slug, reviewedAt: "2026-10-01" }), content.getClinician),
-      ).toBe(false);
-    }
+    const none = medicalPageJsonLd(d, "/x", "Alopecie androgenetică");
+    expect(none).not.toHaveProperty("reviewedBy");
+    expect(none).not.toHaveProperty("lastReviewed");
+    const reviewed = medicalPageJsonLd(d, "/x", "Alopecie androgenetică", "2026-10-01") as Record<
+      string,
+      unknown
+    >;
+    expect(reviewed.lastReviewed).toBe("2026-10-01");
+    expect(reviewed.reviewedBy).toEqual({ "@id": "https://telegen.ro/#organizatie" });
+    expect(JSON.stringify(reviewed)).not.toContain('"Person"');
   });
 });

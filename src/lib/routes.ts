@@ -29,11 +29,7 @@ export function allRoutes(): RouteEntry[] {
     ...content.listTreatments(),
   ].map((d) => ({ path: hrefForDoc(d), indexable: reviewContext(d).indexable, lastModified: d.updatedAt }));
 
-  const clinicians = content.listClinicians();
-  const team: RouteEntry[] = [
-    { path: "/echipa-medicala", indexable: clinicians.some((c) => !c.temporary) },
-    ...clinicians.map((c) => ({ path: `/echipa-medicala/${c.slug}`, indexable: !c.temporary })),
-  ];
+  const team: RouteEntry[] = [{ path: "/echipa-medicala", indexable: true }];
 
   return [...staticPages, ...docs, ...team];
 }

@@ -13,8 +13,6 @@ export const flags = {
   ratings: false,
   /** Reviews carousel. Needs real, consented, verifiable reviews. */
   reviews: false,
-  /** Doctor photos, carousel, grid and quotes. Needs confirmed clinicians. */
-  doctorProfiles: false,
   /** Certification / registration badges. Needs real registrations. */
   certificationBadges: false,
   /** Refund promise. Owner commercial + legal decision. */

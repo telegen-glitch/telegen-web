@@ -29,7 +29,7 @@ export function MedicalArticle({
 }) {
   const order = sourceOrderFor(doc);
   const sources = content.getSources(order);
-  const { reviewer, realReviewer } = reviewContext(doc);
+  const { reviewer, reviewedAt } = reviewContext(doc);
   const condition = content.getCondition(doc.conditionSlug);
 
   return (
@@ -46,7 +46,7 @@ export function MedicalArticle({
         </header>
 
         <div className="container-page pt-8 pb-16 md:pt-10 md:pb-24">
-          <ReviewMeta doc={doc} reviewer={reviewer} />
+          <ReviewMeta doc={doc} reviewer={reviewer} reviewedAt={reviewedAt} />
 
           <div className="mt-10 grid gap-12 lg:grid-cols-[minmax(0,42rem)_1fr] lg:gap-16">
             <div className="min-w-0">
@@ -92,20 +92,7 @@ export function MedicalArticle({
         <ClosingCta title="Vrei o părere medicală?" accent="Începe cu evaluarea." />
       )}
 
-      <JsonLd
-        data={medicalPageJsonLd(
-          doc,
-          path,
-          condition?.medicalName ?? doc.title,
-          realReviewer && doc.review
-            ? {
-                name: realReviewer.name,
-                credential: realReviewer.credential ?? "",
-                reviewedAt: doc.review.reviewedAt,
-              }
-            : undefined,
-        )}
-      />
+      <JsonLd data={medicalPageJsonLd(doc, path, condition?.medicalName ?? doc.title, reviewedAt)} />
       <JsonLd data={faqJsonLd(doc.faqs)} />
     </>
   );

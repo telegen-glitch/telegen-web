@@ -173,6 +173,53 @@ All section 11 gates, plus:
 ### I. Report (phone-sized)
 Preview link first, then the list of new URLs, then the reviewers and blockers needed, in at most 5 bullets.
 
+## v4. FINAL BUILD (launch-ready site)
+Execute end to end without stopping for confirmation, on branch claude/telegen-production-build-sv94k7.
+
+HARD RULES (unchanged): never touch DNS; production stays noindex (SITE_INDEXING off) until the owner launches; serviceOpen stays OFF for every condition; never invent clinicians, reviews, statistics, sources or press; medicine names never in hero, CTA, price or ad blocks; no health data in URLs, analytics, logs or storage; never report planned work as done.
+
+### A. Sources and research first
+1. Fetch and read the sources before writing: EuroGuiDerm acne guideline (2025 update, guidelines.edf.one), NICE NG198, AAD 2024 acne guideline (doi 10.1016/j.jaad.2023.12.017), EAU Guidelines on Sexual and Reproductive Health (latest), EMA product information and referrals (sildenafil, tadalafil, isotretinoin/retinoids, oral tetracyclines, finasteride), ANMDM nomenclator (nomenclator.anm.ro) for Romanian prescription status. Verify every entry in src/content/sources.ts (URL resolves, citation correct); fix wrong ones.
+2. Romanian keyword research (autocomplete, People Also Ask, related searches, top-ranking RO pages) for every URL in docs/keywords-ro.md plus hair loss. Finalize docs/keywords-ro.md (one primary intent per URL; merge URLs without distinct intent into the hub). Use PAA questions for H2s and FAQs.
+3. Capture fellos.nl (home, a condition page, acne and ED or equivalent) and 2 competitors with scripts/capture-reference.mjs. Complete docs/token-map.md and docs/motion-spec.md with measured values. Run the §4c.E parity passes (3 loops) on home, hair loss, acne and ED at 360 and 1280.
+
+### B. Write and publish acne + ED (all 17 pages)
+Write all draft pages in Romanian (ș ț comma-below) from the sources read in A and set status "published": /acnee (+ tipuri, cauze, tratament, cicatrici); /disfunctie-erectila (+ cauze, tratament, sanatatea-inimii); /tratamente: peroxid-de-benzoil, adapalen, tretinoin, clindamicina-topica, doxiciclina-limeciclina, isotretinoin (information only), sildenafil, tadalafil.
+Every page: answer-first "Pe scurt" of 40–60 words; H2s from real PAA questions; every section cited; 4–6 FAQs; limitations; related links (≥3 in, ≥3 out, no orphans); medical review meta; MedicalCondition entity or Drug data with terms visible on the page. Length: hubs 1,200–1,800 words, subpages 900–1,400, medicine pages 700–1,100. Medicine pages neutral, no CTA, no price. ED: no performance or size language, discreet, cardiovascular link explained, nitrate and riociguat warnings prominent. Acne: when to see a doctor in person (nodules, scarring, sudden adult onset).
+Make all three conditions available across the site (hero, chips, cards, topic picker, mega-menu, mobile menu, footer, /afectiuni, /ghiduri, /tratamente, evaluation topic screen). Delete the "Pregătim protocolul clinic…" copy and the upcoming-topic path if unused. Recheck every acne/ED hard-stop and safety text against the sources.
+
+### C. GEO / SEO fixes
+1. ConditionView: no hard-coded hair-loss wording; per-condition data. ED never mentions dermatologist.
+2. Move the hair-loss hub to /caderea-parului; 301 /afectiuni/caderea-parului, /alopecie, /alopecie-androgenetica to it; remove the old reverse redirect; update links, breadcrumbs, routes, sitemap, tests. /afectiuni stays the listing hub.
+3. Positioning: Telegen is an online men's health clinic. Rewrite homepage title, description and hero, root default title, siteConfig.description and hub metadata to cover every published condition (lists generated from published content). No medicine names.
+4. Hair-loss hub entity and minoxidil/finasteride drug data filled (terms visible; prescription status per ANMDM).
+5. Cite the 8 PENDING_CITATION hair-loss sections from verified sources (rewrite or remove unsourced claims), then delete the allowance.
+6. Titles ≤ 60 characters including " | Telegen"; meta descriptions 120–160. Unit test.
+7. Open Graph images per page with next/og (title + brand, no medicine names on condition pages); twitter:card summary_large_image.
+8. `pnpm geo:report` → docs/geo-status.md from allRoutes() + content (index status + reason, title/description length, answer-first word count, FAQs, sources, links in/out, schema types).
+
+### D. Clinician privacy model (owner decision: 2 real accredited doctors, never named or pictured publicly)
+1. Clinician kind "team-member": opaque id (e.g. "derm-1"), specialty, credential type. No names, parafă codes or photos anywhere in the repo, docs, commits or schema. Remove the placeholder role page.
+2. /echipa-medicala: team by specialty and CMR registration; every patient receives the doctor's name and parafă code before the consult. No photos, no invented people, no stock images.
+3. Review = { reviewerId, reviewedAt }. Indexing gate: published + reviewerId of a real team member + valid date. Visible line: "Revizuit medical de un medic [specialitate] din echipa Telegen · {data}", linked to /politica-editoriala.
+4. Schema: reviewedBy = Organization (#organizatie) + lastReviewed, only when the visible line shows. Never a Person. Tested.
+5. Remove every promise that doctors will be "prezentați pe site cu nume, grad profesional și cod de parafă".
+6. Do NOT mark any page as reviewed. docs/REVIEW.md: how the owner records a review (file, fields, one commit per page) and a per-page doctor sign-off checklist. The owner keeps the name-to-id log privately, outside the repo.
+
+### E. Missing pieces for a final build
+1. /contact: company identity (siteConfig, TEMPORARY until supplied), contact email, response time, "nu oferim sfaturi medicale prin e-mail". In footer and sitemap.
+2. /politica-editoriala: writing and review process, source selection, update cycle, corrections, honest AI-assistance note (EU AI Act Art. 50 → docs/legal-review-needed.md).
+3. Footer legal block: company name, CUI, Reg. Com., address (TEMPORARY), ANPC SAL link; verify the current Romanian requirement (incl. EU ODR link) and record it in docs/legal-review-needed.md.
+4. Content-Security-Policy compatible with next/font, JSON-LD and consent; keep existing headers; no console CSP errors.
+5. GOOGLE_SITE_VERIFICATION / BING_SITE_VERIFICATION env vars, rendered only when set and only in production.
+6. Per-condition price config (empty); Pricing renders only when the flag is on AND a price exists. No placeholder prices.
+7. docs/LAUNCH.md: exact owner steps (Vercel env vars incl. SITE_INDEXING=on, adding telegen.ro in Vercel and copying the DNS records Vercel shows, keeping email DNS untouched, submitting sitemap.xml in Search Console and Bing, pricing flag, prerequisites for any serviceOpen).
+8. docs/clinical-app-architecture.md: design only, for app.telegen.ro (EU hosting, accounts, GDPR art. 9 consent, encrypted intake, photo upload, doctor dashboard, e-prescription handoff, payments, pharmacy fulfilment, audit log, retention), options and costs, for owner + lawyer review.
+9. Fix anything else a launch-ready, Fellos-class site needs; list each addition in STATUS.md.
+
+### F. Quality gates and report
+Format, lint, typecheck, unit, build, e2e (all routes at 360/768/1280, axe AA, hard-stop paths), Lighthouse mobile on home and one page per condition (Performance ≥ 90, Accessibility 100, SEO 100 except intended noindex). Logical commits, push, keep PR #1 current. Update STATUS.md, open-items.md, geo-status.md. Final report: every item DONE / NOT DONE / BLOCKED with reason, plus open owner decisions.
+
 ## 8. GEO/SEO from the first commit
 - Semantic HTML, one H1, descriptive Romanian URLs, canonicals, title templates, meta descriptions, Open Graph, sitemap.xml, robots.txt, breadcrumbs, redirects, 404, alt text, responsive images.
 - JSON-LD generated from the same data as the visible page. Never fabricate schema. FAQPage only for visible FAQs; author/reviewer only when real.

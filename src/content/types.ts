@@ -33,22 +33,24 @@ export interface Source {
   kind: "guideline" | "trial" | "review" | "label" | "organisation";
 }
 
-export interface Clinician {
-  slug: string;
-  /** Real full name, or a clearly temporary role label. Never invent a person. */
-  name: string;
-  role: string;
-  /** Professional title and specialty, e.g. "Medic primar dermatovenerolog". */
-  credential?: string;
-  /** Registration with Colegiul Medicilor din România, if supplied. */
-  registration?: string;
-  bio: RichText[];
-  /** True until the owner supplies and confirms the real person's details. */
-  temporary: boolean;
+/**
+ * Clinical team member (owner decision, CLAUDE.md §v4.D): doctors are never
+ * named or pictured publicly. Only an opaque id, the specialty and the
+ * credential type live in the repo. The name-to-id log is kept by the owner,
+ * privately, outside the repository. Patients receive the doctor's name and
+ * parafă code in the clinical app before the consult.
+ */
+export interface TeamMember {
+  kind: "team-member";
+  /** Opaque id, e.g. "derm-1". Never derived from a name. */
+  id: string;
+  specialty: "dermatologie" | "urologie" | "medicina-de-familie";
+  credentialType: "medic-specialist" | "medic-primar";
 }
 
 export interface Review {
-  reviewerSlug: string;
+  /** TeamMember.id of the reviewing doctor. */
+  reviewerId: string;
   reviewedAt: ISODate;
 }
 

@@ -12,7 +12,6 @@ export const routes = [
   "/cum-functioneaza",
   "/standarde-clinice",
   "/echipa-medicala",
-  "/echipa-medicala/medic-dermatolog-coordonator",
   "/evaluare",
   "/termeni-si-conditii",
   "/politica-de-confidentialitate",

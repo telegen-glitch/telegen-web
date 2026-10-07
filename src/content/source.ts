@@ -3,12 +3,12 @@
  * local typed content can be swapped for Sanity (Phase 5) without touching pages.
  * Only published documents are ever returned.
  */
-import { clinicians, getClinician } from "./clinicians";
+import { getTeamMember, team } from "./clinicians";
 import { conditions } from "./conditions";
 import { guides } from "./guides";
 import { getSource, sources } from "./sources";
 import { treatments } from "./treatments";
-import type { Clinician, Condition, MedicalDoc, Source } from "./types";
+import type { Condition, MedicalDoc, Source, TeamMember } from "./types";
 
 export interface ContentSource {
   listConditions(): Condition[];
@@ -22,8 +22,9 @@ export interface ContentSource {
   getGuide(slug: string): MedicalDoc | undefined;
   listTreatments(conditionSlug?: string): MedicalDoc[];
   getTreatment(slug: string): MedicalDoc | undefined;
-  listClinicians(): Clinician[];
-  getClinician(slug: string): Clinician | undefined;
+  /** Clinical team by opaque id (no names; see TeamMember). */
+  listTeam(): TeamMember[];
+  getTeamMember(id: string): TeamMember | undefined;
   getSources(ids: string[]): Source[];
   allSources(): Source[];
 }
@@ -47,8 +48,8 @@ export const localContent: ContentSource = {
   listTreatments: (conditionSlug) =>
     published(treatments).filter((t) => !conditionSlug || t.conditionSlug === conditionSlug),
   getTreatment: (slug) => published(treatments).find((t) => t.slug === slug),
-  listClinicians: () => clinicians,
-  getClinician,
+  listTeam: () => team,
+  getTeamMember,
   getSources: (ids) => ids.map(getSource).filter((s): s is Source => Boolean(s)),
   allSources: () => sources,
 };

@@ -27,7 +27,7 @@ export function ConditionView({ condition }: { condition: Condition }) {
   const { doc, timeline } = condition;
   const path = condition.basePath;
   const order = sourceOrderFor(doc, condition);
-  const { reviewer, realReviewer } = reviewContext(doc);
+  const { reviewer, reviewedAt } = reviewContext(doc);
 
   return (
     <>
@@ -91,7 +91,7 @@ export function ConditionView({ condition }: { condition: Condition }) {
         )}
 
         <div className="container-page pt-8">
-          <ReviewMeta doc={doc} reviewer={reviewer} />
+          <ReviewMeta doc={doc} reviewer={reviewer} reviewedAt={reviewedAt} />
         </div>
 
         {/* Education integrated with the service */}
@@ -181,7 +181,7 @@ export function ConditionView({ condition }: { condition: Condition }) {
           </div>
         </section>
 
-        <TeamSection clinicians={content.listClinicians()} />
+        <TeamSection />
 
         {/* FAQ, limitations, sources, related */}
         <div className="border-t border-line-soft">
@@ -208,20 +208,7 @@ export function ConditionView({ condition }: { condition: Condition }) {
 
       <ClosingCta />
 
-      <JsonLd
-        data={medicalPageJsonLd(
-          doc,
-          path,
-          condition.medicalName,
-          realReviewer && doc.review
-            ? {
-                name: realReviewer.name,
-                credential: realReviewer.credential ?? "",
-                reviewedAt: doc.review.reviewedAt,
-              }
-            : undefined,
-        )}
-      />
+      <JsonLd data={medicalPageJsonLd(doc, path, condition.medicalName, reviewedAt)} />
       <JsonLd data={faqJsonLd(doc.faqs)} />
     </>
   );

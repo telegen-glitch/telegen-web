@@ -106,7 +106,8 @@ export function medicalPageJsonLd(
   doc: MedicalDoc,
   path: string,
   conditionMedicalName: string,
-  realReviewer?: { name: string; credential: string; reviewedAt: string },
+  /** Only when the visible "Revizuit medical…" line is shown (real review). */
+  reviewedAt?: string,
 ): JsonLd {
   const about =
     doc.kind === "treatment"
@@ -158,15 +159,9 @@ export function medicalPageJsonLd(
     about,
     isPartOf: { "@id": `${siteConfig.url}/#website` },
     publisher: { "@id": `${siteConfig.url}/#organizatie` },
-    ...(realReviewer
-      ? {
-          lastReviewed: realReviewer.reviewedAt,
-          reviewedBy: {
-            "@type": "Person",
-            name: realReviewer.name,
-            jobTitle: realReviewer.credential,
-          },
-        }
+    // Doctors are never named (§v4.D): the reviewer is the organisation, never a Person.
+    ...(reviewedAt
+      ? { lastReviewed: reviewedAt, reviewedBy: { "@id": `${siteConfig.url}/#organizatie` } }
       : {}),
   };
 }

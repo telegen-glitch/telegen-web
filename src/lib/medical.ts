@@ -1,5 +1,5 @@
 import { content } from "@/content/source";
-import type { Clinician, Condition, MedicalDoc } from "@/content/types";
+import type { Condition, MedicalDoc, TeamMember } from "@/content/types";
 import { hasRealReview, isMedicalDocIndexable } from "@/lib/indexing";
 import { citationOrder } from "@/lib/rich-text";
 
@@ -29,17 +29,17 @@ export function sourceOrderFor(doc: MedicalDoc, condition?: Condition): string[]
 }
 
 export interface ReviewContext {
-  reviewer?: Clinician;
-  realReviewer?: Clinician;
+  /** The reviewing team member, only when the review is real (§v4.D). */
+  reviewer?: TeamMember;
+  reviewedAt?: string;
   indexable: boolean;
 }
 
 export function reviewContext(doc: MedicalDoc): ReviewContext {
-  const reviewer = doc.review ? content.getClinician(doc.review.reviewerSlug) : undefined;
-  const real = hasRealReview(doc, content.getClinician);
+  const real = hasRealReview(doc, content.getTeamMember);
   return {
-    reviewer,
-    realReviewer: real ? reviewer : undefined,
-    indexable: isMedicalDocIndexable(doc, content.getClinician),
+    reviewer: real && doc.review ? content.getTeamMember(doc.review.reviewerId) : undefined,
+    reviewedAt: real ? doc.review?.reviewedAt : undefined,
+    indexable: isMedicalDocIndexable(doc, content.getTeamMember),
   };
 }
