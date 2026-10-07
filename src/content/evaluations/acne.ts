@@ -2,7 +2,8 @@ import { adultQuestion, minorStop } from "./shared";
 import type { EvaluationDefinition } from "./types";
 
 /**
- * Acne evaluation. No photo upload (CLAUDE.md 7b). Red flags from 7c.C end on a
+ * Acne evaluation. No photo upload (CLAUDE.md 7b). Wording checked against the source pack
+ * (docs/sources/acne.md, 2026-10-07). Red flags from 7c.C end on a
  * hard stop recommending an in-person consult: nodular or scarring acne, fever
  * with severe acne, sudden severe adult-onset acne, current isotretinoin
  * (specialist-supervised), pregnancy or breastfeeding.
@@ -121,7 +122,7 @@ export const acneEvaluation: EvaluationDefinition = {
     {
       id: "isotretinoin",
       title: "Ai luat vreodată isotretinoin?",
-      help: "Un tratament pe gură pentru acneea severă, prescris doar de medicul dermatolog.",
+      help: "Un tratament pe gură pentru acneea severă, folosit sub supravegherea medicului specialist.",
       type: "single",
       options: [
         { value: "never", label: "Nu" },
@@ -162,7 +163,7 @@ export const acneEvaluation: EvaluationDefinition = {
     {
       id: "sudden-adult",
       title: "Ai nevoie de un consult în persoană",
-      text: "Acneea apărută brusc și sever la vârstă adultă poate avea o cauză care trebuie investigată, de exemplu hormonală sau legată de un medicament. Programează un consult la un medic dermatolog.",
+      text: "Acneea apărută brusc și sever la vârstă adultă trebuie văzută de un medic dermatolog în persoană, care stabilește de unde vine și ce investigații sunt necesare.",
     },
     {
       id: "systemic",
@@ -177,6 +178,11 @@ export const acneEvaluation: EvaluationDefinition = {
     },
   ],
   notes: [
+    {
+      when: [{ question: "areas", anyOf: ["back", "chest"] }],
+      tone: "info",
+      text: "Când acneea se întinde pe spate sau pe piept, medicul poate lua în calcul mai devreme un tratament pe gură. Va discuta opțiunile cu tine.",
+    },
     {
       when: [{ question: "scars", anyOf: ["unsure"] }],
       tone: "info",

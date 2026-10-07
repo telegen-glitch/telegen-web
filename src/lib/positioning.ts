@@ -17,5 +17,5 @@ export function homeTitle(): string {
 }
 
 export function homeDescription(): string {
-  return `Clinică online pentru bărbați din România: evaluare făcută de un medic pentru ${publishedConditionList()}, plan de tratament clar și urmărire, de pe telefon.`;
+  return `Clinică online pentru bărbați: un medic evaluează ${publishedConditionList()}, cu plan de tratament clar și urmărire de pe telefon.`;
 }

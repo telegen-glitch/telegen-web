@@ -6,6 +6,8 @@ import type { EvaluationDefinition, HardStop, Question } from "./types";
  * Any positive answer, and "not sure" on medication questions, ends on a hard
  * stop recommending in-person care. Wording is original: no validated
  * questionnaire (e.g. IIEF-5) is reproduced (see docs/legal-review-needed.md).
+ * Checked against the source pack (docs/sources/erectile-dysfunction.md, 2026-10-07). The
+ * alpha-blocker hard stop stays until the reviewing doctor decides (docs/open-items.md).
  */
 const yesNoUnsure = [
   { value: "no", label: "Nu" },
@@ -71,7 +73,7 @@ const stops: HardStop[] = [
   {
     id: "nitrates",
     title: "Ai nevoie de un consult în persoană",
-    text: "Unele tratamente pentru disfuncția erectilă nu se pot asocia cu nitrații sau cu riociguatul, iar combinația poate scădea periculos tensiunea arterială. Discută cu medicul tău cardiolog sau de familie înainte de orice tratament. Dacă nu știi exact ce medicamente iei, ia lista lor la consult.",
+    text: "Tratamentul oral obișnuit pentru disfuncția erectilă nu se folosește niciodată împreună cu nitrații (inclusiv „poppers”) sau cu riociguatul. Discută cu medicul tău cardiolog sau de familie înainte de orice tratament. Dacă nu știi exact ce medicamente iei, ia lista lor la consult.",
   },
   {
     id: "cardiac-event",

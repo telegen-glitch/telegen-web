@@ -154,6 +154,15 @@ export interface Condition {
     asideAccent: string;
     /** Condition-led CTA label, e.g. "Evaluare dermatologică online". */
     evaluationLabel: string;
+    /** Illustrative phone screens of Telegen's own UI on the hub (no photos for ED). */
+    mockup?: {
+      question: string;
+      options: string[];
+      goal: string;
+      /** When the first check-in happens, e.g. "Luna 3". */
+      checkIn: string;
+      followUp: string;
+    };
   };
   status: "published" | "draft";
   doc: MedicalDoc;

@@ -1,4 +1,5 @@
-import { draftDoc } from "./drafts";
+import { acneMedicines } from "./medicines/acne";
+import { edMedicines } from "./medicines/erectile-dysfunction";
 import type { MedicalDoc } from "./types";
 
 /**
@@ -246,86 +247,8 @@ export const treatments: MedicalDoc[] = [
   },
 ];
 
-/**
- * Medicine information for acne and erectile dysfunction (CLAUDE.md 7c.B).
- * Drafts until written from the EMA / ANMDM product information and guidelines.
- */
-const medicine = (
-  slug: string,
-  conditionSlug: string,
-  title: string,
-  metaTitle: string,
-  description: string,
-) =>
-  draftDoc({
-    kind: "treatment",
-    slug,
-    conditionSlug,
-    graphRole: "treatment",
-    title,
-    metaTitle,
-    metaDescription: description,
-    h1: `${title}: informații despre tratament`,
-  });
-
-treatments.push(
-  medicine(
-    "peroxid-de-benzoil",
-    "acnee",
-    "Peroxid de benzoil",
-    "Peroxid de benzoil: cum acționează",
-    "Informații neutre despre peroxidul de benzoil în acnee: cum acționează, cum se aplică, iritația pielii, decolorarea textilelor și precauții.",
-  ),
-  medicine(
-    "adapalen",
-    "acnee",
-    "Adapalen",
-    "Adapalen: cum acționează și efecte adverse",
-    "Informații neutre despre adapalen, un retinoid topic folosit în acnee: cum acționează, cum se folosește, efecte adverse și precauții în sarcină.",
-  ),
-  medicine(
-    "tretinoin",
-    "acnee",
-    "Tretinoin",
-    "Tretinoin: cum acționează și efecte adverse",
-    "Informații neutre despre tretinoinul topic în acnee: cum acționează, cum se folosește, iritația pielii, protecția solară și precauții în sarcină.",
-  ),
-  medicine(
-    "clindamicina-topica",
-    "acnee",
-    "Clindamicină topică",
-    "Clindamicină topică în acnee",
-    "Informații neutre despre clindamicina topică în acnee: de ce se folosește doar în combinație și cum se evită rezistența bacteriană.",
-  ),
-  medicine(
-    "doxiciclina-limeciclina",
-    "acnee",
-    "Doxiciclină și limeciclină",
-    "Doxiciclină și limeciclină în acnee",
-    "Informații neutre despre antibioticele orale doxiciclină și limeciclină în acnee: cât durează, cu ce se asociază, efecte adverse.",
-  ),
-  medicine(
-    "isotretinoin",
-    "acnee",
-    "Isotretinoin",
-    "Isotretinoin: ce trebuie să știi",
-    "Informații despre isotretinoin în acneea severă: prescris doar sub supravegherea dermatologului, programul de prevenire a sarcinii, efecte adverse.",
-  ),
-  medicine(
-    "sildenafil",
-    "disfunctie-erectila",
-    "Sildenafil",
-    "Sildenafil: cum acționează și precauții",
-    "Informații neutre despre sildenafil în disfuncția erectilă: cum acționează, contraindicații (nitrați), interacțiuni, efecte adverse.",
-  ),
-  medicine(
-    "tadalafil",
-    "disfunctie-erectila",
-    "Tadalafil",
-    "Tadalafil: cum acționează și precauții",
-    "Informații neutre despre tadalafil în disfuncția erectilă: cum acționează, durata efectului, contraindicații, efecte adverse.",
-  ),
-);
+/** Acne and erectile dysfunction medicine information (CLAUDE.md 7c.B). */
+treatments.push(...acneMedicines, ...edMedicines);
 
 export function getTreatment(slug: string): MedicalDoc | undefined {
   return treatments.find((t) => t.slug === slug && t.status === "published");

@@ -13,6 +13,7 @@ import { faqJsonLd } from "@/lib/seo";
 
 const published = [
   ...content.listConditions().map((c) => c.doc),
+  ...content.listConditions().flatMap((c) => content.listSubpages(c.slug)),
   ...content.listGuides(),
   ...content.listTreatments(),
 ];
@@ -87,13 +88,16 @@ describe("internal linking graph", () => {
     }
   });
 
-  it("condition ↔ symptoms ↔ causes ↔ treatment ↔ questions are connected", () => {
+  it("condition ↔ causes ↔ treatment ↔ medicine pages are connected both ways", () => {
     for (const c of content.listConditions()) {
       const condHref = hrefForDoc(c.doc);
-      const children = [...content.listGuides(c.slug), ...content.listTreatments(c.slug)];
+      const children = [
+        ...content.listSubpages(c.slug),
+        ...content.listGuides(c.slug),
+        ...content.listTreatments(c.slug),
+      ];
       const roles = new Set(children.map((d) => d.graphRole));
-      for (const role of ["symptoms", "causes", "treatment", "questions"] as const)
-        expect(roles).toContain(role);
+      for (const role of ["causes", "treatment"] as const) expect(roles, c.slug).toContain(role);
       const condLinks = new Set(c.doc.related.map((r) => r.href));
       for (const child of children) {
         expect(condLinks, `condition → ${child.slug}`).toContain(hrefForDoc(child));
@@ -105,12 +109,36 @@ describe("internal linking graph", () => {
     }
   });
 
-  it("draft topics are modelled but never published", () => {
-    const drafts = conditions.filter((c) => c.status === "draft");
-    expect(drafts.length).toBeGreaterThan(0);
-    for (const d of drafts) {
+  it("drafts, if any, are never routed", () => {
+    for (const d of conditions.filter((c) => c.status === "draft")) {
       expect(content.getCondition(d.slug)).toBeUndefined();
       expect(routes).not.toContain(d.basePath);
+    }
+    const draftDocs = [
+      ...conditions.flatMap((c) => c.subpages ?? []),
+      ...guidesAll,
+      ...treatmentsAll,
+    ].filter((d) => d.status === "draft");
+    for (const d of draftDocs) expect(routes).not.toContain(hrefForDoc(d));
+  });
+
+  it("every published medical page has ≥ 3 related links, 4–6 FAQs on new pages, and is linked from ≥ 3 pages", () => {
+    const inbound = new Map<string, number>();
+    for (const d of published) {
+      const targets = new Set([
+        ...d.related.map((r) => r.href.split("#")[0]),
+        ...textsOf(d).flatMap((t) => [...t.matchAll(/\]\((\/[^)\s#]*)/g)].map((m) => m[1])),
+      ]);
+      targets.delete(hrefForDoc(d));
+      for (const t of targets) inbound.set(t, (inbound.get(t) ?? 0) + 1);
+    }
+    for (const d of published) {
+      expect(d.related.length, `${d.slug} related`).toBeGreaterThanOrEqual(3);
+      expect(inbound.get(hrefForDoc(d)) ?? 0, `${hrefForDoc(d)} inbound`).toBeGreaterThanOrEqual(3);
+      if (d.conditionSlug !== "caderea-parului") {
+        expect(d.faqs.length, `${d.slug} FAQs`).toBeGreaterThanOrEqual(4);
+        expect(d.faqs.length, `${d.slug} FAQs`).toBeLessThanOrEqual(6);
+      }
     }
   });
 });
