@@ -1,6 +1,45 @@
 # Status
 
-_Last updated: 2026-10-07 (v4.4: hair and acne panel illustrations redesigned)_
+_Last updated: 2026-10-07 (v4.5: realistic WebGL scenes for hair and acne, branch claude/hero-realistic)_
+
+## v4.5 realistic WebGL scenes for hair and acne (branch claude/hero-realistic, separate PR, not merged)
+
+DONE (verified locally, 2026-10-07):
+
+- The ED line (Pulse) is unchanged. Hair and acne are now GPU-rendered scenes in raw WebGL2, no library
+  (`src/components/home/panels/scenes/`): `gl.ts` (helpers, shared duotone grade in brand colours, same key
+  light), `hair.ts`, `skin.ts`. Loader: `SceneArt.tsx`. Gzipped chunks: hair 4.5 KB, skin 3.4 KB (target ≤ 30).
+- Hair: about 1,400 strands on desktop, 700 on mobile, 480 on low-end devices (instanced, tapered ribbons
+  with curl, dark roots and light tips, Kajiya-Kay sliding highlight, 3 depth layers, wind sway). Story: six
+  strands detach and drift down like feathers, then new strands grow in over about 4 s until the field is
+  fuller; afterwards a single strand is shed and regrown every 24 s. On desktop the strands lean away from
+  the cursor (spring); no touch interaction.
+- Acne: a full-panel skin shader (Worley pores, fbm micro-relief and crossing fine furrows, normal from the
+  height field, wrapped diffuse as a soft subsurface stand-in, faint sheen). Six soft raised areas with a
+  restrained rose tint flatten and fade over about 8 s while a light sweeps across. On desktop the light
+  follows the cursor. No pus, no sharp red.
+- Lifecycle: the scene code is imported only after page load and idle, only for the open panel while it is on
+  screen. One WebGL context at a time; disposed on close; paused offscreen and in a hidden tab; 30 fps after
+  the story. DPR cap 2 (1.5 on mobile); lower quality with fewer than 4 cores. Reduced motion, Save-Data, no
+  WebGL, no GPU (software renderer) or sustained slow frames: the poster stays.
+- Posters: `pnpm render:posters` (Playwright + sharp) renders each scene at its calm state into
+  `public/posters/{hair,skin}.{avif,webp}` (hair 38/108 KB, skin 16/19 KB). Shown in closed doors, before
+  load and in every fallback. Fixed 1400 × 560 box, no CLS. All art is `aria-hidden`. The same scenes run on
+  the /caderea-parului and /acnee hub panels (checked live at 360 and 1280).
+- Visual loop: 6 screenshot passes at 360 and 1280 (open, closed, posters, recordings). Fixed: hair reading
+  as grass, skin reading as reptile scales or cracked glaze, a washed-out grade.
+- Gates: format, lint, typecheck, 46 unit tests, build, 168 Playwright tests (0 failed; new: posters with
+  reduced motion, without WebGL and without a GPU, one live scene at a time, none for ED, no console errors).
+  Lighthouse mobile (local): home Perf 94, TBT 72 ms, CLS 0, A11y 100, LCP element the H1; /acnee 95;
+  /caderea-parului 98. SEO 66 locally only because the site is noindex (intended).
+
+NOT VERIFIED / honest notes:
+
+- Lighthouse's headless Chrome has no GPU, so it measures the poster path (as on any device without GPU
+  acceleration). The first run without the software-renderer check scored home Perf 64 (TBT 79 s). Real-GPU
+  frame times on a mid-range phone were not measured here; the slow-frame guard falls back to the poster.
+- Nothing was cut from the brief's counts or effects; the subsurface look is an approximation (wrapped
+  diffuse), not a true scattering model.
 
 ## v4.4 hair and acne illustrations redesigned
 
