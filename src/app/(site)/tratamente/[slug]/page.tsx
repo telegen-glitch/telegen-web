@@ -21,6 +21,7 @@ export async function generateMetadata({ params }: PageProps<"/tratamente/[slug]
     path: `/tratamente/${slug}`,
     indexable: reviewContext(doc).indexable,
     type: "article",
+    defaultOgImage: false,
   });
 }
 

@@ -21,6 +21,7 @@ export async function generateMetadata({ params }: PageProps<"/ghiduri/[slug]">)
     path: `/ghiduri/${slug}`,
     indexable: reviewContext(doc).indexable,
     type: "article",
+    defaultOgImage: false,
   });
 }
 

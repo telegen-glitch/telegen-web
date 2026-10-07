@@ -12,6 +12,11 @@ interface PageMetaInput {
   indexable?: boolean;
   type?: "website" | "article";
   absoluteTitle?: boolean;
+  /**
+   * Use the site-wide OG image. Pages whose route segment has its own
+   * opengraph-image file pass false, otherwise this would override it.
+   */
+  defaultOgImage?: boolean;
 }
 
 export function pageMetadata({
@@ -21,6 +26,7 @@ export function pageMetadata({
   indexable = true,
   type = "website",
   absoluteTitle = false,
+  defaultOgImage = true,
 }: PageMetaInput): Metadata {
   const index = indexable && isSiteIndexable();
   return {
@@ -34,7 +40,11 @@ export function pageMetadata({
       description,
       siteName: siteConfig.name,
       locale: siteConfig.locale,
+      ...(defaultOgImage
+        ? { images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: siteConfig.name }] }
+        : {}),
     },
+    twitter: { card: "summary_large_image" },
     robots: index
       ? { index: true, follow: true }
       : { index: false, follow: isSiteIndexable(), nocache: true },

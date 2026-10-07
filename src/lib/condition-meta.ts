@@ -15,5 +15,6 @@ export function docMetadata(doc: MedicalDoc, path = hrefForDoc(doc)): Metadata {
     path,
     indexable: reviewContext(doc).indexable,
     type: "article",
+    defaultOgImage: false,
   });
 }
