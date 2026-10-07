@@ -1,6 +1,37 @@
 # Status
 
-_Last updated: 2026-10-06 (v3 conditions expansion)_
+_Last updated: 2026-10-07 (v4 final build)_
+
+## v4 final build (CLAUDE.md §v4)
+
+DONE (verified locally, 2026-10-07):
+
+- C1 ConditionView reads all wording from per-condition data (presentation, approaches, timeline, subpages).
+- C2 Hair loss moved to /caderea-parului (301s from /afectiuni/caderea-parului, /alopecie, /alopecie-androgenetica).
+- C3 Men's-health positioning, generated from the published conditions (home title, description, Organization).
+- C4 MedicalCondition entity data for hair loss; a test fails if any schema value is not visible on the page.
+- C6 Titles ≤ 60 and descriptions 120–160 for every page, drafts included; titles unique (unit test).
+- C7 Open Graph images via next/og (self-hosted OFL fonts); medicine pages use a generic image; large Twitter card.
+- C8 `pnpm geo:report` writes docs/geo-status.md; all answer-first paragraphs now 40–60 words.
+- D Clinician privacy: no names, codes or photos anywhere; reviewer = team id + specialty, shown as "un medic
+  dermatolog din echipa Telegen"; a page counts as reviewed only with a valid date and a matching specialty
+  (tests). No page is marked reviewed. Process in docs/REVIEW.md.
+- E /contact and /politica-editoriala; footer company block (TEMPORARY until supplied) + ANPC links; CSP and HSTS
+  headers (checked in e2e, no violations); Search Console/Bing verification via env vars (production only);
+  per-condition price config (hidden while empty); docs/LAUNCH.md; docs/clinical-app-architecture.md.
+- Gates: format, lint, typecheck, 41 unit tests, build, 91 Playwright tests (0 failed; incl. 19 hard-stop paths,
+  axe clean at 360/1280, CSP). Lighthouse mobile (local, idle): home 95–96, /caderea-parului 97, /evaluare 99,
+  /contact 96; Accessibility 100, Best Practices 100; SEO 66 only because of the intended noindex.
+
+BLOCKED by network (every external host denied in this session, incl. web fetch; Semrush has no API units):
+
+- A1 fetching EAU / EuroGuiDerm / NICE / EMA / ANMDM sources; A2 Romanian keyword research; A3 Fellos capture and
+  parity passes.
+- B the 17 acne and ED pages stay drafts (no clinical text without fetched sources).
+- C5 the 8 older hair-loss sections still lack citations (PENDING_CITATION allowance kept).
+- Drug prescriptionStatus for minoxidil/finasteride (needs ANMDM status).
+
+NEXT: start a new session (network settings apply to new sessions) and run A, B, C5 from the v4 brief.
 
 ## v3 conditions expansion: acne + ED (CLAUDE.md §7c), in progress
 
