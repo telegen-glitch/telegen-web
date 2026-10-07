@@ -373,8 +373,9 @@
 /*
  * Hero condition panels (v4.3). Mobile first: stacked cards, one open. From
  * 80rem: vertical doors whose flex-grow opens one at a time. Motion is limited
- * to transform, opacity and stroke-dashoffset; illustrations play only on the
- * open panel while it is on screen ([data-playing]) and never with reduced motion.
+ * to opacity, transform and stroke-dashoffset; the illustration line is traced
+ * only on the open panel while it is on screen ([data-playing]) and is drawn in
+ * full and static with reduced motion or when its panel is closed.
  */
 .cp-panels {
   display: flex;
@@ -561,12 +562,6 @@
 }
 
 /* Illustrations at rest (also the reduced-motion and collapsed state). */
-.cp-sway {
-  transform-origin: 50% 100%;
-}
-.cp-unrest {
-  opacity: 0;
-}
 .cp-trace {
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
@@ -637,23 +632,6 @@
     animation: cp-node-in 380ms var(--ease-out-soft) both;
     animation-delay: calc(320ms + var(--i, 0) * 75ms);
   }
-  .cp-panel[data-open] .cp-sway {
-    animation: cp-sway 9s ease-in-out infinite alternate;
-  }
-  .cp-panel[data-open] .cp-sway-1 {
-    animation-duration: 11s;
-    animation-delay: -3s;
-  }
-  .cp-panel[data-open] .cp-sway-2 {
-    animation-duration: 7s;
-    animation-delay: -5s;
-  }
-  .cp-panel[data-open] .cp-unrest {
-    animation: cp-unrest 10s ease-in-out infinite;
-  }
-  .cp-panel[data-open] .cp-calm {
-    animation: cp-calm 10s ease-in-out infinite;
-  }
   .cp-panel[data-open] .cp-trace {
     animation: cp-trace 9s var(--ease-calm) infinite;
   }
@@ -701,38 +679,6 @@
   from {
     opacity: 0;
     transform: translateY(6px);
-  }
-}
-@keyframes cp-sway {
-  from {
-    transform: rotate(-1.1deg);
-  }
-  to {
-    transform: rotate(1.3deg);
-  }
-}
-@keyframes cp-unrest {
-  0%,
-  12%,
-  100% {
-    opacity: 1;
-    transform: scale(1.04);
-  }
-  55%,
-  88% {
-    opacity: 0;
-    transform: scale(1);
-  }
-}
-@keyframes cp-calm {
-  0%,
-  12%,
-  100% {
-    opacity: 0.2;
-  }
-  55%,
-  88% {
-    opacity: 1;
   }
 }
 @keyframes cp-trace {

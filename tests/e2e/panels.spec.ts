@@ -64,9 +64,25 @@ test("reduced motion renders the panels static", async ({ page }) => {
       .locator(sel)
       .first()
       .evaluate((el) => getComputedStyle(el).animationName);
-  expect(await anim(".cp-panel[data-open] .cp-sway")).toBe("none");
+  expect(await anim(".cp-panel[data-open] .cp-trace")).toBe("none");
+  // The static frame is the whole line, not a half-drawn one.
+  const offsets = await page
+    .locator(".cp-trace")
+    .evaluateAll((els) => els.map((el) => getComputedStyle(el).strokeDashoffset));
+  expect(offsets.length).toBe(3);
+  for (const o of offsets) expect(parseFloat(o)).toBe(0);
   expect(await anim(".cp-panel[data-open] .cp-route-line")).toBe("none");
   expect(await anim(".cp-panel[data-open] .cp-region")).toBe("none");
+});
+
+test("closed panels show their line whole and still", async ({ page }) => {
+  await page.goto("/");
+  const closed = page.locator(".cp-panel:not([data-open]) .cp-trace");
+  await expect(closed).toHaveCount(2);
+  for (const el of await closed.all()) {
+    expect(await el.evaluate((e) => getComputedStyle(e).animationName)).toBe("none");
+    expect(parseFloat(await el.evaluate((e) => getComputedStyle(e).strokeDashoffset))).toBe(0);
+  }
 });
 
 test("axe clean with another panel open", async ({ page }, info) => {
