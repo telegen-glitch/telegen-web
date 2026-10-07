@@ -171,7 +171,15 @@ describe("structured data mirrors visible content", () => {
       ...content.listTreatments(),
     ];
     for (const d of docs) {
-      const visible = [d.h1, d.title, ...textsOf(d), ...d.sections.map((x) => x.heading)]
+      const cond = d.kind === "condition" ? content.getCondition(d.conditionSlug) : undefined;
+      const visible = [
+        d.h1,
+        d.title,
+        ...textsOf(d),
+        ...d.sections.map((x) => x.heading),
+        // Shown on the hub: medical name (eyebrow) and the approach cards.
+        ...(cond ? [cond.medicalName, ...(cond.approaches ?? []).flatMap((a) => [a.title, a.text])] : []),
+      ]
         .join(" ")
         .toLowerCase();
       const facts = [

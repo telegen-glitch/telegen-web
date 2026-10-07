@@ -46,6 +46,17 @@ export const hairLoss: Condition = {
     kind: "condition",
     slug: "caderea-parului",
     path: "/caderea-parului",
+    // Every term below appears verbatim on the page (tested).
+    entity: {
+      alternateName: ["alopecie androgenetică"],
+      signOrSymptom: [
+        "linia frunții se retrage",
+        "părul se subțiază difuz pe creștet",
+        "cărarea pare tot mai lată",
+      ],
+      riskFactor: ["predispoziția genetică", "dihidrotestosteron (DHT)"],
+      possibleTreatment: ["Tratament topic", "Tratament oral"],
+    },
     graphRole: "condition",
     conditionSlug: "caderea-parului",
     title: "Căderea părului",
@@ -54,7 +65,7 @@ export const hairLoss: Condition = {
       "Ce este alopecia androgenetică, cum o recunoști, ce opțiuni de tratament există și la ce să te aștepți lună de lună. Evaluare dermatologică online.",
     h1: "Căderea părului",
     summary:
-      "Cea mai frecventă formă de cădere a părului, la bărbați și la femei, este alopecia androgenetică: firele devin treptat mai subțiri și mai scurte, mai ales la tâmple, pe creștet sau de-a lungul cărării. Nu se oprește de la sine, dar progresia poate fi încetinită, iar în multe cazuri densitatea se îmbunătățește cu un tratament ales de medic și urmat constant {{cite:kanti-2018}}.",
+      "Cea mai frecventă formă de cădere a părului, la bărbați și la femei, este alopecia androgenetică: firele devin treptat mai subțiri, mai ales la tâmple, pe creștet sau de-a lungul cărării. Nu se oprește de la sine, dar progresia poate fi încetinită, iar în multe cazuri densitatea se îmbunătățește cu un tratament ales de medic și urmat constant {{cite:kanti-2018}}.",
     sections: [
       {
         id: "ce-este",

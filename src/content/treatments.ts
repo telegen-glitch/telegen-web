@@ -25,7 +25,7 @@ export const treatments: MedicalDoc[] = [
       "Informații neutre despre minoxidilul topic în alopecia androgenetică: cum acționează, ce arată studiile, efecte adverse, limite și întrebări de pus medicului.",
     h1: "Minoxidil: informații despre tratament",
     summary:
-      "Minoxidilul topic este una dintre substanțele recomandate de ghidul european pentru alopecia androgenetică, atât la bărbați, cât și la femei {{cite:kanti-2018}}. Se aplică pe scalp, prelungește faza de creștere a firului și acționează doar cât timp este folosit.",
+      "Minoxidilul topic este una dintre substanțele recomandate de ghidul european pentru alopecia androgenetică, atât la bărbați, cât și la femei {{cite:kanti-2018}}. Se aplică pe scalp, prelungește faza de creștere a firului și acționează doar cât timp este folosit. Efectul se evaluează după câteva luni de aplicare constantă, nu după câteva săptămâni {{cite:kanti-2018}}.",
     sections: [
       {
         id: "cum-actioneaza",
@@ -131,7 +131,7 @@ export const treatments: MedicalDoc[] = [
       "Informații neutre despre finasteridă în alopecia androgenetică la bărbați: cum acționează, ce arată studiile, efecte adverse. Se eliberează pe rețetă.",
     h1: "Finasteridă: informații despre tratament",
     summary:
-      "Finasterida este un medicament oral, eliberat doar pe bază de rețetă, care scade transformarea testosteronului în dihidrotestosteron (DHT). Ghidul european o recomandă pentru alopecia androgenetică la bărbați {{cite:kanti-2018}}. Are efecte adverse cunoscute, iar decizia aparține medicului.",
+      "Finasterida este un medicament oral, eliberat doar pe bază de rețetă, care scade transformarea testosteronului în dihidrotestosteron (DHT). Față de placebo, încetinește progresia căderii și poate crește numărul de fire {{cite:kaufman-1998}}. Ghidul european o recomandă pentru alopecia androgenetică la bărbați {{cite:kanti-2018}}. Are efecte adverse cunoscute, iar decizia aparține medicului.",
     sections: [
       {
         id: "cum-actioneaza",
