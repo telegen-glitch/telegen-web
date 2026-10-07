@@ -3,14 +3,9 @@ import { content } from "@/content/source";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Arrow } from "@/components/ui/Button";
 import { plainText } from "@/lib/rich-text";
-import { pageMetadata } from "@/lib/seo";
+import { staticPageMetadata } from "@/lib/page-meta";
 
-export const metadata = pageMetadata({
-  title: "Informații despre tratamentele pentru căderea părului",
-  description:
-    "Informații neutre, cu surse, despre substanțele folosite în alopecia androgenetică: mecanism, dovezi, efecte adverse și limite.",
-  path: "/tratamente",
-});
+export const metadata = staticPageMetadata("/tratamente");
 
 /** Neutral medicine information. No calls to action next to medicine names (section 9.4). */
 export default function TreatmentsIndex() {

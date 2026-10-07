@@ -10,6 +10,7 @@ import type { EvaluationDefinition } from "./types";
 export const acneEvaluation: EvaluationDefinition = {
   topic: "acnee",
   name: "Acnee",
+  label: "Evaluare dermatologică online",
   introTitle: "Acneea:",
   introAccent: "câteva întrebări.",
   questions: [

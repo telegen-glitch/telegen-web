@@ -73,7 +73,7 @@ export function ScreenQuestion() {
 export function ScreenReview() {
   const steps = [
     { label: "Evaluare trimisă", done: true },
-    { label: "Medicul dermatolog analizează", active: true },
+    { label: "Medicul analizează", active: true },
     { label: "Planul tău", done: false },
   ];
   return (
@@ -96,7 +96,7 @@ export function ScreenReview() {
         ))}
       </ol>
       <div className="mt-auto rounded-2xl bg-mist p-3">
-        <p className="font-semibold text-navy-950">Medic dermatolog</p>
+        <p className="font-semibold text-navy-950">Medicul tău</p>
         <p className="text-ink-muted">cu drept de liberă practică în România</p>
       </div>
     </>

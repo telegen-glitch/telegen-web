@@ -61,8 +61,9 @@ export function hrefForDoc(doc: Pick<MedicalDoc, "kind" | "slug" | "path">): str
   if (doc.path) return doc.path;
   switch (doc.kind) {
     case "condition":
+      return `/${doc.slug}`;
     case "subpage":
-      return `/afectiuni/${doc.slug}`;
+      throw new Error(`Subpage ${doc.slug} needs an explicit path`);
     case "guide":
       return `/ghiduri/${doc.slug}`;
     case "treatment":

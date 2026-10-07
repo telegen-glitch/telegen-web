@@ -25,8 +25,9 @@ test("unknown pages return 404 with a helpful page", async ({ page }) => {
 
 test("legacy paths redirect permanently", async ({ request }) => {
   for (const [from, to] of [
-    ["/caderea-parului", "/afectiuni/caderea-parului"],
-    ["/alopecie-androgenetica", "/afectiuni/caderea-parului"],
+    ["/afectiuni/caderea-parului", "/caderea-parului"],
+    ["/alopecie-androgenetica", "/caderea-parului"],
+    ["/alopecie", "/caderea-parului"],
     ["/despre", "/standarde-clinice"],
     ["/cookies", "/politica-cookie"],
   ]) {

@@ -12,15 +12,11 @@ import { FaqList } from "@/components/medical/Faq";
 import { StartButton } from "@/components/topic/StartButton";
 import { Arrow, ButtonLink } from "@/components/ui/Button";
 import { JsonLd } from "@/components/ui/JsonLd";
-import { faqJsonLd, pageMetadata } from "@/lib/seo";
+import { publishedConditionList } from "@/lib/positioning";
+import { staticPageMetadata } from "@/lib/page-meta";
+import { faqJsonLd } from "@/lib/seo";
 
-export const metadata = pageMetadata({
-  title: "Telegen — dermatologie online. Căderea părului, evaluată de medici",
-  description:
-    "Clinică dermatologică online din România. Evaluare făcută de un medic dermatolog, plan de tratament explicat clar și urmărire în timp. Începem cu căderea părului.",
-  path: "/",
-  absoluteTitle: true,
-});
+export const metadata = staticPageMetadata("/");
 
 const homeFaqs: Faq[] = [
   {
@@ -57,10 +53,10 @@ export default function HomePage() {
   return (
     <>
       <Hero
-        eyebrow="Dermatologie online"
-        title="Căderea părului se poate trata."
-        accent="Cu un dermatolog alături."
-        text="Evaluare online, un plan stabilit de medic și urmărire pe termen lung. Totul de pe telefon, fără drumuri la cabinet."
+        eyebrow="Clinică online pentru bărbați"
+        title="Sănătatea ta, tratată discret."
+        accent="Cu un medic alături."
+        text={`Evaluare online pentru ${publishedConditionList()}, un plan stabilit de medic și urmărire pe termen lung. De pe telefon, fără drumuri la cabinet.`}
         chips={[
           ...conditions.map((c) => ({ label: c.name, href: c.basePath })),
           ...upcoming.map((t) => ({ label: t.name })),
@@ -90,7 +86,10 @@ export default function HomePage() {
           </SectionHeading>
           <ul data-reveal-group className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
             {[
-              ["Medici dermatologi", "Specialiști cu drept de liberă practică în România."],
+              [
+                "Medicul potrivit",
+                "Medici cu drept de liberă practică în România și specialitatea potrivită afecțiunii.",
+              ],
               ["Explicat clar", "Știi ce ai, ce opțiuni există și la ce să te aștepți."],
               ["Datele tale, protejate", "Datele medicale nu ajung pe acest site."],
             ].map(([t, d]) => (

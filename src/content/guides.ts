@@ -1,7 +1,7 @@
 import type { MedicalDoc } from "./types";
 
 const conditionLink = {
-  href: "/afectiuni/caderea-parului",
+  href: "/caderea-parului",
   label: "Căderea părului: privire de ansamblu",
   description: "Ce este alopecia androgenetică și cum se tratează.",
 };
@@ -16,7 +16,7 @@ export const guides: MedicalDoc[] = [
     graphRole: "symptoms",
     conditionSlug: "caderea-parului",
     title: "Semnele alopeciei androgenetice",
-    metaTitle: "Semnele alopeciei androgenetice la bărbați și femei",
+    metaTitle: "Semnele alopeciei androgenetice",
     metaDescription:
       "Cum recunoști alopecia androgenetică: retragerea liniei frunții, rărirea pe creștet, cărarea mai lată. Ce semne indică alte cauze.",
     h1: "Semnele alopeciei androgenetice",
@@ -158,7 +158,7 @@ export const guides: MedicalDoc[] = [
     graphRole: "causes",
     conditionSlug: "caderea-parului",
     title: "Cauzele căderii părului",
-    metaTitle: "Cauzele căderii părului: genetică, hormoni și alte cauze",
+    metaTitle: "Cauzele căderii părului",
     metaDescription:
       "De ce cade părul: alopecia androgenetică, căderea după boală, naștere sau stres, deficitul de fier, problemele tiroidiene și afecțiunile scalpului.",
     h1: "Cauzele căderii părului",
@@ -276,9 +276,9 @@ export const guides: MedicalDoc[] = [
     graphRole: "questions",
     conditionSlug: "caderea-parului",
     title: "Căderea părului: întrebări frecvente",
-    metaTitle: "Căderea părului: întrebări frecvente și când să ceri o evaluare",
+    metaTitle: "Căderea părului: întrebări frecvente",
     metaDescription:
-      "Răspunsuri clare la întrebările frecvente despre căderea părului: când e normal, când e alopecie androgenetică, cât durează tratamentul, ce se întâmplă dacă îl oprești.",
+      "Răspunsuri clare despre căderea părului: când e normal, când e alopecie androgenetică, cât durează tratamentul și ce se întâmplă dacă îl oprești.",
     h1: "Căderea părului: întrebări frecvente",
     summary:
       "Pierderea zilnică a unor fire de păr este normală. Merită o evaluare dacă observi că părul se subțiază la tâmple, pe creștet sau pe cărare, dacă căderea durează de mai multe luni sau dacă apare brusc, în pete ori cu simptome pe scalp {{cite:statpearls-aga}}.",
@@ -293,7 +293,7 @@ export const guides: MedicalDoc[] = [
           },
           {
             type: "p",
-            text: "Ce nu este normal este subțierea care se adâncește în timp, într-un anumit tipar. Acesta este semnul [alopeciei androgenetice](/afectiuni/caderea-parului).",
+            text: "Ce nu este normal este subțierea care se adâncește în timp, într-un anumit tipar. Acesta este semnul [alopeciei androgenetice](/caderea-parului).",
           },
         ],
       },
@@ -322,7 +322,7 @@ export const guides: MedicalDoc[] = [
         blocks: [
           {
             type: "p",
-            text: "Alopecia androgenetică este o afecțiune de durată, iar tratamentele acționează cât timp sunt folosite. Primul bilanț se face de obicei după aproximativ șase luni de utilizare constantă, iar dacă tratamentul funcționează, el continuă pentru menținere {{cite:kanti-2018}}. Pe pagina despre [căderea părului](/afectiuni/caderea-parului#asteptari) găsești la ce să te aștepți lună de lună.",
+            text: "Alopecia androgenetică este o afecțiune de durată, iar tratamentele acționează cât timp sunt folosite. Primul bilanț se face de obicei după aproximativ șase luni de utilizare constantă, iar dacă tratamentul funcționează, el continuă pentru menținere {{cite:kanti-2018}}. Pe pagina despre [căderea părului](/caderea-parului#asteptari) găsești la ce să te aștepți lună de lună.",
           },
           {
             type: "p",

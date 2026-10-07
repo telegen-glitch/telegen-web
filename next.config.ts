@@ -18,9 +18,9 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      { source: "/caderea-parului", destination: "/afectiuni/caderea-parului", permanent: true },
-      { source: "/alopecie", destination: "/afectiuni/caderea-parului", permanent: true },
-      { source: "/alopecie-androgenetica", destination: "/afectiuni/caderea-parului", permanent: true },
+      { source: "/afectiuni/caderea-parului", destination: "/caderea-parului", permanent: true },
+      { source: "/alopecie", destination: "/caderea-parului", permanent: true },
+      { source: "/alopecie-androgenetica", destination: "/caderea-parului", permanent: true },
       { source: "/conditii", destination: "/afectiuni", permanent: true },
       { source: "/evaluare-online", destination: "/evaluare", permanent: true },
       { source: "/despre", destination: "/standarde-clinice", permanent: true },

@@ -2,6 +2,9 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { describe, expect, it } from "vitest";
 import { conditions } from "@/content/conditions";
+import { guides as guidesAll } from "@/content/guides";
+import { treatments as treatmentsAll } from "@/content/treatments";
+import { staticPages } from "@/lib/page-meta";
 import { content, hrefForDoc } from "@/content/source";
 import type { MedicalDoc } from "@/content/types";
 import { docTexts } from "@/lib/medical";
@@ -131,7 +134,7 @@ describe("internal linking graph", () => {
     expect(drafts.length).toBeGreaterThan(0);
     for (const d of drafts) {
       expect(content.getCondition(d.slug)).toBeUndefined();
-      expect(routes).not.toContain(`/afectiuni/${d.slug}`);
+      expect(routes).not.toContain(d.basePath);
     }
   });
 });
@@ -188,5 +191,36 @@ describe("structured data mirrors visible content", () => {
       if (d.faqs.length === 0) expect(ld).toBeNull();
       else expect(ld!.mainEntity.map((q) => q.name)).toEqual(d.faqs.map((f) => f.question));
     }
+  });
+});
+
+describe("titles and descriptions (§v4.C6)", () => {
+  const all = [
+    ...conditions.map((c) => c.doc),
+    ...conditions.flatMap((c) => c.subpages ?? []),
+    ...guidesAll,
+    ...treatmentsAll,
+  ];
+  it("medical pages: title ≤ 60 with suffix, description 120–160 (drafts included)", () => {
+    for (const d of all) {
+      expect(`${d.metaTitle} | Telegen`.length, `${d.slug} title`).toBeLessThanOrEqual(60);
+      expect(d.metaDescription.length, `${d.slug} description`).toBeGreaterThanOrEqual(120);
+      expect(d.metaDescription.length, `${d.slug} description`).toBeLessThanOrEqual(160);
+    }
+  });
+  it("static pages: title ≤ 60 with suffix, description 120–160", () => {
+    for (const [path, m] of Object.entries(staticPages())) {
+      const title = m.absolute ? m.title : `${m.title} | Telegen`;
+      expect(title.length, `${path} title`).toBeLessThanOrEqual(60);
+      expect(m.description.length, `${path} description`).toBeGreaterThanOrEqual(120);
+      expect(m.description.length, `${path} description`).toBeLessThanOrEqual(160);
+    }
+  });
+  it("titles are unique", () => {
+    const titles = [
+      ...all.filter((d) => d.status === "published").map((d) => d.metaTitle),
+      ...Object.values(staticPages()).map((m) => m.title),
+    ];
+    expect(new Set(titles).size).toBe(titles.length);
   });
 });

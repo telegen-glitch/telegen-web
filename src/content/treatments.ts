@@ -8,7 +8,7 @@ import type { MedicalDoc } from "./types";
  */
 
 const conditionLink = {
-  href: "/afectiuni/caderea-parului",
+  href: "/caderea-parului",
   label: "Căderea părului: privire de ansamblu",
   description: "Ce este alopecia androgenetică și ce opțiuni există.",
 };
@@ -20,7 +20,7 @@ export const treatments: MedicalDoc[] = [
     graphRole: "treatment",
     conditionSlug: "caderea-parului",
     title: "Minoxidil",
-    metaTitle: "Minoxidil pentru căderea părului: cum acționează, efecte adverse",
+    metaTitle: "Minoxidil: cum acționează și efecte adverse",
     metaDescription:
       "Informații neutre despre minoxidilul topic în alopecia androgenetică: cum acționează, ce arată studiile, efecte adverse, limite și întrebări de pus medicului.",
     h1: "Minoxidil: informații despre tratament",
@@ -126,9 +126,9 @@ export const treatments: MedicalDoc[] = [
     graphRole: "treatment",
     conditionSlug: "caderea-parului",
     title: "Finasteridă",
-    metaTitle: "Finasterida în alopecia androgenetică: mecanism, efecte adverse, limite",
+    metaTitle: "Finasterida: cum acționează și efecte adverse",
     metaDescription:
-      "Informații neutre despre finasteridă în alopecia androgenetică la bărbați: cum acționează, ce arată studiile, efecte adverse și contraindicații. Medicament eliberat pe bază de rețetă.",
+      "Informații neutre despre finasteridă în alopecia androgenetică la bărbați: cum acționează, ce arată studiile, efecte adverse. Se eliberează pe rețetă.",
     h1: "Finasteridă: informații despre tratament",
     summary:
       "Finasterida este un medicament oral, eliberat doar pe bază de rețetă, care scade transformarea testosteronului în dihidrotestosteron (DHT). Ghidul european o recomandă pentru alopecia androgenetică la bărbați {{cite:kanti-2018}}. Are efecte adverse cunoscute, iar decizia aparține medicului.",
@@ -227,14 +227,20 @@ export const treatments: MedicalDoc[] = [
  * Medicine information for acne and erectile dysfunction (CLAUDE.md 7c.B).
  * Drafts until written from the EMA / ANMDM product information and guidelines.
  */
-const medicine = (slug: string, conditionSlug: string, title: string, description: string) =>
+const medicine = (
+  slug: string,
+  conditionSlug: string,
+  title: string,
+  metaTitle: string,
+  description: string,
+) =>
   draftDoc({
     kind: "treatment",
     slug,
     conditionSlug,
     graphRole: "treatment",
     title,
-    metaTitle: `${title}: cum acționează, efecte adverse, precauții`,
+    metaTitle,
     metaDescription: description,
     h1: `${title}: informații despre tratament`,
   });
@@ -244,48 +250,56 @@ treatments.push(
     "peroxid-de-benzoil",
     "acnee",
     "Peroxid de benzoil",
-    "Informații neutre despre peroxidul de benzoil în acnee: cum acționează, cum se folosește, iritație și precauții.",
+    "Peroxid de benzoil: cum acționează",
+    "Informații neutre despre peroxidul de benzoil în acnee: cum acționează, cum se aplică, iritația pielii, decolorarea textilelor și precauții.",
   ),
   medicine(
     "adapalen",
     "acnee",
     "Adapalen",
-    "Informații neutre despre adapalen, un retinoid topic folosit în acnee: mecanism, folosire, efecte adverse, sarcină.",
+    "Adapalen: cum acționează și efecte adverse",
+    "Informații neutre despre adapalen, un retinoid topic folosit în acnee: cum acționează, cum se folosește, efecte adverse și precauții în sarcină.",
   ),
   medicine(
     "tretinoin",
     "acnee",
     "Tretinoin",
-    "Informații neutre despre tretinoinul topic în acnee: cum acționează, iritație, protecție solară, sarcină.",
+    "Tretinoin: cum acționează și efecte adverse",
+    "Informații neutre despre tretinoinul topic în acnee: cum acționează, cum se folosește, iritația pielii, protecția solară și precauții în sarcină.",
   ),
   medicine(
     "clindamicina-topica",
     "acnee",
     "Clindamicină topică",
+    "Clindamicină topică în acnee",
     "Informații neutre despre clindamicina topică în acnee: de ce se folosește doar în combinație și cum se evită rezistența bacteriană.",
   ),
   medicine(
     "doxiciclina-limeciclina",
     "acnee",
     "Doxiciclină și limeciclină",
+    "Doxiciclină și limeciclină în acnee",
     "Informații neutre despre antibioticele orale doxiciclină și limeciclină în acnee: cât durează, cu ce se asociază, efecte adverse.",
   ),
   medicine(
     "isotretinoin",
     "acnee",
     "Isotretinoin",
+    "Isotretinoin: ce trebuie să știi",
     "Informații despre isotretinoin în acneea severă: prescris doar sub supravegherea dermatologului, programul de prevenire a sarcinii, efecte adverse.",
   ),
   medicine(
     "sildenafil",
     "disfunctie-erectila",
     "Sildenafil",
+    "Sildenafil: cum acționează și precauții",
     "Informații neutre despre sildenafil în disfuncția erectilă: cum acționează, contraindicații (nitrați), interacțiuni, efecte adverse.",
   ),
   medicine(
     "tadalafil",
     "disfunctie-erectila",
     "Tadalafil",
+    "Tadalafil: cum acționează și precauții",
     "Informații neutre despre tadalafil în disfuncția erectilă: cum acționează, durata efectului, contraindicații, efecte adverse.",
   ),
 );

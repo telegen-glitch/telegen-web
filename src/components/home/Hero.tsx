@@ -77,7 +77,7 @@ export function Hero({
             </PhoneMockup>
             <div className="absolute top-8 left-4 hidden rounded-2xl bg-white px-4 py-3 shadow-[var(--shadow-card)] sm:block">
               <p className="text-xs text-ink-muted">Analizat de</p>
-              <p className="text-sm font-semibold text-navy-950">un medic dermatolog</p>
+              <p className="text-sm font-semibold text-navy-950">un medic</p>
             </div>
             <div className="absolute right-4 bottom-8 hidden rounded-2xl bg-white px-4 py-3 shadow-[var(--shadow-card)] sm:block">
               <p className="text-xs text-ink-muted">Reevaluare</p>

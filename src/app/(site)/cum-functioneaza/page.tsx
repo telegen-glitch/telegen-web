@@ -5,14 +5,9 @@ import { StepStrip } from "@/components/home/StepStrip";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { StartButton } from "@/components/topic/StartButton";
 import { TemporaryNote } from "@/components/ui/Temporary";
-import { pageMetadata } from "@/lib/seo";
+import { staticPageMetadata } from "@/lib/page-meta";
 
-export const metadata = pageMetadata({
-  title: "Cum funcționează evaluarea dermatologică online",
-  description:
-    "Pas cu pas: evaluarea online, analiza făcută de un medic dermatolog, planul de tratament și urmărirea. Ce primești, ce nu facem și cum îți protejăm datele.",
-  path: "/cum-functioneaza",
-});
+export const metadata = staticPageMetadata("/cum-functioneaza");
 
 export default function HowItWorks() {
   return (
@@ -20,7 +15,7 @@ export default function HowItWorks() {
       <PageHeader
         crumbs={[{ name: "Cum funcționează", href: "/cum-functioneaza" }]}
         eyebrow="Cum funcționează"
-        title="Îngrijire dermatologică,"
+        title="Îngrijire medicală,"
         accent="explicată de la început."
         lead="Știi dinainte ce se întâmplă la fiecare pas, cine decide și ce faci dacă ai întrebări."
       >

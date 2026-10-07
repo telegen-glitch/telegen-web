@@ -26,7 +26,7 @@ const serif = Newsreader({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
-  title: { default: "Telegen — dermatologie online", template: "%s | Telegen" },
+  title: { default: "Telegen — clinică online pentru bărbați", template: "%s | Telegen" },
   description: siteConfig.description,
   applicationName: siteConfig.name,
   openGraph: { siteName: siteConfig.name, locale: siteConfig.locale, type: "website" },

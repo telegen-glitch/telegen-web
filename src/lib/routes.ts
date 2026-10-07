@@ -1,5 +1,6 @@
 import { content, hrefForDoc } from "@/content/source";
 import { reviewContext } from "@/lib/medical";
+import { staticPages as staticPagesMeta } from "@/lib/page-meta";
 
 export interface RouteEntry {
   path: string;
@@ -9,18 +10,11 @@ export interface RouteEntry {
 
 /** Every public route with its page-level indexability. Source for sitemap and tests. */
 export function allRoutes(): RouteEntry[] {
-  const staticPages: RouteEntry[] = [
-    "/",
-    "/afectiuni",
-    "/ghiduri",
-    "/tratamente",
-    "/cum-functioneaza",
-    "/standarde-clinice",
-    "/evaluare",
-    "/termeni-si-conditii",
-    "/politica-de-confidentialitate",
-    "/politica-cookie",
-  ].map((path) => ({ path, indexable: true }));
+  // Static pages come from the central metadata table (single source of truth).
+  // /contact and /politica-editoriala are listed there and built in §v4.E.
+  const staticPages: RouteEntry[] = Object.keys(staticPagesMeta())
+    .filter((path) => path !== "/echipa-medicala")
+    .map((path) => ({ path, indexable: true }));
 
   const docs = [
     ...content.listConditions().map((c) => c.doc),

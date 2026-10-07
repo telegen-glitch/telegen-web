@@ -2,12 +2,19 @@ import type { Condition } from "../types";
 
 export const hairLoss: Condition = {
   slug: "caderea-parului",
-  basePath: "/afectiuni/caderea-parului",
+  basePath: "/caderea-parului",
   name: "Căderea părului",
   shortName: "Căderea părului",
   teaser:
     "Alopecia androgenetică: subțierea treptată a părului la tâmple, creștet sau pe cărare. Se poate evalua și trata.",
   medicalName: "Alopecie androgenetică",
+  inSentence: "căderea părului",
+  presentation: {
+    heroAccent: "evaluată de un dermatolog.",
+    asideTitle: "Nu știi dacă e alopecie androgenetică?",
+    asideAccent: "Un dermatolog îți poate spune.",
+    evaluationLabel: "Evaluare dermatologică online",
+  },
   status: "published",
   guideSlugs: [
     "semnele-alopeciei-androgenetice",
@@ -38,10 +45,11 @@ export const hairLoss: Condition = {
   doc: {
     kind: "condition",
     slug: "caderea-parului",
+    path: "/caderea-parului",
     graphRole: "condition",
     conditionSlug: "caderea-parului",
     title: "Căderea părului",
-    metaTitle: "Căderea părului (alopecia androgenetică): cauze, semne și evaluare",
+    metaTitle: "Căderea părului: cauze, semne și tratament",
     metaDescription:
       "Ce este alopecia androgenetică, cum o recunoști, ce opțiuni de tratament există și la ce să te aștepți lună de lună. Evaluare dermatologică online.",
     h1: "Căderea părului",

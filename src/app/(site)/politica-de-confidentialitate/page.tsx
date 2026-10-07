@@ -1,12 +1,8 @@
 import Link from "next/link";
 import { LegalPage } from "@/components/layout/LegalPage";
-import { pageMetadata } from "@/lib/seo";
+import { staticPageMetadata } from "@/lib/page-meta";
 
-export const metadata = pageMetadata({
-  title: "Politica de confidențialitate",
-  description: "Cum tratează Telegen datele personale ale vizitatorilor site-ului telegen.ro.",
-  path: "/politica-de-confidentialitate",
-});
+export const metadata = staticPageMetadata("/politica-de-confidentialitate");
 
 export default function PrivacyPage() {
   return (

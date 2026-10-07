@@ -22,7 +22,7 @@ import { reviewContext, sourceOrderFor } from "@/lib/medical";
 import { renderRichText } from "@/lib/rich-text";
 import { faqJsonLd, medicalPageJsonLd } from "@/lib/seo";
 
-/** Condition hub page, shared by /afectiuni/[slug] and top-level hubs (/acnee). */
+/** Condition hub page, rendered at the condition's top-level URL (/caderea-parului, /acnee…). */
 export function ConditionView({ condition }: { condition: Condition }) {
   const { doc, timeline } = condition;
   const path = condition.basePath;
@@ -45,7 +45,7 @@ export function ConditionView({ condition }: { condition: Condition }) {
               <div>
                 <p className="text-eyebrow text-blue-700">{condition.medicalName}</p>
                 <h1 className="mt-3 text-display-1">
-                  {doc.h1} <span className="accent">evaluată de un dermatolog.</span>
+                  {doc.h1} <span className="accent">{condition.presentation.heroAccent}</span>
                 </h1>
                 <p className="mt-6 max-w-2xl text-lg leading-8 text-ink">
                   {renderRichText(doc.summary, order)}
@@ -104,8 +104,8 @@ export function ConditionView({ condition }: { condition: Condition }) {
           <aside className="hidden lg:block">
             <div className="sticky top-28 rounded-card-lg bg-navy-950 p-8 text-white">
               <p className="text-2xl leading-tight font-semibold tracking-tight">
-                Nu știi dacă e alopecie androgenetică?{" "}
-                <span className="accent text-blue-200">Un medic îți poate spune.</span>
+                {condition.presentation.asideTitle}{" "}
+                <span className="accent text-blue-200">{condition.presentation.asideAccent}</span>
               </p>
               <p className="mt-3 text-sm text-white/70">
                 Evaluarea durează câteva minute. Răspunsurile nu sunt salvate.

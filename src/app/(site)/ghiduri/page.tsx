@@ -4,14 +4,9 @@ import { ClosingCta } from "@/components/home/ClosingCta";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Arrow } from "@/components/ui/Button";
 import { plainText } from "@/lib/rich-text";
-import { pageMetadata } from "@/lib/seo";
+import { staticPageMetadata } from "@/lib/page-meta";
 
-export const metadata = pageMetadata({
-  title: "Ghiduri despre căderea părului",
-  description:
-    "Ghiduri clare, cu surse, despre căderea părului: semnele alopeciei androgenetice, cauzele și răspunsuri la întrebările frecvente.",
-  path: "/ghiduri",
-});
+export const metadata = staticPageMetadata("/ghiduri");
 
 const roleLabel = {
   symptoms: "Semne",

@@ -1,6 +1,6 @@
 const items = [
   { title: "Evaluare online", text: "Câteva minute, de pe telefon." },
-  { title: "Analiză medicală", text: "Un dermatolog citește tot." },
+  { title: "Analiză medicală", text: "Un medic citește tot." },
   { title: "Plan și urmărire", text: "Știi ce urmează, lună de lună." },
 ];
 

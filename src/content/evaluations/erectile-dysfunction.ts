@@ -114,6 +114,7 @@ const stops: HardStop[] = [
 export const erectileDysfunctionEvaluation: EvaluationDefinition = {
   topic: "disfunctie-erectila",
   name: "Disfuncție erectilă",
+  label: "Evaluare medicală online, discretă",
   introTitle: "Disfuncția erectilă:",
   introAccent: "câteva întrebări, discret.",
   questions: [

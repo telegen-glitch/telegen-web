@@ -10,8 +10,8 @@ const steps = [
     Screen: ScreenQuestion,
   },
   {
-    title: "Un dermatolog analizează",
-    text: "Medicul citește evaluarea și fotografiile, îți poate pune întrebări și decide dacă tratamentul la distanță ți se potrivește.",
+    title: "Un medic analizează",
+    text: "Medicul, cu specialitatea potrivită afecțiunii tale, citește evaluarea, îți poate pune întrebări și decide dacă tratamentul la distanță ți se potrivește.",
     Screen: ScreenReview,
   },
   {

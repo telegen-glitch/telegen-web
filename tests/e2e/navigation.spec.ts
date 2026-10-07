@@ -21,7 +21,7 @@ test("mobile menu opens, traps focus, closes with Escape", async ({ page }, info
 
   await page.getByRole("button", { name: "Deschide meniul" }).click();
   await menu.getByRole("link", { name: /Căderea părului/ }).click();
-  await expect(page).toHaveURL(/\/afectiuni\/caderea-parului$/);
+  await expect(page).toHaveURL(/\/caderea-parului$/);
   await expect(menu).toBeHidden();
 });
 

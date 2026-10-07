@@ -1,13 +1,9 @@
 import { LegalPage } from "@/components/layout/LegalPage";
 import { CookieSettingsButton } from "@/components/consent/CookieSettingsButton";
 import { CONSENT_COOKIE } from "@/lib/consent";
-import { pageMetadata } from "@/lib/seo";
+import { staticPageMetadata } from "@/lib/page-meta";
 
-export const metadata = pageMetadata({
-  title: "Politica de cookie-uri",
-  description: "Ce cookie-uri folosește telegen.ro și cum îți poți schimba alegerea.",
-  path: "/politica-cookie",
-});
+export const metadata = staticPageMetadata("/politica-cookie");
 
 export default function CookiePolicy() {
   return (

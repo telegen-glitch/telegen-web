@@ -4,6 +4,7 @@ import type { EvaluationDefinition } from "./types";
 export const hairLossEvaluation: EvaluationDefinition = {
   topic: "caderea-parului",
   name: "Căderea părului",
+  label: "Evaluare dermatologică online",
   introTitle: "Căderea părului:",
   introAccent: "câteva întrebări.",
   questions: [

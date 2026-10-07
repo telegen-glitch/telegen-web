@@ -1,14 +1,9 @@
 import { ClosingCta } from "@/components/home/ClosingCta";
 import { SectionHeading } from "@/components/home/SectionHeading";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { pageMetadata } from "@/lib/seo";
+import { staticPageMetadata } from "@/lib/page-meta";
 
-export const metadata = pageMetadata({
-  title: "Echipa medicală Telegen",
-  description:
-    "Medicii Telegen au drept de liberă practică în România și specialitatea potrivită fiecărei afecțiuni. Afli numele și codul de parafă ale medicului înainte de consult.",
-  path: "/echipa-medicala",
-});
+export const metadata = staticPageMetadata("/echipa-medicala");
 
 const specialties = [
   ["Căderea părului și acneea", "Medici specialiști sau primari în dermatovenerologie."],

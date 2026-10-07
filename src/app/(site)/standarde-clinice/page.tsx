@@ -2,14 +2,9 @@ import Link from "next/link";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { TemporaryNote } from "@/components/ui/Temporary";
 import { ClosingCta } from "@/components/home/ClosingCta";
-import { pageMetadata } from "@/lib/seo";
+import { staticPageMetadata } from "@/lib/page-meta";
 
-export const metadata = pageMetadata({
-  title: "Standarde clinice și despre Telegen",
-  description:
-    "Regulile după care lucrează Telegen: medici cu drept de liberă practică, protocoale clinice scrise, informații medicale cu surse și date de sănătate protejate.",
-  path: "/standarde-clinice",
-});
+export const metadata = staticPageMetadata("/standarde-clinice");
 
 const standards = [
   {
@@ -52,7 +47,7 @@ export default function ClinicalStandards() {
         eyebrow="Despre Telegen"
         title="Standardele"
         accent="după care lucrăm."
-        lead="Telegen este o clinică dermatologică online construită în România. Publicăm regulile după care funcționăm, ca să le poți verifica."
+        lead="Telegen este o clinică online pentru sănătatea bărbaților, construită în România. Publicăm regulile după care funcționăm, ca să le poți verifica."
       />
       <div className="container-page section-y">
         <ol data-reveal-group className="grid gap-x-16 md:grid-cols-2">

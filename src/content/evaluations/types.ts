@@ -40,6 +40,8 @@ export interface EvaluationDefinition {
   /** Matches the condition slug. */
   topic: string;
   name: string;
+  /** Shown under the name in the topic picker. */
+  label: string;
   introTitle: string;
   introAccent: string;
   questions: Question[];

@@ -131,7 +131,7 @@ export interface Approach {
 
 export interface Condition {
   slug: string;
-  /** Hub URL: /afectiuni/caderea-parului for hair loss, top-level (/acnee) for newer conditions. */
+  /** Hub URL, top-level for every condition (/caderea-parului, /acnee, /disfunctie-erectila). */
   basePath: string;
   /** Intent-specific subpages under basePath (types, causes, treatment...). */
   subpages?: MedicalDoc[];
@@ -141,6 +141,17 @@ export interface Condition {
   medicalName: string;
   /** One line for hubs and navigation. */
   teaser: string;
+  /** Lower-case form used inside generated sentences and lists ("căderea părului"). */
+  inSentence: string;
+  /** Per-condition wording for the shared condition template (§v4.C1). */
+  presentation: {
+    /** Italic accent after the hub H1. */
+    heroAccent: string;
+    asideTitle: string;
+    asideAccent: string;
+    /** Condition-led CTA label, e.g. "Evaluare dermatologică online". */
+    evaluationLabel: string;
+  };
   status: "published" | "draft";
   doc: MedicalDoc;
   /** Month-by-month expectations block on the condition page. */

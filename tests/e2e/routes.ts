@@ -1,7 +1,7 @@
 export const routes = [
   "/",
   "/afectiuni",
-  "/afectiuni/caderea-parului",
+  "/caderea-parului",
   "/ghiduri",
   "/ghiduri/semnele-alopeciei-androgenetice",
   "/ghiduri/cauzele-caderii-parului",
@@ -16,6 +16,8 @@ export const routes = [
   "/termeni-si-conditii",
   "/politica-de-confidentialitate",
   "/politica-cookie",
+  "/contact",
+  "/politica-editoriala",
 ];
 
 export const slug = (r: string) => (r === "/" ? "home" : r.slice(1).replace(/\//g, "__"));

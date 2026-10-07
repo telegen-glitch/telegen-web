@@ -2,14 +2,9 @@ import { content } from "@/content/source";
 import { ClosingCta } from "@/components/home/ClosingCta";
 import { ConditionCards } from "@/components/home/ConditionCards";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { pageMetadata } from "@/lib/seo";
+import { staticPageMetadata } from "@/lib/page-meta";
 
-export const metadata = pageMetadata({
-  title: "Afecțiuni dermatologice tratate online",
-  description:
-    "Afecțiunile pentru care Telegen oferă evaluare dermatologică online. Începem cu căderea părului (alopecia androgenetică).",
-  path: "/afectiuni",
-});
+export const metadata = staticPageMetadata("/afectiuni");
 
 export default function ConditionsHub() {
   return (
@@ -19,7 +14,7 @@ export default function ConditionsHub() {
         eyebrow="Afecțiuni"
         title="Ce evaluăm"
         accent="online."
-        lead="Lucrăm pe rând, câte o afecțiune, fiecare cu protocol clinic scris și revizuit de medici dermatologi. Prima este căderea părului."
+        lead="Lucrăm pe rând, câte o afecțiune, fiecare cu protocol clinic scris și revizuit de medici cu specialitatea potrivită."
       />
       <div className="container-page section-y">
         <ConditionCards

@@ -13,10 +13,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   const topics = evaluations.map((e) => ({
     slug: e.topic,
     name: e.name,
-    teaser:
-      e.topic === "disfunctie-erectila"
-        ? "Evaluare medicală online, discretă"
-        : "Evaluare dermatologică online",
+    teaser: e.label,
     href: "/evaluare",
   }));
   const upcoming = content.listUpcomingTopics().filter((t) => !evaluations.some((e) => e.topic === t.slug));
