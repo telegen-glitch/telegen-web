@@ -1,6 +1,26 @@
 # Status
 
-_Last updated: 2026-10-07 (v4.3: hero condition panels)_
+_Last updated: 2026-10-07 (v4.4: hair and acne panel illustrations redesigned)_
+
+## v4.4 hair and acne illustrations redesigned
+
+DONE (verified locally, 2026-10-07):
+
+- The ED illustration (Pulse) is the quality bar and is unchanged. Hair and acne were deleted and redrawn in
+  the same visual language: each is one continuous, hand-authored line (no randomness). They use the same
+  ghost layer (navy, 2 px, 0.16) and blue trace (2.4 px, round caps and joins, pathLength 1, `cp-trace`), the
+  same 960 × 200 canvas and crop, and the same trace timing. All three lines start flat on the baseline
+  (y=112), keep their key feature at the centre and end in the same calm curve.
+- Căderea părului: ten narrow hairpin strands with rounded tips, curving gently forward, growing taller and
+  closer together from left to right. Acnee: the skin surface with small, uneven, soft bumps that shrink and
+  spread out until the line is calm.
+- The static frame (reduced motion, closed panel) is the whole line; e2e checks it. Each narrow closed door
+  shows a strand, a bump or a beat. Removed: the sway, unrest and calm CSS and keyframes, the PRNG and the
+  210-stroke and dot-field markup.
+- Visual loop: 2 passes at 360 and 1280 (each panel open, closed doors, hub panels, recordings, mid-trace
+  frames).
+- Gates: format, lint, typecheck, 46 unit tests, build, 159 Playwright tests (0 failed). Lighthouse mobile
+  (local, idle): home 95, /acnee 95, /caderea-parului 95; Accessibility 100; CLS 0.
 
 ## v4.3 hero condition panels
 
