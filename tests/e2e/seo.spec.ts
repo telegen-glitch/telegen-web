@@ -1,3 +1,4 @@
+import { routes } from "./routes";
 import { expect, test } from "@playwright/test";
 
 test.beforeEach(({}, info) => test.skip(info.project.name !== "desktop-1280"));
@@ -38,7 +39,7 @@ test("legacy paths redirect permanently", async ({ request }) => {
 });
 
 test("treatment pages carry no evaluation call to action", async ({ page }) => {
-  for (const p of ["/tratamente/minoxidil", "/tratamente/finasterida", "/tratamente"]) {
+  for (const p of [...routes.filter((r) => r.startsWith("/tratamente/")), "/tratamente"]) {
     await page.goto(p);
     await expect(page.locator("main a[href='/evaluare']")).toHaveCount(0);
   }

@@ -10,6 +10,7 @@ import type { MedicalDoc } from "@/content/types";
 import { docTexts } from "@/lib/medical";
 import { allRoutes } from "@/lib/routes";
 import { faqJsonLd } from "@/lib/seo";
+import { routes as e2eRoutes } from "../e2e/routes";
 
 const published = [
   ...content.listConditions().map((c) => c.doc),
@@ -75,6 +76,10 @@ describe("sources and citations", () => {
 });
 
 describe("internal linking graph", () => {
+  it("the e2e route list covers every route (no page skips axe, metadata and CSP checks)", () => {
+    expect(new Set(e2eRoutes)).toEqual(routes);
+  });
+
   it("all internal links resolve to a route", () => {
     for (const c of content.listConditions()) {
       for (const a of c.approaches ?? []) expect(routes, `${c.slug} approach → ${a.href}`).toContain(a.href);
@@ -114,11 +119,9 @@ describe("internal linking graph", () => {
       expect(content.getCondition(d.slug)).toBeUndefined();
       expect(routes).not.toContain(d.basePath);
     }
-    const draftDocs = [
-      ...conditions.flatMap((c) => c.subpages ?? []),
-      ...guidesAll,
-      ...treatmentsAll,
-    ].filter((d) => d.status === "draft");
+    const draftDocs = [...conditions.flatMap((c) => c.subpages ?? []), ...guidesAll, ...treatmentsAll].filter(
+      (d) => d.status === "draft",
+    );
     for (const d of draftDocs) expect(routes).not.toContain(hrefForDoc(d));
   });
 
