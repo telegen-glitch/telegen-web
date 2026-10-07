@@ -13,7 +13,8 @@
     "test": "vitest run",
     "check:content": "vitest run tests/unit",
     "prebuild": "pnpm run check:content",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "geo:report": "tsx scripts/geo-report.ts && prettier --write docs/geo-status.md"
   },
   "dependencies": {
     "next": "16.3.8",
@@ -33,6 +34,7 @@
     "prettier": "^3.9.9",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^5.0.3"
   },
