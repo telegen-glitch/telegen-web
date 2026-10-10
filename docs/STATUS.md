@@ -28,7 +28,10 @@ DONE (verified locally, 2026-10-10):
 - **Launch lock.** `scripts/launch-lock.ts` runs before every build; with VERCEL_ENV=production and
   "open" it fails and lists what is missing (verified: exit 1 with 11 items; previews exit 0).
   `scripts/launch-copy-check.ts` runs after every build and fails if any prerendered page contains a
-  pre-launch phrase (36 pages, clean).
+  pre-launch phrase (36 pages, clean). On Vercel the builder keeps prerendered pages elsewhere, so there
+  the check warns and passes (the first v4.7 preview failed on this; fixed in babe4d9); CI and e2e run it
+  on every pull request. The production lock itself was verified locally only (VERCEL_ENV=production
+  exits 1); it runs before the build on Vercel too.
 - **Tests:** unit `tests/unit/launch-copy.test.ts` (defaults; phrase detector; no pre-launch phrase in any
   source file outside prelaunch-copy.ts; every route's title/description and every content string; lock
   logic; no invented values; price answer; owner markers; https-only app URL). Pages cannot be rendered in
