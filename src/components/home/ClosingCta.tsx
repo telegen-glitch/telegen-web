@@ -1,11 +1,15 @@
 import { StartButton } from "@/components/topic/StartButton";
 import { ButtonLink } from "@/components/ui/Button";
+import { prelaunchCopy } from "@/lib/prelaunch-copy";
+import { isPrelaunch } from "@/lib/site";
 
 /** Condition-led closing call to action. Never names a medicine. */
 export function ClosingCta({
   title = "Fă primul pas",
   accent = "în câteva minute.",
-  text = "Până la lansarea serviciului, răspunsurile la evaluare nu sunt trimise și nici salvate.",
+  text = isPrelaunch()
+    ? prelaunchCopy.closingCta
+    : "Răspunzi la câteva întrebări, un medic îți analizează evaluarea și primești un plan clar, cu urmărire.",
 }: {
   title?: string;
   accent?: string;

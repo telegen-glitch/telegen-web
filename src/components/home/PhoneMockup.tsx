@@ -100,7 +100,9 @@ export function ScreenReview() {
       <p className="mt-5 text-[0.9375rem] leading-tight font-semibold text-navy-950">
         Evaluarea ta este la medic
       </p>
-      <p className="mt-1.5 text-ink-muted">Te anunțăm când planul e gata sau dacă medicul are întrebări.</p>
+      <p className="mt-1.5 text-ink-muted">
+        Primești un mesaj când planul e gata sau dacă medicul are întrebări.
+      </p>
       <ol className="mt-5 space-y-3">
         {steps.map((s) => (
           <li key={s.label} className="flex items-center gap-2.5">

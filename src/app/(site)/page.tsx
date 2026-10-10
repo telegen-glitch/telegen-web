@@ -15,46 +15,44 @@ import { StartButton } from "@/components/topic/StartButton";
 import { Arrow, ButtonLink } from "@/components/ui/Button";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { publishedConditionList } from "@/lib/positioning";
+import { prelaunchCopy } from "@/lib/prelaunch-copy";
+import { priceAnswer } from "@/lib/price-text";
+import { isPrelaunch } from "@/lib/site";
 import { staticPageMetadata } from "@/lib/page-meta";
 import { faqJsonLd } from "@/lib/seo";
 
 export const metadata = staticPageMetadata("/");
 
-const homeFaqs = (): Faq[] => [
-  {
-    question: "Ce afecțiuni evaluați?",
-    answer: `În prezent: ${publishedConditionList()}. Pentru fiecare există un ghid medical pe site și o evaluare online. Căderea părului și acneea sunt evaluate de un medic dermatolog, iar disfuncția erectilă de un medic urolog sau de familie.`,
-  },
-  {
-    question: "Telegen funcționează deja?",
-    answer:
-      "Nu încă. Site-ul este în pre-lansare: poți citi ghidurile și poți parcurge evaluarea ca să vezi cum arată, dar răspunsurile nu sunt trimise nimănui. Te putem anunța când serviciul medical se deschide.",
-  },
-  {
-    question: "Cine îmi va analiza evaluarea?",
-    answer:
-      "Un medic cu drept de liberă practică în România și cu specialitatea potrivită afecțiunii tale. Înainte de consult afli numele medicului și codul lui de parafă.",
-  },
-  {
-    question: "Primesc tratament fără să vorbesc cu un medic?",
-    answer:
-      "Nu. Orice recomandare de tratament pornește de la evaluarea unui medic. Dacă situația ta are nevoie de un consult în persoană, îți spunem direct.",
-  },
-  {
-    question: "Ce se întâmplă cu datele mele de sănătate?",
-    answer:
-      "În pre-lansare, răspunsurile la evaluare rămân doar în pagina deschisă și dispar când o închizi. La lansare, datele medicale vor fi gestionate într-o aplicație clinică separată, cu acordul tău explicit și găzduire în Uniunea Europeană. Detalii în [politica de confidențialitate](/politica-de-confidentialitate).",
-  },
-  {
-    question: "Cât costă?",
-    answer:
-      "Prețurile vor fi afișate clar pe site înainte de lansare, pentru fiecare tip de evaluare și de urmărire.",
-  },
-];
+const homeFaqs = (conditions: { slug: string; name: string }[]): Faq[] => {
+  const price = priceAnswer(conditions);
+  return [
+    {
+      question: "Ce afecțiuni evaluați?",
+      answer: `În prezent: ${publishedConditionList()}. Pentru fiecare există un ghid medical pe site și o evaluare online. Căderea părului și acneea sunt evaluate de un medic dermatolog, iar disfuncția erectilă de un medic urolog sau de familie.`,
+    },
+    ...(isPrelaunch() ? [prelaunchCopy.homeFaq] : []),
+    {
+      question: "Cine îmi analizează evaluarea?",
+      answer:
+        "Un medic cu drept de liberă practică în România și cu specialitatea potrivită afecțiunii tale. Înainte de consult afli numele medicului și codul lui de parafă.",
+    },
+    {
+      question: "Primesc tratament fără să vorbesc cu un medic?",
+      answer:
+        "Nu. Orice recomandare de tratament pornește de la evaluarea unui medic. Dacă situația ta are nevoie de un consult în persoană, îți spunem direct.",
+    },
+    {
+      question: "Ce se întâmplă cu datele mele de sănătate?",
+      answer:
+        "Pe acest site, răspunsurile la evaluare rămân doar în pagina deschisă și dispar când o închizi. Datele medicale le introduci în aplicația clinică Telegen, separată de site, unde sunt prelucrate doar cu acordul tău explicit, găzduite în Uniunea Europeană și criptate. Detalii în [politica de confidențialitate](/politica-de-confidentialitate).",
+    },
+    ...(price ? [{ question: "Cât costă?", answer: price }] : []),
+  ];
+};
 
 export default function HomePage() {
   const conditions = content.listConditions();
-  const faqs = homeFaqs();
+  const faqs = homeFaqs(conditions);
 
   return (
     <>

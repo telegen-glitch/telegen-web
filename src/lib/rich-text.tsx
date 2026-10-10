@@ -1,13 +1,16 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { MissingMark } from "@/components/ui/MissingMark";
 
 /**
  * Minimal inline markup for content strings:
  *   [label](/path or https://…)   link
  *   **bold**                      strong
  *   {{cite:source-id}}            numbered citation to the page's source list
+ *   {{lipsește:what}}             owner-only marker for a missing launch value; only
+ *                                 inserted on the server when showOwnerMarkers() is true
  */
-const TOKEN = /\[([^\]]+)\]\(([^)\s]+)\)|\*\*([^*]+)\*\*|\{\{cite:([a-z0-9-]+)\}\}/g;
+const TOKEN = /\[([^\]]+)\]\(([^)\s]+)\)|\*\*([^*]+)\*\*|\{\{cite:([a-z0-9-]+)\}\}|\{\{lipsește:([^}]+)\}\}/g;
 
 export function renderRichText(text: string, sourceOrder: string[] = []): ReactNode[] {
   const nodes: ReactNode[] = [];
@@ -31,6 +34,8 @@ export function renderRichText(text: string, sourceOrder: string[] = []): ReactN
       );
     } else if (m[3]) {
       nodes.push(<strong key={key++}>{m[3]}</strong>);
+    } else if (m[5]) {
+      nodes.push(<MissingMark key={key++} what={m[5]} />);
     } else if (m[4]) {
       const n = sourceOrder.indexOf(m[4]) + 1;
       if (n > 0) {
@@ -57,6 +62,7 @@ export function renderRichText(text: string, sourceOrder: string[] = []): ReactN
 export function plainText(text: string): string {
   return text
     .replace(/\s*\{\{cite:[a-z0-9-]+\}\}/g, "")
+    .replace(/\s*\{\{lipsește:[^}]+\}\}/g, "")
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
     .replace(/\*\*([^*]+)\*\*/g, "$1")
     .replace(/\s+/g, " ")

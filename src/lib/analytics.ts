@@ -10,7 +10,7 @@ import { useConsent } from "@/components/consent/ConsentProvider";
 import { analyticsProvider } from "@/lib/consent";
 
 export type AnalyticsEvent =
-  "evaluation_started" | "evaluation_completed" | "notify_form_viewed" | "cta_clicked";
+  "evaluation_started" | "evaluation_completed" | "evaluation_handoff" | "notify_form_viewed" | "cta_clicked";
 
 let enabled = false;
 

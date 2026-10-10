@@ -12,10 +12,12 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "check:content": "vitest run tests/unit",
-    "prebuild": "pnpm run check:content",
+    "prebuild": "pnpm run check:content && tsx scripts/launch-lock.ts",
     "e2e": "playwright test",
     "geo:report": "tsx scripts/geo-report.ts && prettier --write docs/geo-status.md",
-    "render:posters": "node scripts/render-posters.mjs"
+    "render:posters": "node scripts/render-posters.mjs",
+    "postbuild": "tsx scripts/launch-copy-check.ts",
+    "launch:check": "tsx scripts/launch-lock.ts"
   },
   "dependencies": {
     "next": "16.3.8",

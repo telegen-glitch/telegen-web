@@ -11,11 +11,16 @@ import { stopFor, summaryNotes, visibleQuestions } from "@/lib/evaluation";
 import { isServiceOpen } from "@/lib/flags";
 import { subscribeToLaunch } from "@/lib/notify/actions";
 import { NOTIFY_CONSENT_TEXT } from "@/lib/notify/consent";
+import { prelaunchCopy } from "@/lib/prelaunch-copy";
+import { MissingMark } from "@/components/ui/MissingMark";
 
 /**
  * Privacy contract (section 7b): answers exist only in this component's state.
  * No URL changes, no cookies, no Web Storage, no network requests, no logging.
- * Closing or reloading the page discards them.
+ * Closing or reloading the page discards them. The hand-over to the clinical
+ * app (v4.7) sends the chosen condition only, by POST, never the answers: the
+ * app asks the medical questions again after consent
+ * (docs/clinical-app-architecture.md, "Hand-over from telegen.ro").
  */
 type Stage =
   | { kind: "topic" }
@@ -30,9 +35,21 @@ export interface FlowTopic {
   name: string;
   /** Published condition page, if any. */
   href?: string;
+  /** Who decides, e.g. "Un medic dermatolog" (never a name). */
+  decider?: string;
 }
 
-export function EvaluationFlow({ topics }: { topics: FlowTopic[] }) {
+export function EvaluationFlow({
+  topics,
+  clinicalAppUrl = null,
+  ownerMarkers = false,
+}: {
+  topics: FlowTopic[];
+  /** Hand-over target (CLINICAL_APP_URL), resolved on the server. */
+  clinicalAppUrl?: string | null;
+  /** Owner-only "[lipsește: …]" markers (previews only), resolved on the server. */
+  ownerMarkers?: boolean;
+}) {
   // A topic chosen in the topic picker skips the topic screen (in-memory hand-over only).
   const [topic, setTopic] = useState<string | null>(() => {
     const pending = peekPendingTopic();
@@ -58,6 +75,7 @@ export function EvaluationFlow({ topics }: { topics: FlowTopic[] }) {
 
   const def = topic ? getEvaluation(topic) : undefined;
   const readMoreHref = topics.find((t) => t.slug === topic)?.href;
+  const decider = topics.find((t) => t.slug === topic)?.decider ?? "Un medic";
   const go = (s: Stage) => setStage(s);
 
   const reset = () => {
@@ -126,9 +144,7 @@ export function EvaluationFlow({ topics }: { topics: FlowTopic[] }) {
         <div className="mt-6 rounded-card bg-white p-5 text-sm text-ink-soft shadow-[var(--shadow-card)]">
           <p className="font-semibold text-navy-950">Înainte să începi</p>
           <ul className="mt-2 list-disc space-y-1.5 pl-5">
-            {!isServiceOpen(def.topic) && (
-              <li>Serviciul medical nu este încă deschis. Acum poți vedea cum arată evaluarea.</li>
-            )}
+            {!isServiceOpen(def.topic) && <li>{prelaunchCopy.evaluationIntroNote}</li>}
             <li>Răspunsurile nu sunt trimise și nu sunt salvate. Dispar când închizi pagina.</li>
             <li>Evaluarea nu pune un diagnostic. În caz de urgență, sună la 112.</li>
           </ul>
@@ -372,13 +388,71 @@ export function EvaluationFlow({ topics }: { topics: FlowTopic[] }) {
   if (isServiceOpen(def.topic)) {
     return (
       <Screen>
-        <h1 ref={headingRef} tabIndex={-1} className="text-display-2 outline-none">
-          Mai e <span className="accent">un singur pas</span>
+        <p className="text-eyebrow text-blue-700">Evaluare completă</p>
+        <h1 ref={headingRef} tabIndex={-1} className="mt-3 text-display-2 outline-none">
+          Ultimul pas: <span className="accent">consultul cu medicul.</span>
         </h1>
         <p className="mt-4 text-lead">
-          Continuarea evaluării, cu datele medicale, se face în aplicația clinică Telegen, separat de acest
-          site.
+          Continui în aplicația clinică Telegen, separată de acest site, unde datele tale medicale sunt
+          protejate.
         </p>
+        <ol className="mt-8 space-y-4">
+          {[
+            [
+              "Contul și acordul tău",
+              "Îți creezi contul și îți dai acordul explicit pentru prelucrarea datelor medicale.",
+            ],
+            [
+              "Răspunsurile, în aplicație",
+              "Răspunzi acolo la întrebările medicale. Răspunsurile de pe această pagină nu se transmit și dispar când o închizi.",
+            ],
+            [
+              "Analiza medicului",
+              `${decider} îți analizează evaluarea și îți poate pune întrebări. Afli numele lui și codul de parafă.`,
+            ],
+            [
+              "Planul și urmărirea",
+              "Primești un plan clar: ce recomandă medicul, la ce să te aștepți și când urmează reevaluarea.",
+            ],
+          ].map(([title, text], i) => (
+            <li key={title} className="flex gap-4 rounded-card bg-white p-5 shadow-[var(--shadow-card)]">
+              <span
+                aria-hidden="true"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-navy-950 text-sm font-semibold text-white"
+              >
+                {i + 1}
+              </span>
+              <span>
+                <span className="block font-semibold text-navy-950">{title}</span>
+                <span className="mt-1 block text-sm text-ink-soft">{text}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+        {clinicalAppUrl ? (
+          // POST, so the condition never appears in a URL, a log line or a referrer.
+          <form
+            method="post"
+            action={clinicalAppUrl}
+            className="mt-8"
+            onSubmit={() => track("evaluation_handoff")}
+          >
+            <input type="hidden" name="condition" value={def.topic} />
+            <input type="hidden" name="v" value="1" />
+            <button type="submit" className={buttonClasses("primary", "lg", "w-full sm:w-auto")}>
+              Continuă către consult <Arrow />
+            </button>
+          </form>
+        ) : (
+          ownerMarkers && (
+            <p className="mt-8">
+              <MissingMark what="CLINICAL_APP_URL (adresa aplicației clinice)" />
+            </p>
+          )
+        )}
+        <button type="button" className={buttonClasses("quiet", "md", "mt-4")} onClick={reset}>
+          Șterge răspunsurile și ia-o de la capăt
+        </button>
       </Screen>
     );
   }
@@ -386,19 +460,16 @@ export function EvaluationFlow({ topics }: { topics: FlowTopic[] }) {
   return (
     <Screen>
       <h1 ref={headingRef} tabIndex={-1} className="text-display-2 outline-none">
-        Serviciul nu este <span className="accent">încă deschis</span>
+        {prelaunchCopy.endTitle} <span className="accent">{prelaunchCopy.endAccent}</span>
       </h1>
-      <p className="mt-4 text-lead">
-        Mulțumim că ai parcurs evaluarea. Telegen este în pre-lansare, așa că răspunsurile tale nu au fost
-        trimise unui medic și nu au fost salvate. Când închizi pagina, ele dispar.
-      </p>
+      <p className="mt-4 text-lead">{prelaunchCopy.endText}</p>
       {readMoreHref && (
         <p className="mt-4 text-ink-soft">
           Între timp, poți citi despre{" "}
           <Link href={readMoreHref} className="text-blue-700 underline underline-offset-2">
             {def.name.toLowerCase()}
           </Link>{" "}
-          sau te putem anunța când pornim.
+          {prelaunchCopy.endReadMoreSuffix}
         </p>
       )}
       <NotifyForm />
@@ -463,14 +534,14 @@ function NotifyForm() {
   if (result?.status === "ok") {
     return (
       <p role="status" className="mt-8 rounded-card bg-blue-50 p-5 text-navy-950">
-        Gata. Îți scriem când serviciul se deschide.
+        {prelaunchCopy.notifyOk}
       </p>
     );
   }
 
   return (
     <form action={action} className="mt-8 rounded-card bg-white p-5 shadow-[var(--shadow-card)] md:p-6">
-      <h2 className="text-lg font-semibold text-navy-950">Anunță-mă la lansare</h2>
+      <h2 className="text-lg font-semibold text-navy-950">{prelaunchCopy.notifyHeading}</h2>
       <label htmlFor={emailId} className="mt-4 block text-sm font-medium text-navy-950">
         Adresa de e-mail
       </label>
@@ -504,13 +575,11 @@ function NotifyForm() {
         disabled={pending}
         className={buttonClasses("primary", "md", "mt-5 w-full sm:w-auto")}
       >
-        {pending ? "Se trimite…" : "Anunță-mă"}
+        {pending ? "Se trimite…" : prelaunchCopy.notifyButton}
       </button>
       <div aria-live="polite">
         {result?.status === "disabled" && (
-          <p className="mt-4 rounded-xl bg-mist p-4 text-sm text-ink-soft">
-            Înscrierea pentru anunț nu este încă activă, așa că adresa ta nu a fost salvată. Revino curând.
-          </p>
+          <p className="mt-4 rounded-xl bg-mist p-4 text-sm text-ink-soft">{prelaunchCopy.notifyDisabled}</p>
         )}
         {result?.status === "invalid" && (
           <p className="mt-4 text-sm text-amber-800">Verifică adresa de e-mail și bifează acordul.</p>

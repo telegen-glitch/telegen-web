@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { TemporaryNote } from "@/components/ui/Temporary";
 import { ClosingCta } from "@/components/home/ClosingCta";
 import { staticPageMetadata } from "@/lib/page-meta";
 
@@ -35,7 +34,7 @@ const standards = [
   {
     id: "date",
     title: "Date de sănătate protejate",
-    text: "Acest site nu colectează date medicale. La lansare, datele clinice vor fi gestionate într-o aplicație separată, cu acordul tău explicit, găzduire în Uniunea Europeană și criptare.",
+    text: "Acest site nu colectează date medicale. Datele clinice sunt prelucrate în aplicația clinică Telegen, separată de site, doar cu acordul tău explicit, cu găzduire în Uniunea Europeană și criptare.",
   },
 ];
 
@@ -61,11 +60,7 @@ export default function ClinicalStandards() {
             </li>
           ))}
         </ol>
-        <div className="mt-10 max-w-2xl space-y-3">
-          <TemporaryNote>
-            Standardele de mai sus sunt în curs de confirmare de către echipa medicală. Datele de identificare
-            ale societății și autorizațiile se publică înainte de lansare.
-          </TemporaryNote>
+        <div className="mt-10 max-w-2xl">
           <p className="text-sm text-ink-soft">
             Vezi și{" "}
             <Link href="/echipa-medicala" className="text-blue-700 underline underline-offset-2">
@@ -77,6 +72,10 @@ export default function ClinicalStandards() {
               className="text-blue-700 underline underline-offset-2"
             >
               politica de confidențialitate
+            </Link>
+            . Datele de identificare ale societății sunt pe pagina de{" "}
+            <Link href="/contact" className="text-blue-700 underline underline-offset-2">
+              contact
             </Link>
             .
           </p>
