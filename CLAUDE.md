@@ -220,6 +220,12 @@ Make all three conditions available across the site (hero, chips, cards, topic p
 ### F. Quality gates and report
 Format, lint, typecheck, unit, build, e2e (all routes at 360/768/1280, axe AA, hard-stop paths), Lighthouse mobile on home and one page per condition (Performance ≥ 90, Accessibility 100, SEO 100 except intended noindex). Logical commits, push, keep PR #1 current. Update STATUS.md, open-items.md, geo-status.md. Final report: every item DONE / NOT DONE / BLOCKED with reason, plus open owner decisions.
 
+## v4.7 LAUNCH STATE (owner decision; overrides earlier pre-launch rules where they conflict)
+- `siteConfig.launchState` is "open" by default on previews and production; "prelaunch" is only a fallback mode. All pre-launch strings live in `src/lib/prelaunch-copy.ts` and render only in "prelaunch".
+- `serviceOpen` follows the launch state (open for every condition when "open"); this replaces "serviceOpen stays OFF" and the §7b "not open yet" final screen. The evaluation ends with "Continuă către consult": a POST of the chosen condition only to `CLINICAL_APP_URL`; answers never leave the browser and the app asks again (docs/clinical-app-architecture.md §4b).
+- No "TEMPORARY", pre-launch or waitlist wording on public pages (replaces the visible TEMPORARY labels of §9.1 and §9.6). Owner values live in `src/lib/launch-config.ts`; a missing one shows "[lipsește: …]" on previews only and the prebuild launch lock fails the production build until it is supplied. Never invent a value to pass the lock.
+- Unreviewed medical pages show "Scris de echipa editorială Telegen pe baza ghidurilor citate · actualizat {dată}" and stay noindex. Indexing rules, DNS rules and every other hard rule are unchanged.
+
 ## 8. GEO/SEO from the first commit
 - Semantic HTML, one H1, descriptive Romanian URLs, canonicals, title templates, meta descriptions, Open Graph, sitemap.xml, robots.txt, breadcrumbs, redirects, 404, alt text, responsive images.
 - JSON-LD generated from the same data as the visible page. Never fabricate schema. FAQPage only for visible FAQs; author/reviewer only when real.

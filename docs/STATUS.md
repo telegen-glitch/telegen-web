@@ -1,6 +1,46 @@
 # Status
 
-_Last updated: 2026-10-07 (v4.6 photo in the hair-loss panel, merged into the v4.5 WebGL branch claude/hero-realistic)_
+_Last updated: 2026-10-10 (v4.7: launch state, no pre-launch signals; branch claude/hero-realistic)_
+
+## v4.7 launch state: no "not open / at launch" signals
+
+DONE (verified locally, 2026-10-10):
+
+- **One switch.** `siteConfig.launchState` is "open" on previews and production; "prelaunch" is only a
+  fallback. `serviceOpen` follows it (open for all three conditions). Every pre-launch string (announcement,
+  intro note, "not open yet" screen, notification form, closing line, FAQ, meta text, legal note) lives in
+  `src/lib/prelaunch-copy.ts` and renders only in "prelaunch".
+- **Evaluation end screen.** "Ultimul pas: consultul cu medicul." with what happens next (account and
+  consent, answers in the app, the doctor's review, plan and follow-up) and **Continuă către consult**: a
+  form POST of the chosen condition only to `CLINICAL_APP_URL`. Answers never leave the browser; the app
+  asks again (contract in docs/clinical-app-architecture.md §4b). CSP `form-action` allows the app's
+  origin. Without the variable, previews show an owner marker; production cannot build.
+- **Copy rewritten in the present tense:** home FAQ ("Telegen funcționează deja?" removed in "open"; data
+  answer; "Cât costă?" from config), /cum-functioneaza prices from config, /afectiuni lead,
+  /standarde-clinice, /contact, ClosingCta, announcement bar, footer line, mockup line, an ED FAQ answer,
+  /evaluare, /termeni-si-conditii and privacy meta descriptions, /politica-editoriala. Unreviewed medical
+  pages show "Scris de echipa editorială Telegen pe baza ghidurilor citate · actualizat {dată}" (no badge,
+  no review claim). Launch versions of terms, privacy and cookies (marked REQUIRES LAWYER SIGN-OFF in
+  docs/legal-review-needed.md, items 20–23); no note on the site.
+- **No TEMPORARY anywhere public.** TemporaryBadge/TemporaryNote deleted. Company identity, contact
+  e-mail, response time, prices and the legal sign-off come from `src/lib/launch-config.ts`; a missing
+  value shows a dashed "[lipsește: …]" marker on previews and local builds only, never in production.
+- **Launch lock.** `scripts/launch-lock.ts` runs before every build; with VERCEL_ENV=production and
+  "open" it fails and lists what is missing (verified: exit 1 with 11 items; previews exit 0).
+  `scripts/launch-copy-check.ts` runs after every build and fails if any prerendered page contains a
+  pre-launch phrase (36 pages, clean).
+- **Tests:** unit `tests/unit/launch-copy.test.ts` (defaults; phrase detector; no pre-launch phrase in any
+  source file outside prelaunch-copy.ts; every route's title/description and every content string; lock
+  logic; no invented values; price answer; owner markers; https-only app URL). Pages cannot be rendered in
+  a unit test, so every route's HTML is checked after the build and in e2e (`tests/e2e/launch.spec.ts`);
+  the evaluation e2e checks the final screen and that the hand-over POST carries only the condition.
+- **Gates:** format, lint, typecheck, 59 unit tests, build (with and without `CLINICAL_APP_URL`), 187 Playwright tests (0 failed), axe on every route. Lighthouse mobile (local): home Perf 95 / A11y
+  100 / CLS 0 (LCP element the H1), /caderea-parului 98, /acnee 95, /disfunctie-erectila 95, /contact 95;
+  A11y 100 everywhere; SEO 66 only because of the intended noindex.
+
+STILL NEEDED FROM THE OWNER (the production build is locked until then): see docs/open-items.md, "Launch
+values the owner still has to supply" (11 items: company name, CUI, Reg. Com., address, contact e-mail,
+reply time, three prices, `CLINICAL_APP_URL` with a live app, lawyer sign-off).
 
 ## v4.6 animated photo in the hair-loss panel
 

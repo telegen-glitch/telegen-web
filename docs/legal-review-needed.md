@@ -59,7 +59,8 @@ confirmed).
     obsolete; the lawyer should confirm and say what replaces it, if anything.
 14. **Company identity on the website.** Which identification data Romanian law requires on the site
     (Legea 365/2002 on e-commerce, consumer law): legal name, CUI, Reg. Com. number, registered address,
-    contact email, and for a medical provider any authorisation number. Currently shown as TEMPORARY.
+    contact email, and for a medical provider any authorisation number. Filled from src/lib/launch-config.ts
+    (owner-only markers on previews; the launch lock blocks production until supplied).
 15. **Anonymous doctors.** Doctors are not named publicly; patients receive the doctor's name and parafă
     code in the clinical app before the consult (owner decision). Confirm this satisfies Romanian rules on
     medical advertising, telemedicine and patient information, and that "Revizuit medical de un medic
@@ -93,3 +94,29 @@ confirmed).
     image-rights rules (Codul civil art. 73, dreptul la propria imagine), or should we license a photo with a model release that
     covers sensitive (health) use? The switch `heroMedia.hair` in `src/lib/flags.ts` turns it back to
     the illustration with one line.
+
+## Added for the launch state (CLAUDE.md v4.7)
+
+The site now reads as the live service. Production cannot launch until the owner sets
+`legalApproved: true` in `src/lib/launch-config.ts`, after the lawyer has signed off the items below.
+
+20. **REQUIRES LAWYER SIGN-OFF: /termeni-si-conditii (launch version, 2026-10-10).** Describes the live
+    service: the online evaluation, the clinical app, adults only (18+), prices on /cum-functioneaza and
+    in the app, online payment in the app, cancellation (free before payment; after payment, the
+    conditions shown in the app before paying, within the law), complaints, ANPC and SAL. Open points:
+    (a) the right of withdrawal under OUG 34/2014: does the healthcare exclusion apply to the evaluation,
+    and what must be said; (b) the refund policy itself is an owner + lawyer decision and is not stated on
+    the site; (c) telemedicine information the law requires on the site (see item 3).
+21. **REQUIRES LAWYER SIGN-OFF: /politica-de-confidentialitate (launch version, 2026-10-10).** Covers the
+    site (no health data; the evaluation stays in the browser; only the condition is handed over) and the
+    clinical app (account data; health data under art. 9(2)(a) and (h); payment data held by the payment
+    processor; EU hosting, encryption, processors under contract; retention per medical-records law;
+    rights; ANSPDCP). These describe the app as designed in docs/clinical-app-architecture.md: confirm
+    each matches the real app before launch, and add the DPO contact if one is required.
+22. **REQUIRES LAWYER SIGN-OFF: /politica-cookie (launch version, 2026-10-10).** Only the strictly
+    necessary consent cookie on the site; the clinical app's cookies are explained in the app.
+23. **REQUIRES LAWYER SIGN-OFF: /politica-editoriala.** Unreviewed pages now show "Scris de echipa
+    editorială Telegen pe baza ghidurilor citate · actualizat {dată}" (no review claim) instead of a
+    "review pending" badge. Confirm this is acceptable together with item 12 (AI assistance).
+24. **Item 6 (pre-launch email consent)** now applies only to the "prelaunch" fallback mode, which is
+    not the default.
