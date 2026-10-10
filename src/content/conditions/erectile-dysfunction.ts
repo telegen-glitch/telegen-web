@@ -679,7 +679,7 @@ export const erectileDysfunction: Condition = {
       {
         question: "Evaluarea este discretă?",
         answer:
-          "Da. Întrebările se completează pe telefon, iar răspunsurile din evaluarea de pe site nu se salvează nicăieri. Pentru disfuncția erectilă nu se cer fotografii.",
+          "Da. Răspunzi la întrebări de pe telefon, iar răspunsurile din evaluarea de pe site nu se salvează nicăieri. Pentru disfuncția erectilă nu se cer fotografii.",
       },
     ],
     sourceIds: ["eau-srh", "ema-viagra"],

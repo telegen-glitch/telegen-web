@@ -111,19 +111,31 @@ describe("acne red flags (CLAUDE.md 7c.C/D)", () => {
   });
 });
 
-describe("service switch", () => {
-  it("every condition with an evaluation has a serviceOpen flag, OFF by default", () => {
-    for (const def of evaluations) expect(serviceOpen[def.topic], def.topic).toBe(false);
+describe("service switch (v4.7)", () => {
+  it("every condition with an evaluation follows the launch state", async () => {
+    const { siteConfig } = await import("@/lib/site");
+    for (const def of evaluations)
+      expect(serviceOpen[def.topic], def.topic).toBe(siteConfig.launchState === "open");
   });
 });
 
-describe("pricing (§v4.E6)", () => {
-  it("ships with the flag off and no placeholder prices", async () => {
-    const { flags } = await import("@/lib/flags");
-    const { prices } = await import("@/lib/pricing");
-    expect(flags.pricing).toBe(false);
-    for (const [slug, list] of Object.entries(prices)) {
-      for (const p of list) expect(p.amount, slug).toBeGreaterThan(0);
+describe("pricing (§v4.E6, v4.7)", () => {
+  it("prices come only from launch-config: positive, for published conditions, never naming a medicine", async () => {
+    const { launchConfig } = await import("@/lib/launch-config");
+    const { content } = await import("@/content/source");
+    const { MEDICINE_NAMES } = await import("./compliance");
+    const published = content.listConditions().map((c) => c.slug);
+    for (const [slug, list] of Object.entries(launchConfig.prices)) {
+      expect(published, slug).toContain(slug);
+      for (const p of list) {
+        expect(p.amount, slug).toBeGreaterThan(0);
+        expect(`${p.label} ${p.note ?? ""}`, slug).not.toMatch(MEDICINE_NAMES);
+      }
     }
+  });
+
+  it("the condition-page pricing block keeps its flag off by default", async () => {
+    const { flags } = await import("@/lib/flags");
+    expect(flags.pricing).toBe(false);
   });
 });

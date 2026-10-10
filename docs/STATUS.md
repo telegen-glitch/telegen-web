@@ -1,6 +1,49 @@
 # Status
 
-_Last updated: 2026-10-07 (v4.6: animated photo in the hair-loss panel)_
+_Last updated: 2026-10-10 (v4.7: launch state, no pre-launch signals; branch claude/hero-realistic)_
+
+## v4.7 launch state: no "not open / at launch" signals
+
+DONE (verified locally, 2026-10-10):
+
+- **One switch.** `siteConfig.launchState` is "open" on previews and production; "prelaunch" is only a
+  fallback. `serviceOpen` follows it (open for all three conditions). Every pre-launch string (announcement,
+  intro note, "not open yet" screen, notification form, closing line, FAQ, meta text, legal note) lives in
+  `src/lib/prelaunch-copy.ts` and renders only in "prelaunch".
+- **Evaluation end screen.** "Ultimul pas: consultul cu medicul." with what happens next (account and
+  consent, answers in the app, the doctor's review, plan and follow-up) and **Continuă către consult**: a
+  form POST of the chosen condition only to `CLINICAL_APP_URL`. Answers never leave the browser; the app
+  asks again (contract in docs/clinical-app-architecture.md §4b). CSP `form-action` allows the app's
+  origin. Without the variable, previews show an owner marker; production cannot build.
+- **Copy rewritten in the present tense:** home FAQ ("Telegen funcționează deja?" removed in "open"; data
+  answer; "Cât costă?" from config), /cum-functioneaza prices from config, /afectiuni lead,
+  /standarde-clinice, /contact, ClosingCta, announcement bar, footer line, mockup line, an ED FAQ answer,
+  /evaluare, /termeni-si-conditii and privacy meta descriptions, /politica-editoriala. Unreviewed medical
+  pages show "Scris de echipa editorială Telegen pe baza ghidurilor citate · actualizat {dată}" (no badge,
+  no review claim). Launch versions of terms, privacy and cookies (marked REQUIRES LAWYER SIGN-OFF in
+  docs/legal-review-needed.md, items 20–23); no note on the site.
+- **No TEMPORARY anywhere public.** TemporaryBadge/TemporaryNote deleted. Company identity, contact
+  e-mail, response time, prices and the legal sign-off come from `src/lib/launch-config.ts`; a missing
+  value shows a dashed "[lipsește: …]" marker on previews and local builds only, never in production.
+- **Launch lock.** `scripts/launch-lock.ts` runs before every build; with VERCEL_ENV=production and
+  "open" it fails and lists what is missing (verified: exit 1 with 11 items; previews exit 0).
+  `scripts/launch-copy-check.ts` runs after every build and fails if any prerendered page contains a
+  pre-launch phrase (36 pages, clean). On Vercel the builder keeps prerendered pages elsewhere, so there
+  the check warns and passes (the first v4.7 preview failed on this; fixed in babe4d9); CI and e2e run it
+  on every pull request. The production lock itself was verified locally only (VERCEL_ENV=production
+  exits 1); it runs before the build on Vercel too.
+- **Tests:** unit `tests/unit/launch-copy.test.ts` (defaults; phrase detector; no pre-launch phrase in any
+  source file outside prelaunch-copy.ts; every route's title/description and every content string; lock
+  logic; no invented values; price answer; owner markers; https-only app URL). Pages cannot be rendered in
+  a unit test, so every route's HTML is checked after the build and in e2e (`tests/e2e/launch.spec.ts`);
+  the evaluation e2e checks the final screen and that the hand-over POST carries only the condition.
+- **Gates:** format, lint, typecheck, 59 unit tests, build (with and without `CLINICAL_APP_URL`), 187 Playwright tests (0 failed), axe on every route. Lighthouse mobile (local): home Perf 95 / A11y
+  100 / CLS 0 (LCP element the H1), /caderea-parului 98, /acnee 95, /disfunctie-erectila 95, /contact 95;
+  A11y 100 everywhere; SEO 66 only because of the intended noindex.
+
+STILL NEEDED FROM THE OWNER (the production build is locked until then): see docs/open-items.md, "Launch
+values the owner still has to supply" (11 items: company name, CUI, Reg. Com., address, contact e-mail,
+reply time, three prices, `CLINICAL_APP_URL` with a live app, lawyer sign-off).
 
 ## v4.6 animated photo in the hair-loss panel
 
@@ -39,8 +82,48 @@ NOT DONE / open:
 
 - The Pexels licence gives no model release; whether it covers a health topic is listed for the lawyer
   (docs/legal-review-needed.md #19, docs/open-items.md).
-- PR #2 (WebGL hair and acne scenes, claude/hero-realistic) touches the same files and will need a merge
-  if the owner approves it.
+- Merged into PR #2 (claude/hero-realistic): there the hair panel shows this photo by default, the WebGL
+  hair scene is the switch's "illustration" option and its still poster is the photo's load fallback;
+  acne keeps its WebGL scene.
+
+## v4.5 realistic WebGL scenes for hair and acne (branch claude/hero-realistic, separate PR, not merged)
+
+DONE (verified locally, 2026-10-07):
+
+- The ED line (Pulse) is unchanged. Hair and acne are now GPU-rendered scenes in raw WebGL2, no library
+  (`src/components/home/panels/scenes/`): `gl.ts` (helpers, shared duotone grade in brand colours, same key
+  light), `hair.ts`, `skin.ts`. Loader: `SceneArt.tsx`. Gzipped chunks: hair 4.5 KB, skin 3.4 KB (target ≤ 30).
+- Hair: about 1,400 strands on desktop, 700 on mobile, 480 on low-end devices (instanced, tapered ribbons
+  with curl, dark roots and light tips, Kajiya-Kay sliding highlight, 3 depth layers, wind sway). Story: six
+  strands detach and drift down like feathers, then new strands grow in over about 4 s until the field is
+  fuller; afterwards a single strand is shed and regrown every 24 s. On desktop the strands lean away from
+  the cursor (spring); no touch interaction.
+- Acne: a full-panel skin shader (Worley pores, fbm micro-relief and crossing fine furrows, normal from the
+  height field, wrapped diffuse as a soft subsurface stand-in, faint sheen). Six soft raised areas with a
+  restrained rose tint flatten and fade over about 8 s while a light sweeps across. On desktop the light
+  follows the cursor. No pus, no sharp red.
+- Lifecycle: the scene code is imported only after page load and idle, only for the open panel while it is on
+  screen. One WebGL context at a time; disposed on close; paused offscreen and in a hidden tab; 30 fps after
+  the story. DPR cap 2 (1.5 on mobile); lower quality with fewer than 4 cores. Reduced motion, Save-Data, no
+  WebGL, no GPU (software renderer) or sustained slow frames: the poster stays.
+- Posters: `pnpm render:posters` (Playwright + sharp) renders each scene at its calm state into
+  `public/posters/{hair,skin}.{avif,webp}` (hair 38/108 KB, skin 16/19 KB). Shown in closed doors, before
+  load and in every fallback. Fixed 1400 × 560 box, no CLS. All art is `aria-hidden`. The same scenes run on
+  the /caderea-parului and /acnee hub panels (checked live at 360 and 1280).
+- Visual loop: 6 screenshot passes at 360 and 1280 (open, closed, posters, recordings). Fixed: hair reading
+  as grass, skin reading as reptile scales or cracked glaze, a washed-out grade.
+- Gates: format, lint, typecheck, 46 unit tests, build, 168 Playwright tests (0 failed; new: posters with
+  reduced motion, without WebGL and without a GPU, one live scene at a time, none for ED, no console errors).
+  Lighthouse mobile (local): home Perf 94, TBT 72 ms, CLS 0, A11y 100, LCP element the H1; /acnee 95;
+  /caderea-parului 98. SEO 66 locally only because the site is noindex (intended).
+
+NOT VERIFIED / honest notes:
+
+- Lighthouse's headless Chrome has no GPU, so it measures the poster path (as on any device without GPU
+  acceleration). The first run without the software-renderer check scored home Perf 64 (TBT 79 s). Real-GPU
+  frame times on a mid-range phone were not measured here; the slow-frame guard falls back to the poster.
+- Nothing was cut from the brief's counts or effects; the subsurface look is an approximation (wrapped
+  diffuse), not a true scattering model.
 
 ## v4.4 hair and acne illustrations redesigned
 

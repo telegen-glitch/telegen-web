@@ -1,18 +1,36 @@
-# Open items (TEMPORARY content and unverified facts)
+# Open items (launch values and unverified facts)
 
-Everything below is visibly labelled TEMPORARY on the site or is otherwise unconfirmed.
+## Launch values the owner still has to supply (v4.7)
+
+The site reads as the live service. Each value below shows on previews as an owner-only marker
+"[lipsește: …]" and blocks the production build until supplied (docs/LAUNCH.md, step 0). Send them to
+Claude in one message, or edit `src/lib/launch-config.ts`.
+
+1. Legal name of the company (`company.legalName`)
+2. CUI (`company.cui`)
+3. Nr. Registrul Comerțului (`company.regCom`)
+4. Registered address (`company.address`)
+5. Public contact e-mail (`contact.email`)
+6. Usual reply time, e.g. "2 zile lucrătoare" (`contact.responseTime`)
+7. Price for hair loss: amount in lei with VAT, what it covers, optional note (`prices["caderea-parului"]`)
+8. Price for acne (`prices["acnee"]`)
+9. Price for erectile dysfunction (`prices["disfunctie-erectila"]`)
+10. The clinical app's https hand-over address, set in Vercel as `CLINICAL_APP_URL` (the app must be
+    live first: docs/clinical-app-architecture.md, "Hand-over from telegen.ro")
+11. Lawyer sign-off on the legal pages → `legalApproved: true` (docs/legal-review-needed.md, items 20–23)
+
+Not part of the lock but still needed for indexing: a recorded medical review per page (docs/REVIEW.md).
+
+## Unconfirmed items
 
 | Item                                                                                                                                                                                                                                                | Where                                                                    | Needed from                                                               |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| Company identity: legal name, CUI, Reg. Com. no., registered address, contact                                                                                                                                                                       | Footer, legal pages, `siteConfig.legalName`                              | Owner                                                                     |
 | ANPC / SAL links and wording                                                                                                                                                                                                                        | Footer, Terms                                                            | Owner + lawyer                                                            |
 | Medical coordinator and clinicians: name, grade, specialty, CMR code                                                                                                                                                                                | `src/content/clinicians.ts`, team pages, review blocks                   | Owner                                                                     |
 | Medical review of every medical page (reviewer + date) — pages stay noindex until then                                                                                                                                                              | `review` field on each doc                                               | Medical reviewer                                                          |
 | Verify every source URL and citation (network blocked during authoring; DOIs written from records, EMA URL especially)                                                                                                                              | `src/content/sources.ts`                                                 | Medical reviewer                                                          |
 | Clinical standards wording (commitments on verification, protocols)                                                                                                                                                                                 | `/standarde-clinice`                                                     | Medical coordinator                                                       |
-| Prices and pricing structure (`features.pricing` stays OFF)                                                                                                                                                                                         | Pricing block, how-it-works                                              | Owner                                                                     |
-| Legal texts: terms, privacy, cookies are working drafts                                                                                                                                                                                             | Legal pages                                                              | Lawyer                                                                    |
-| Launch-notification processor (proposed: Brevo, EU) + API key, list id, DPA                                                                                                                                                                         | `src/lib/notify`                                                         | Owner                                                                     |
+| Launch-notification processor (Brevo, EU): "prelaunch" fallback mode only                                                                                                                                                                           | `src/lib/notify`                                                         | Owner                                                                     |
 | Analytics provider (none configured; consent banner appears only once one is)                                                                                                                                                                       | `NEXT_PUBLIC_ANALYTICS_PROVIDER`                                         | Owner                                                                     |
 | Sanity project id, dataset, read token (Phase 5)                                                                                                                                                                                                    | env vars                                                                 | Owner                                                                     |
 | GPTBot policy (currently "unchanged": no explicit rule)                                                                                                                                                                                             | `siteConfig.crawlers.gptbot`                                             | Owner                                                                     |
@@ -24,8 +42,6 @@ Everything below is visibly labelled TEMPORARY on the site or is otherwise uncon
 | Romanian keyword research (autocomplete, PAA, SERPs)                                                                                                                                                                                                | docs/keywords-ro.md                                                      | Network access; or Semrush API units (https://www.semrush.com/mcp-access) |
 | Fellos acne/ED page capture for structure                                                                                                                                                                                                           | /reference                                                               | Network access                                                            |
 | Hair-loss hero photo (Pexels stock, no model release): confirm the licence covers health-topic use, or supply a photo with a model release (legal-review-needed.md #19)                                                                             | Home hero, /caderea-parului                                              | Owner + lawyer                                                            |
-| Company identity values (legal name, CUI, Reg. Com., address, contact email, response time)                                                                                                                                                         | `siteConfig.company` in src/lib/site.ts (footer, /contact)               | Owner                                                                     |
-| Prices per condition (flag off, none set)                                                                                                                                                                                                           | src/lib/pricing.ts, `flags.pricing`                                      | Owner                                                                     |
 | Women and hair loss: men's-health positioning vs hair-loss content covering women                                                                                                                                                                   | home, hair-loss pages, docs/legal-review-needed.md §16                   | Owner                                                                     |
 | Search Console / Bing verification codes                                                                                                                                                                                                            | Vercel env (docs/LAUNCH.md)                                              | Owner at launch                                                           |
 

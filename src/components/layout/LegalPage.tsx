@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { TemporaryNote } from "@/components/ui/Temporary";
 import { formatDate } from "@/components/medical/ReviewMeta";
+import { prelaunchCopy } from "@/lib/prelaunch-copy";
+import { isPrelaunch } from "@/lib/site";
 
 export function LegalPage({
   title,
@@ -22,13 +23,12 @@ export function LegalPage({
         </p>
       </PageHeader>
       <div className="container-page py-12 md:py-16">
-        <div className="max-w-[42rem]">
-          <TemporaryNote>
-            Document de lucru. Textul final se stabilește împreună cu un jurist, după confirmarea datelor
-            societății, înainte de lansare.
-          </TemporaryNote>
-        </div>
-        <div className="prose-telegen mt-8">{children}</div>
+        {isPrelaunch() && (
+          <p className="mb-8 max-w-[42rem] rounded-xl bg-mist p-4 text-sm text-ink-soft">
+            {prelaunchCopy.legalNote}
+          </p>
+        )}
+        <div className="prose-telegen">{children}</div>
       </div>
     </>
   );

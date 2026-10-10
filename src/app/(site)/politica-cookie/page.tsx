@@ -7,11 +7,11 @@ export const metadata = staticPageMetadata("/politica-cookie");
 
 export default function CookiePolicy() {
   return (
-    <LegalPage title="Politica de cookie-uri" path="/politica-cookie" updatedAt="2026-10-05">
+    <LegalPage title="Politica de cookie-uri" path="/politica-cookie" updatedAt="2026-10-10">
       <p>
         Folosim doar cookie-urile strict necesare funcționării site-ului. Cookie-urile de analiză sau
-        marketing ar fi folosite doar cu acordul tău, separat pentru fiecare categorie. În prezent nu folosim
-        astfel de cookie-uri.
+        marketing se folosesc doar cu acordul tău, separat pentru fiecare categorie. În prezent nu folosim
+        astfel de cookie-uri. Aplicația clinică Telegen are propriile reguli, explicate în aplicație.
       </p>
       <h2>Cookie-uri folosite</h2>
       <div className="overflow-x-auto" role="region" aria-label="Tabel cookie-uri" tabIndex={0}>

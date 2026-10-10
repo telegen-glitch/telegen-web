@@ -6,7 +6,7 @@ import { SectionHeading } from "@/components/home/SectionHeading";
 import { StepStrip } from "@/components/home/StepStrip";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { StartButton } from "@/components/topic/StartButton";
-import { TemporaryNote } from "@/components/ui/Temporary";
+import { PriceSummary } from "@/components/medical/PriceSummary";
 import { staticPageMetadata } from "@/lib/page-meta";
 
 export const metadata = staticPageMetadata("/cum-functioneaza");
@@ -72,19 +72,7 @@ export default function HowItWorks() {
         </div>
       </section>
 
-      <section aria-labelledby="preturi-info" className="border-t border-line-soft">
-        <div className="container-page grid gap-6 py-14 lg:grid-cols-2 lg:gap-20 lg:py-20">
-          <h2 id="preturi-info" className="text-display-3">
-            Cât costă
-          </h2>
-          <div>
-            <p className="text-ink-soft">Prețurile vor fi afișate clar pe site înainte de lansare.</p>
-            <div className="mt-4">
-              <TemporaryNote>Structura de prețuri este în curs de stabilire.</TemporaryNote>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PriceSummary conditions={content.listConditions()} />
 
       <ClosingCta />
     </>

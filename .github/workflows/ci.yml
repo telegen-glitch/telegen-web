@@ -34,6 +34,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     needs: checks
+    env:
+      # A test target so the hand-over to the clinical app is exercised (the POST is intercepted).
+      CLINICAL_APP_URL: https://app.telegen.test/consult
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6

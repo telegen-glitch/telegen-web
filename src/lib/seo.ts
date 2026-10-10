@@ -96,11 +96,13 @@ export function breadcrumbJsonLd(crumbs: Crumb[]): JsonLd {
 
 /** FAQPage only for FAQs that are visible on the same page. */
 export function faqJsonLd(faqs: Faq[]): JsonLd | null {
-  if (faqs.length === 0) return null;
+  // An answer that is only an owner-only marker (previews) has no text to publish.
+  const items = faqs.filter((f) => plainText(f.answer) !== "");
+  if (items.length === 0) return null;
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
+    mainEntity: items.map((f) => ({
       "@type": "Question",
       name: f.question,
       acceptedAnswer: { "@type": "Answer", text: plainText(f.answer) },

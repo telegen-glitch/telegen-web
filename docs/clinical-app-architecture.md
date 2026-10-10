@@ -57,6 +57,33 @@ otherwise Option A for the clinical core, with the Telegen-styled front end.
 | Email/SMS      | EU processor (the site already proposes Brevo for launch notifications)                      |
 | Identity       | Whether ID verification is required for telemedicine prescriptions                           |
 
+## 4b. Hand-over from telegen.ro (v4.7, decided)
+
+The evaluation on telegen.ro ends with **Continuă către consult**. Choice: **the app collects the
+medical answers again**; the site never sends them.
+
+Why: the answers on the site are health data (GDPR art. 9). Sending them from the public site would
+need explicit consent before transfer, a processor chain for the site and logging rules for the
+marketing stack. Re-asking in the app keeps all health data inside the reviewed clinical system, after
+consent. The site's questionnaire still does its job: safety hard stops before anyone is handed over,
+and the patient sees what will be asked. `CLINICAL_APP_INTAKE_URL` is therefore **not used**.
+
+Data contract (version 1):
+
+|             |                                                                                                                                                                                                                                 |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Request     | `POST` to `CLINICAL_APP_URL` (https; set in Vercel), `Content-Type: application/x-www-form-urlencoded`, a top-level browser navigation (form submit) from `https://telegen.ro/evaluare`                                         |
+| Fields      | `condition` = `caderea-parului` \| `acnee` \| `disfunctie-erectila`; `v` = `1`                                                                                                                                                  |
+| Never sent  | health answers, age, sex, name, e-mail, anything typed on the site; nothing in the URL or query string                                                                                                                          |
+| Referrer    | `Referrer-Policy: strict-origin-when-cross-origin`: the app sees only `https://telegen.ro`                                                                                                                                      |
+| App must    | accept the POST without authentication, ignore unknown fields, not log the body, start (or resume) the intake for `condition`, respond with `303` to its own page; reject unknown `condition` values with a friendly start page |
+| Site CSP    | `form-action` allows the origin of `CLINICAL_APP_URL` (next.config.ts)                                                                                                                                                          |
+| Launch lock | a production build of the site in the "open" state fails without `CLINICAL_APP_URL` (docs/LAUNCH.md)                                                                                                                            |
+
+The site states, in the present tense, that the app hosts data in the EU, encrypts it and asks for
+explicit consent (home FAQ, /standarde-clinice, privacy policy). Those statements must be true on the
+launch day.
+
 ## 5. Rough costs (order of magnitude, to verify with vendors)
 
 | Item                              | Option A                              | Option B             |

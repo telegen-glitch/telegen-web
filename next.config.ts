@@ -12,6 +12,15 @@ const isPreview = process.env.VERCEL_ENV === "preview";
  * not executed. Vercel's preview toolbar is allowed on previews only.
  */
 const vercelLive = isPreview ? " https://vercel.live" : "";
+/** The evaluation hands over to the clinical app by form POST (v4.7), so its origin may receive forms. */
+const clinicalAppOrigin = (() => {
+  try {
+    const url = new URL(process.env.CLINICAL_APP_URL ?? "");
+    return url.protocol === "https:" ? ` ${url.origin}` : "";
+  } catch {
+    return "";
+  }
+})();
 const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}${vercelLive}`,
@@ -23,7 +32,7 @@ const csp = [
   "frame-ancestors 'none'",
   "object-src 'none'",
   "base-uri 'self'",
-  "form-action 'self'",
+  `form-action 'self'${clinicalAppOrigin}`,
   ...(isDev ? [] : ["upgrade-insecure-requests"]),
 ].join("; ");
 

@@ -1,13 +1,13 @@
 import { CompanyIdentity } from "@/components/layout/CompanyIdentity";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { TemporaryNote } from "@/components/ui/Temporary";
+import { Missing } from "@/components/ui/Missing";
+import { launchConfig } from "@/lib/launch-config";
 import { staticPageMetadata } from "@/lib/page-meta";
-import { siteConfig } from "@/lib/site";
 
 export const metadata = staticPageMetadata("/contact");
 
 export default function ContactPage() {
-  const { email, responseTime } = siteConfig.company;
+  const { email, responseTime } = launchConfig.contact;
   return (
     <>
       <PageHeader
@@ -23,27 +23,23 @@ export default function ContactPage() {
             <h2 id="email" className="text-display-3">
               E-mail
             </h2>
-            {email ? (
-              <p className="mt-3 text-lg">
+            <p className="mt-3 text-lg">
+              {email ? (
                 <a
                   href={`mailto:${email}`}
                   className="font-semibold text-blue-700 underline underline-offset-2"
                 >
                   {email}
                 </a>
-              </p>
-            ) : (
-              <div className="mt-3">
-                <TemporaryNote>Adresa de e-mail se publică înainte de lansare.</TemporaryNote>
-              </div>
-            )}
+              ) : (
+                <Missing what="adresa de e-mail de contact" />
+              )}
+            </p>
             <p className="mt-4 text-ink-soft">
               {responseTime ? (
                 <>Răspundem de obicei în {responseTime}.</>
               ) : (
-                <span className="inline-flex flex-wrap items-center gap-2">
-                  Timpul de răspuns se publică înainte de lansare.
-                </span>
+                <Missing what="timpul de răspuns" />
               )}
             </p>
           </section>

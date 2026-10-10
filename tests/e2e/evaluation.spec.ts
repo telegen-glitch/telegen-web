@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { prelaunchPhrases } from "../../src/lib/launch-phrases";
 
 test("evaluation keeps answers in memory only", async ({ page, context }, info) => {
   test.skip(info.project.name === "tablet-768");
@@ -56,20 +57,33 @@ test("evaluation keeps answers in memory only", async ({ page, context }, info) 
   expect(unexpected).toEqual([]);
 
   await pick(/^Continuă/);
-  await expect(page.getByRole("heading", { name: "Serviciul nu este încă deschis" })).toBeVisible();
-
-  // Notify form: adapter disabled → honest message; request carries only email + consent.
-  await page.getByLabel("Adresa de e-mail").fill("test@exemplu.ro");
-  await page.getByRole("checkbox").check();
-  const post = page.waitForRequest((r) => r.method() === "POST");
-  await page.getByRole("button", { name: "Anunță-mă" }).click();
-  const body = (await post).postData() ?? "";
-  expect(body).toContain("test@exemplu.ro");
-  for (const leaked of ["25–34", "35–44", "Masculin", "temples", "crown"]) expect(body).not.toContain(leaked);
-  await expect(page.getByText("Înscrierea pentru anunț nu este încă activă")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Ultimul pas: consultul cu medicul." })).toBeVisible();
+  await expect(page.getByText("Un medic dermatolog îți analizează evaluarea")).toBeVisible();
+  expect(prelaunchPhrases(await page.content())).toEqual([]);
   await page.screenshot({
     path: `artifacts/screenshots/${info.project.name}/_evaluation-final.png`,
     fullPage: true,
   });
-  expect(page.url()).toBe(startUrl);
+
+  // Hand-over to the clinical app: a POST with the condition only, never the answers or a URL change.
+  const handoff = page.getByRole("button", { name: /Continuă către consult/ });
+  if (await handoff.count()) {
+    let body = "";
+    await page.route("**/*", async (route) => {
+      const r = route.request();
+      if (r.method() === "POST" && r.isNavigationRequest()) {
+        body = r.postData() ?? "";
+        await route.fulfill({ status: 200, contentType: "text/html", body: "<title>app</title>ok" });
+      } else await route.continue();
+    });
+    await handoff.click();
+    await expect.poll(() => body).not.toBe("");
+    expect(new URLSearchParams(body).get("condition")).toBe("caderea-parului");
+    for (const leaked of ["25–34", "35–44", "Masculin", "temples", "crown", "Pe creștet"])
+      expect(body).not.toContain(leaked);
+    expect(page.url()).not.toContain("caderea");
+  } else {
+    // No CLINICAL_APP_URL in this build: previews show the owner-only marker instead.
+    await expect(page.getByText("[lipsește: CLINICAL_APP_URL")).toBeVisible();
+  }
 });
