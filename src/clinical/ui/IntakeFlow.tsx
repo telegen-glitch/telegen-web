@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { clearPendingTopic, peekPendingTopic } from "@/components/topic/pendingTopic";
 import { Arrow, buttonClasses } from "@/components/ui/Button";
-import { MissingMark } from "@/components/ui/MissingMark";
+import { ServiceNotReady } from "./ServiceNotReady";
 import { getEvaluation } from "@/content/evaluations";
 import type { Answers, HardStop, Question } from "@/content/evaluations/types";
 import { stopFor, summaryNotes, visibleQuestions } from "@/lib/evaluation";
@@ -40,7 +40,9 @@ type Stage =
   | { kind: "delivery" }
   | { kind: "checkout" }
   | { kind: "submitted" }
-  | { kind: "done" };
+  | { kind: "done" }
+  /** End of an evaluation for a condition without an online plan (no price): next steps, nothing sent. */
+  | { kind: "next-steps" };
 
 export interface FlowTopic {
   slug: string;
@@ -49,6 +51,12 @@ export interface FlowTopic {
   /** Who decides, e.g. "Un medic dermatolog" (never a name). */
   decider: string;
   photoSlots: PhotoSlot[];
+  /**
+   * An online plan can be bought (price set, service open). Every published
+   * condition can be evaluated; this only changes the end of the flow: without
+   * it the answers stay in this page and the flow ends on the next steps.
+   */
+  purchasable: boolean;
 }
 
 export interface FlowDraft {
@@ -65,14 +73,15 @@ export function IntakeFlow({
   draft,
   authReady,
   devCode,
-  ownerMarkers,
+  notReadyDetail,
 }: {
   topics: FlowTopic[];
   account: { email: string; consented: boolean } | null;
   draft: FlowDraft | null;
   authReady: boolean;
   devCode: string | null;
-  ownerMarkers: boolean;
+  /** What the not-ready screen may name (previews only; null in production). */
+  notReadyDetail: string | null;
 }) {
   const [topic, setTopic] = useState<string | null>(() => {
     const pending = peekPendingTopic();
@@ -169,6 +178,7 @@ export function IntakeFlow({
     });
 
   const continueFromSummary = () => {
+    if (!current?.purchasable) return go({ kind: "next-steps" });
     if (autosave && caseId) return afterSaved(caseId);
     if (!account) return go({ kind: "account" });
     if (!account.consented) return go({ kind: "consents" });
@@ -246,7 +256,7 @@ export function IntakeFlow({
   };
 
   if (stage.kind === "intro") {
-    const signedInAndConsented = account?.consented;
+    const signedInAndConsented = current.purchasable && account?.consented;
     return (
       <Screen>
         <BackButton onClick={() => go({ kind: "topic" })} />
@@ -260,7 +270,9 @@ export function IntakeFlow({
           <p className="font-semibold text-navy-950">Înainte să începi</p>
           <ul className="mt-2 list-disc space-y-1.5 pl-5">
             <li>Evaluarea este gratuită.</li>
-            {signedInAndConsented ? (
+            {!current.purchasable ? (
+              <li>Răspunsurile rămân doar pe această pagină: nu se trimit și nu se salvează.</li>
+            ) : signedInAndConsented ? (
               <li>Ești în cont: răspunsurile se salvează pe măsură ce răspunzi.</li>
             ) : (
               <li>
@@ -351,6 +363,40 @@ export function IntakeFlow({
           <div aria-live="polite">{error && <ErrorText>{error}</ErrorText>}</div>
         </Screen>
       </>
+    );
+  }
+
+  if (stage.kind === "next-steps") {
+    // No online plan for this condition: say so plainly, point to the right doctor, keep nothing.
+    return (
+      <Screen>
+        <p className="text-eyebrow text-blue-700">Pasul următor</p>
+        <h1 ref={headingRef} tabIndex={-1} className="mt-3 text-display-2 outline-none">
+          Mulțumim. <span className="accent">Iată ce îți recomandăm.</span>
+        </h1>
+        <p className="mt-5 text-lead">
+          Pentru {def.name.toLowerCase()}, Telegen nu oferă acum un plan de tratament online. Ce poate face un
+          medic pentru tine se stabilește la un consult: {current.decider.toLowerCase()} te poate examina și
+          îți poate recomanda tratamentul potrivit.
+        </p>
+        <p className="mt-5 text-sm text-ink-muted">
+          Răspunsurile tale nu au fost trimise nicăieri și dispar când închizi pagina. Nu ai plătit nimic.
+        </p>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          {current.href && (
+            <Link href={current.href} className={buttonClasses("primary", "lg", "w-full sm:w-auto")}>
+              Citește ghidul despre {def.name.toLowerCase()}
+            </Link>
+          )}
+          <button
+            type="button"
+            className={buttonClasses("secondary", "lg", "w-full sm:w-auto")}
+            onClick={reset}
+          >
+            Închide evaluarea
+          </button>
+        </div>
+      </Screen>
     );
   }
 
@@ -496,12 +542,8 @@ export function IntakeFlow({
               else go({ kind: "consents" });
             }}
           />
-        ) : ownerMarkers ? (
-          <p className="mt-8">
-            <MissingMark what="Supabase (SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, DATABASE_URL)" />
-          </p>
         ) : (
-          <p className="mt-8 text-ink-soft">{ERROR_TEXT.closed}</p>
+          <ServiceNotReady detail={notReadyDetail} />
         )}
       </Screen>
     );
