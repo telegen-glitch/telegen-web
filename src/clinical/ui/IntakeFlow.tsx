@@ -9,10 +9,15 @@ import { getEvaluation } from "@/content/evaluations";
 import type { Answers, HardStop, Question } from "@/content/evaluations/types";
 import { stopFor, summaryNotes, visibleQuestions } from "@/lib/evaluation";
 import type { PhotoSlot } from "../config/conditions";
-import { saveAnswerAction, startCaseAction } from "../intake/actions";
+import type { Billing, PlanId } from "../config/plans";
+import { proposalAction, saveAnswerAction, startCaseAction } from "../intake/actions";
+import type { ProposalView } from "../intake/proposal";
+import { Checkout } from "./Checkout";
 import { Consents } from "./Consents";
+import { Delivery } from "./Delivery";
 import { BackButton, Card, ERROR_TEXT, ErrorText, Progress, Screen } from "./parts";
 import { PhotoStep, type SavedPhoto } from "./PhotoStep";
+import { Proposal } from "./Proposal";
 import { SignIn } from "./SignIn";
 
 /**
@@ -31,6 +36,10 @@ type Stage =
   | { kind: "account" }
   | { kind: "consents" }
   | { kind: "photos" }
+  | { kind: "plan" }
+  | { kind: "delivery" }
+  | { kind: "checkout" }
+  | { kind: "submitted" }
   | { kind: "done" };
 
 export interface FlowTopic {
@@ -45,6 +54,7 @@ export interface FlowTopic {
 export interface FlowDraft {
   caseId: string;
   condition: string;
+  status: "draft" | "awaiting_payment";
   answers: Answers;
   photos: { id: string; slot: PhotoSlot }[];
 }
@@ -74,6 +84,8 @@ export function IntakeFlow({
   const [caseId, setCaseId] = useState<string | null>(null);
   const [photos, setPhotos] = useState<SavedPhoto[]>([]);
   const [returnToSummary, setReturnToSummary] = useState(false);
+  const [proposal, setProposal] = useState<ProposalView | null>(null);
+  const [choice, setChoice] = useState<{ planId: PlanId; billing: Billing } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -107,6 +119,17 @@ export function IntakeFlow({
     go({ kind: "topic" });
   };
 
+  /** "Planul tău propus": loaded from the server, for the signed-in patient only. */
+  const openProposal = (id: string) =>
+    startTransition(async () => {
+      const res = await proposalAction(id);
+      if (res.ok) {
+        setProposal(res.proposal);
+        setChoice(res.proposal.chosen);
+        go({ kind: "plan" });
+      } else go({ kind: "done" });
+    });
+
   const resume = (d: FlowDraft) => {
     const dd = getEvaluation(d.condition);
     if (!dd) return;
@@ -114,15 +137,18 @@ export function IntakeFlow({
     setAnswers(d.answers);
     setCaseId(d.caseId);
     setPhotos(d.photos);
+    if (d.status === "awaiting_payment") return openProposal(d.caseId);
     const list = visibleQuestions(dd, d.answers);
     const missing = list.findIndex((q) => !d.answers[q.id]?.length);
     go(missing >= 0 ? { kind: "question", index: missing } : { kind: "summary" });
   };
 
-  /** After the summary: save (if needed), then photos, then the end. */
+  /** After the summary: save (if needed), then photos, then the proposed plan. */
   const afterSaved = (id: string) => {
     setCaseId(id);
-    go((current?.photoSlots.length ?? 0) > 0 ? { kind: "photos" } : { kind: "done" });
+    const slots = topics.find((t) => t.slug === topic)?.photoSlots ?? [];
+    if (slots.some((s) => !photos.some((p) => p.slot === s))) go({ kind: "photos" });
+    else openProposal(id);
   };
 
   const save = () =>
@@ -160,7 +186,8 @@ export function IntakeFlow({
         {draft && draftTopic && (
           <Card className="mt-8">
             <p className="font-semibold text-navy-950">
-              Ai o evaluare începută: {draftTopic.name.toLowerCase()}
+              {draft.status === "awaiting_payment" ? "Planul tău te așteaptă" : "Ai o evaluare începută"}:{" "}
+              {draftTopic.name.toLowerCase()}
             </p>
             <p className="mt-1 text-sm text-ink-soft">
               Răspunsurile tale sunt salvate în cont. Continui de unde ai rămas.
@@ -522,8 +549,87 @@ export function IntakeFlow({
           slots={current.photoSlots}
           saved={photos}
           onSaved={(p) => setPhotos((list) => [...list.filter((x) => x.slot !== p.slot), p])}
-          onDone={() => go({ kind: "done" })}
+          onDone={() => openProposal(caseId)}
         />
+        <div aria-live="polite">
+          {pending && <p className="mt-4 text-sm text-ink-muted">Se pregătește planul…</p>}
+        </div>
+      </Screen>
+    );
+  }
+
+  if (stage.kind === "plan" && proposal) {
+    return (
+      <Screen wide>
+        <p className="text-eyebrow text-blue-700">Planul tău propus</p>
+        <h1 ref={headingRef} tabIndex={-1} className="mt-3 text-display-2 outline-none">
+          Un plan pentru tine, <span className="accent">verificat de medic.</span>
+        </h1>
+        <p className="mt-4 text-lead">
+          Pe baza răspunsurilor tale îți propunem planul de mai jos. {current.decider} îl verifică și decide:
+          îl aprobă, îl ajustează sau îți recomandă alt pas.
+        </p>
+        <Proposal
+          proposal={proposal}
+          onContinue={(c) => {
+            setChoice(c);
+            go({ kind: "delivery" });
+          }}
+        />
+      </Screen>
+    );
+  }
+
+  if (stage.kind === "delivery" && proposal) {
+    return (
+      <Screen>
+        <BackButton onClick={() => go({ kind: "plan" })} />
+        <h1 ref={headingRef} tabIndex={-1} className="mt-6 text-display-2 outline-none">
+          Unde <span className="accent">livrăm?</span>
+        </h1>
+        <p className="mt-4 text-lead">
+          Farmacia parteneră trimite tratamentul la această adresă, după aprobarea medicului.
+        </p>
+        <Delivery
+          initial={proposal.delivery}
+          onSaved={(d) => {
+            setProposal({ ...proposal, delivery: d });
+            go({ kind: "checkout" });
+          }}
+        />
+      </Screen>
+    );
+  }
+
+  if (stage.kind === "checkout" && proposal && choice) {
+    return (
+      <Screen>
+        <BackButton onClick={() => go({ kind: "delivery" })} />
+        <h1 ref={headingRef} tabIndex={-1} className="mt-6 text-display-2 outline-none">
+          Plătești <span className="accent">doar dacă medicul aprobă.</span>
+        </h1>
+        <Checkout proposal={proposal} choice={choice} onAuthorized={() => go({ kind: "submitted" })} />
+      </Screen>
+    );
+  }
+
+  if (stage.kind === "submitted") {
+    return (
+      <Screen>
+        <p className="text-eyebrow text-blue-700">Evaluare trimisă</p>
+        <h1 ref={headingRef} tabIndex={-1} className="mt-3 text-display-2 outline-none">
+          Evaluarea ta <span className="accent">a ajuns la medic.</span>
+        </h1>
+        <p className="mt-4 text-lead">
+          {current.decider} îți analizează evaluarea în cel mult {proposal?.slaHours ?? 24} de ore. Când preia
+          cazul, îi vezi în cont numele, specialitatea și codul de parafă.
+        </p>
+        <p className="mt-3 text-ink-soft">
+          Suma este doar rezervată pe card. Dacă nu primești rețetă, nu plătești nimic.
+        </p>
+        <Link href="/cont" className={buttonClasses("primary", "lg", "mt-8 w-full sm:w-auto")}>
+          Mergi la cont <Arrow />
+        </Link>
       </Screen>
     );
   }

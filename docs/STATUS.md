@@ -1,11 +1,47 @@
 # Status
 
-_Last updated: 2026-10-11 (v5 P1: intake, branch claude/v5-p1-intake)_
+_Last updated: 2026-10-11 (v5 P2: proposal and payment, branch claude/v5-p2-proposal)_
 
 ## v5 clinical flow inside the site
 
 Owner decision 2026-10-11: one repo, one Vercel project; the clinical flow is built here with the
 separation enforced in code. Phases P0–P6, one stacked pull request each.
+
+### P2 proposal, pricing, A/B, card authorisation (branch claude/v5-p2-proposal) — DONE (verified locally, 2026-10-11)
+
+- **"Planul tău propus"** (signed-in only): the medicine, how it is taken (dose and minoxidil
+  concentration left to the doctor), purpose, time to results, main side effects, the EMA 2025
+  finasteride warning, links to /tratamente and official product information, price, what it includes,
+  plan and billing choice, the refund rule and "Decizia finală aparține medicului. Dacă nu primești
+  rețetă, nu plătești nimic." No urgency, timers or "cumpără". Plans: finasteride 1 mg + minoxidil
+  (default for men), minoxidil alone (the only plan for women; first for a mood history). Plan texts are
+  server-only (`src/clinical/config/plans.ts`) and never reach a public page or browser bundle (test).
+- **Pricing** (`src/clinical/config/pricing.ts`): 320 lei/month or 870 lei/3 months; first month A 320 /
+  B 199, assigned 50/50 on the server once per patient (`clinical.price_assignments`). Matches the
+  public prices (test).
+- **Delivery details** before payment (validated Romanian phone, 6-digit postal code); the parcel is discreet.
+- **Checkout:** Stripe Checkout (hosted, no payment script on Telegen pages), PaymentIntent with
+  `capture_method=manual` and `setup_future_usage=off_session`, product "Plan Telegen", metadata
+  `case_id` + `purpose` only. "Suma este doar rezervată pe card până la decizia medicului." Changing the
+  plan abandons the earlier checkout; a late authorisation of an abandoned checkout is released at once.
+- **After authorisation** (webhook `/api/stripe/webhook`, signature verified; or the return sync on /cont;
+  or the local fake provider): case → submitted, SLA due in 24 h (config), "case_received" e-mail queued
+  (template + ids only), card hold expiry stored for the admin warning (P3).
+- **Tests:** 112 unit tests and 181 Playwright tests pass. The full flow is checked end to end at 360 and
+  1280, through plan, delivery, reservation and "Trimisă medicului". Unit tests cover:
+  - the A/B variant persisting per patient;
+  - plan eligibility;
+  - server amounts;
+  - abandoned and late checkouts;
+  - duplicate webhooks;
+  - SLA;
+  - outbox;
+  - webhook signature (no network).
+- **Not verifiable here:** real Stripe test-mode checkout and webhooks (need the owner's Stripe test key:
+  docs/STRIPE.md).
+
+Stack addition: `stripe` (official SDK): Checkout Sessions with manual capture, captures, cancellations,
+subscriptions (P5) and webhook signature verification.
 
 ### P1 intake (branch claude/v5-p1-intake) — DONE (verified locally, 2026-10-11)
 

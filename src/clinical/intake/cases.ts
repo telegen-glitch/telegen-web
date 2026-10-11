@@ -160,16 +160,17 @@ export async function saveAnswer(
 export interface Draft {
   caseId: string;
   condition: string;
+  status: "draft" | "awaiting_payment";
   answers: Answers;
   photos: { id: string; slot: PhotoSlot }[];
 }
 
-/** The patient's most recent open draft, for resuming without anything in the URL. */
+/** The patient's most recent open case (draft, or a plan waiting for payment), resumed without anything in the URL. */
 export async function latestDraft(session: Session, allowedTopics: string[]): Promise<Draft | null> {
   return asUser(actor(session), async (q) => {
-    const [kase] = await q.query<{ id: string; condition: string }>(
-      `select id, condition from clinical.cases
-       where patient_id = auth.uid() and status = 'draft' and condition = any($1::text[])
+    const [kase] = await q.query<{ id: string; condition: string; status: "draft" | "awaiting_payment" }>(
+      `select id, condition, status from clinical.cases
+       where patient_id = auth.uid() and status in ('draft', 'awaiting_payment') and condition = any($1::text[])
        order by updated_at desc limit 1`,
       [allowedTopics],
     );
@@ -191,6 +192,7 @@ export async function latestDraft(session: Session, allowedTopics: string[]): Pr
     return {
       caseId: kase.id,
       condition: kase.condition,
+      status: kase.status,
       answers,
       photos: photos.filter((p) => slots.includes(p.slot)),
     };

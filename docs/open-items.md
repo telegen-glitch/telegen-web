@@ -60,3 +60,13 @@ Not part of the lock but still needed for indexing: a recorded medical review pe
 | **Romanian status not confirmed** for adapalene alone, benzoyl peroxide alone, topical tretinoin, topical clindamycin alone and lymecycline. Pages say so plainly; no `prescriptionStatus` for adapalen and benzoyl peroxide. Check nomenclator.anm.ro when reachable.                                                                        | `src/content/medicines/acne.ts`                                 | Next session with network access  |
 | **Citation details to verify:** AAD 2024 volume and pages (listed, not cited); EAU edition year (cited as "accessed 7 October 2026"); DOIs of `kanti-2018`, `olsen-2002`, `kaufman-1998`, `hamilton-1951`, `norwood-1975`, `ludwig-1977` not re-checked.                                                                                      | `src/content/sources.ts`                                        | Medical reviewer                  |
 | **Not covered by the pack (left out of the pages):** acne hormones and genetics as causes, hygiene myths, isotretinoin side effects other than pregnancy and mood, retinoid irritation details. Add only from a fetched source.                                                                                                               | acne pages                                                      | Next session with network access  |
+
+## v5 P2 (proposal and payment)
+
+- Owner: confirm that 320 lei/month (870 lei/3 months) **includes the medicines** dispensed by the
+  partner pharmacy, as the proposal now says ("tratamentul pentru perioada plătită").
+- Owner: how long the 199/320 first-month A/B test runs and how it is judged (it is assigned and stored
+  per patient; reporting comes with the admin view in P3).
+- Doctor: confirm the plan rules (finasteride only for men; a history of depression, anxiety or
+  self-harm starts the proposal from minoxidil alone) and the plan texts in `src/clinical/config/plans.ts`.
+- Owner: Stripe account (docs/STRIPE.md): test key and webhook for previews now; live keys at launch.

@@ -153,9 +153,13 @@ describe("internal linking graph", () => {
 describe("prescription-medicine promotion rules (section 9.4)", () => {
   const medicine = MEDICINE_NAMES;
 
+  // v5 exception (lawyer, docs/legal-review-needed.md #25): the signed-in proposal names the medicine next to
+  // its price. Those names live in one server-only file; tests/unit/proposal.test.ts keeps it out of browser code.
+  const PROPOSAL_PLANS = join("src", "clinical", "config", "plans.ts");
+
   it("medicine names appear only in neutral content data, never in page or component code", () => {
     const offenders = walk("src")
-      .filter((f) => /\.(tsx?|css)$/.test(f) && !f.startsWith(join("src", "content")))
+      .filter((f) => /\.(tsx?|css)$/.test(f) && !f.startsWith(join("src", "content")) && f !== PROPOSAL_PLANS)
       .filter((f) => medicine.test(readFileSync(f, "utf8")))
       .map((f) => relative(".", f));
     expect(offenders).toEqual([]);

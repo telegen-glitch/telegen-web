@@ -125,13 +125,26 @@ test("evaluation: in memory until consent, then saved, with photos and nothing i
   });
   await next.click();
 
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("este în cont");
+  // "Planul tău propus": signed in, the medicine is named next to the price; no urgency.
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("verificat de medic");
+  await expect(page.getByText("Finasteridă 1 mg și minoxidil pentru scalp")).toBeVisible();
+  await expect(page.getByText("Propus pentru tine")).toBeVisible();
+  await expect(page.getByText(/confirmat în 2025 gândurile suicidare/)).toBeVisible();
+  await expect(
+    page.getByText("Decizia finală aparține medicului. Dacă nu primești rețetă, nu plătești nimic."),
+  ).toBeVisible();
+  await expect(page.getByText(/^(320 lei pe lună|199 lei prima lună, apoi 320 lei pe lună)$/)).toBeVisible();
+  await expect(page.getByText("870 lei o dată la 3 luni")).toBeVisible();
+  await expect(page.locator("main")).not.toContainText(/cumpără|grăbește|ofertă limitată|expiră în/i);
   expect(prelaunchPhrases(await page.content())).toEqual([]);
   expect(page.url()).toBe(startUrl);
+  await page.screenshot({
+    path: `artifacts/screenshots/${info.project.name}/_evaluation-plan.png`,
+    fullPage: true,
+  });
 
   // The account lists the saved evaluation, marked TEST outside production.
-  await page.getByRole("link", { name: /Mergi la cont/ }).click();
-  await expect(page).toHaveURL(/\/cont$/);
+  await page.goto("/cont");
   await expect(page.getByText("Căderea părului")).toBeVisible();
   await expect(page.getByText("TEST", { exact: true })).toBeVisible();
   await expect(page.getByText(/Evaluare începută/)).toBeVisible();
@@ -148,6 +161,30 @@ test("evaluation: in memory until consent, then saved, with photos and nothing i
   await page.reload();
   await page.getByRole("button", { name: /Continuă evaluarea/ }).click();
   await expect(page.getByText("Să am din nou păr mai des")).toBeVisible();
+
+  // Plan → delivery → card reservation (test provider) → the doctor's queue.
+  await pick(page, /^Continuă/);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("verificat de medic");
+  await page.getByRole("radio", { name: /La 3 luni/ }).check();
+  await pick(page, /^Continuă/);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("livrăm");
+  await page.getByLabel("Nume și prenume").fill("Pacient Test");
+  await page.getByLabel("Telefon (pentru curier)").fill("0712345678");
+  await page.getByLabel("Adresa (stradă, număr, bloc, apartament)").fill("Str. Exemplu 1, ap. 2");
+  await page.getByLabel("Localitatea").fill("Cluj-Napoca");
+  await page.getByLabel("Județul").fill("Cluj");
+  await page.getByLabel("Codul poștal").fill("400001");
+  await page.getByRole("button", { name: /Salvează și continuă/ }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("doar dacă medicul aprobă");
+  await expect(page.getByText("Suma este doar rezervată pe card până la decizia medicului.")).toBeVisible();
+  await page.screenshot({
+    path: `artifacts/screenshots/${info.project.name}/_evaluation-checkout.png`,
+    fullPage: true,
+  });
+  await page.getByRole("button", { name: "Rezervă 870 lei pe card" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("a ajuns la medic");
+  await page.getByRole("link", { name: /Mergi la cont/ }).click();
+  await expect(page.getByText(/Trimisă medicului/)).toBeVisible();
 
   // No URL ever carried health data, and no query strings were added.
   for (const url of urls) {
