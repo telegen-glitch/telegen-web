@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { evaluations } from "@/content/evaluations";
+import { isPurchasable } from "@/lib/purchasable";
 import { Footer } from "@/components/layout/Footer";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { TopicPickerProvider } from "@/components/topic/TopicPicker";
@@ -9,13 +10,15 @@ import { isPrelaunch } from "@/lib/site";
 
 /** Announcement bar, sticky header, topic picker and footer around site pages. */
 export function SiteChrome({ children }: { children: React.ReactNode }) {
-  // Every condition with a questionnaire is selectable (CLAUDE.md 7c.B).
-  const topics = evaluations.map((e) => ({
-    slug: e.topic,
-    name: e.name,
-    teaser: e.label,
-    href: "/evaluare",
-  }));
+  // Only conditions that can be bought are offered (CLAUDE.md v5).
+  const topics = evaluations
+    .filter((e) => isPurchasable(e.topic))
+    .map((e) => ({
+      slug: e.topic,
+      name: e.name,
+      teaser: e.label,
+      href: "/evaluare",
+    }));
   return (
     <TopicPickerProvider topics={topics}>
       <div className="bg-navy-950 text-white">

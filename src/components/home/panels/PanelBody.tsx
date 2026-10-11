@@ -2,6 +2,7 @@ import Link from "next/link";
 import { StartButton } from "@/components/topic/StartButton";
 import { Arrow } from "@/components/ui/Button";
 import { careRoute } from "@/lib/care-route";
+import { isPurchasable } from "@/lib/purchasable";
 
 /** The care route: a thin line that draws itself, with four nodes appearing in sequence. */
 export function CareRoute() {
@@ -67,9 +68,11 @@ export function PanelBody({
       <CareRoute />
       {variant === "home" && (
         <div className="cp-actions">
-          <StartButton topic={slug} variant="inverse" size="md">
-            Începe evaluarea<span className="sr-only"> pentru {name.toLowerCase()}</span>
-          </StartButton>
+          {isPurchasable(slug) && (
+            <StartButton topic={slug} variant="inverse" size="md">
+              Începe evaluarea<span className="sr-only"> pentru {name.toLowerCase()}</span>
+            </StartButton>
+          )}
           <Link
             href={href}
             className="inline-flex min-h-11 items-center gap-2 px-1 text-sm font-semibold text-white hover:underline"

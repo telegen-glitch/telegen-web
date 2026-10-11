@@ -226,7 +226,8 @@ export function SiteHeader({ groups }: { groups: NavGroup[] }) {
                 <span className="accent text-blue-200">Începe cu întrebările.</span>
               </p>
               <p className="mt-3 text-sm text-white/70">
-                Câteva minute, fără cont. Răspunsurile nu sunt salvate.
+                Evaluarea e gratuită și durează câteva minute. Răspunsurile se păstrează doar după ce îți
+                creezi contul și îți dai acordul.
               </p>
               <StartButton variant="inverse" size="md" className="mt-6" />
             </div>

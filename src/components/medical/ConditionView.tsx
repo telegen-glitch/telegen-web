@@ -20,6 +20,7 @@ import { ReviewMeta } from "@/components/medical/ReviewMeta";
 import { SourceList } from "@/components/medical/SourceList";
 import { Timeline } from "@/components/medical/Timeline";
 import { StartButton } from "@/components/topic/StartButton";
+import { isPurchasable } from "@/lib/purchasable";
 import { Arrow, ButtonLink } from "@/components/ui/Button";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { reviewContext, sourceOrderFor } from "@/lib/medical";
@@ -33,6 +34,8 @@ export function ConditionView({ condition }: { condition: Condition }) {
   const order = sourceOrderFor(doc, condition);
   const { reviewer, reviewedAt } = reviewContext(doc);
   const mockup = condition.presentation.mockup ?? neutralMockup([condition.name]);
+  // Only conditions with an open service and a price get evaluation buttons (CLAUDE.md v5).
+  const purchasable = isPurchasable(condition.slug);
 
   return (
     <>
@@ -56,9 +59,19 @@ export function ConditionView({ condition }: { condition: Condition }) {
                   {renderRichText(doc.summary, order)}
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                  <StartButton className="w-full sm:w-auto" />
-                  <ButtonLink href="#ce-este" variant="secondary" className="w-full sm:w-auto">
-                    Citește mai întâi
+                  {purchasable ? (
+                    <StartButton topic={condition.slug} className="w-full sm:w-auto" />
+                  ) : (
+                    <ButtonLink href="#ce-este" className="w-full sm:w-auto">
+                      Citește ghidul
+                    </ButtonLink>
+                  )}
+                  <ButtonLink
+                    href={purchasable ? "#ce-este" : "/cum-functioneaza"}
+                    variant="secondary"
+                    className="w-full sm:w-auto"
+                  >
+                    {purchasable ? "Citește mai întâi" : "Cum lucrăm"}
                   </ButtonLink>
                 </div>
               </div>
@@ -116,16 +129,19 @@ export function ConditionView({ condition }: { condition: Condition }) {
             ))}
           </div>
           <aside className="hidden lg:block">
-            <div className="sticky top-28 rounded-card-lg bg-navy-950 p-8 text-white">
-              <p className="text-2xl leading-tight font-semibold tracking-tight">
-                {condition.presentation.asideTitle}{" "}
-                <span className="accent text-blue-200">{condition.presentation.asideAccent}</span>
-              </p>
-              <p className="mt-3 text-sm text-white/70">
-                Evaluarea durează câteva minute. Răspunsurile nu sunt salvate.
-              </p>
-              <StartButton variant="inverse" size="md" className="mt-6 w-full" />
-            </div>
+            {purchasable && (
+              <div className="sticky top-28 rounded-card-lg bg-navy-950 p-8 text-white">
+                <p className="text-2xl leading-tight font-semibold tracking-tight">
+                  {condition.presentation.asideTitle}{" "}
+                  <span className="accent text-blue-200">{condition.presentation.asideAccent}</span>
+                </p>
+                <p className="mt-3 text-sm text-white/70">
+                  Evaluarea e gratuită și durează câteva minute. La final suma doar se rezervă pe card și se
+                  încasează numai dacă medicul aprobă planul.
+                </p>
+                <StartButton topic={condition.slug} variant="inverse" size="md" className="mt-6 w-full" />
+              </div>
+            )}
           </aside>
         </div>
 
@@ -220,7 +236,7 @@ export function ConditionView({ condition }: { condition: Condition }) {
         </div>
       </article>
 
-      <ClosingCta />
+      <ClosingCta topic={condition.slug} />
 
       <JsonLd data={medicalPageJsonLd(doc, path, condition.medicalName, reviewedAt)} />
       <JsonLd data={faqJsonLd(doc.faqs)} />

@@ -10,6 +10,7 @@ import type { EvaluationDefinition } from "./types";
  */
 export const acneEvaluation: EvaluationDefinition = {
   topic: "acnee",
+  version: "2026-10-11",
   name: "Acnee",
   label: "Evaluare dermatologică online",
   introTitle: "Acneea:",
@@ -134,7 +135,7 @@ export const acneEvaluation: EvaluationDefinition = {
     {
       id: "medicines",
       title: "Iei alte medicamente în mod regulat?",
-      help: "Inclusiv anticoncepționale sau suplimente. Detaliile le vei putea da medicului în aplicația clinică.",
+      help: "Inclusiv anticoncepționale sau suplimente. Detaliile le poți da medicului prin mesaje, în cont.",
       type: "single",
       options: [
         { value: "no", label: "Nu" },

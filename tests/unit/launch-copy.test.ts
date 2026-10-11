@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { content } from "@/content/source";
 import { serviceOpen } from "@/lib/flags";
 import { launchConfig, type LaunchConfig } from "@/lib/launch-config";
-import { launchBlockers, launchLocked } from "@/lib/launch-lock";
+import { clinicalLaunchBlockers, launchBlockers, launchLocked } from "@/lib/launch-lock";
 import { prelaunchPhrases } from "@/lib/launch-phrases";
 import { docTexts } from "@/lib/medical";
 import { staticPages } from "@/lib/page-meta";
@@ -92,21 +92,49 @@ describe("launch lock", () => {
   const complete: LaunchConfig = {
     company: { legalName: "Exemplu SRL", cui: "RO1", regCom: "J1/1/2026", address: "Str. Exemplu 1" },
     contact: { email: "contact@exemplu.ro", responseTime: "2 zile lucrătoare" },
-    prices: Object.fromEntries(conditions.map((c) => [c.slug, [{ amount: 100, label: "Evaluare" }]])),
+    prices: Object.fromEntries(conditions.map((c) => [c.slug, [{ amount: 100, label: "Plan" }]])),
     legalApproved: true,
   };
 
   it("lists every missing value, and nothing once all are supplied", () => {
-    const empty = launchBlockers({ config: launchConfig, clinicalAppUrl: null, conditions });
-    expect(empty.length).toBe(6 + conditions.length + 2);
-    expect(empty.join("\n")).toMatch(/CUI[\s\S]*CLINICAL_APP_URL[\s\S]*legalApproved/);
-    expect(
-      launchBlockers({ config: complete, clinicalAppUrl: "https://app.exemplu.ro", conditions }),
-    ).toEqual([]);
-    const noPrice = { ...complete, prices: { ...complete.prices, acnee: [] } };
-    expect(launchBlockers({ config: noPrice, clinicalAppUrl: "https://app.exemplu.ro", conditions })).toEqual(
-      ['prețul pentru acnee (prices["acnee"])'],
-    );
+    const now = launchBlockers({ config: launchConfig, conditions });
+    // company (4), contact (2), the lawyer's sign-off; the hair-loss plan is priced.
+    expect(now.length).toBe(6 + 1);
+    expect(now.join("\n")).toMatch(/CUI[\s\S]*legalApproved/);
+    expect(launchBlockers({ config: complete, conditions })).toEqual([]);
+  });
+
+  it("a condition without a price simply cannot be bought; at least one must be priced, completely", () => {
+    const acneUnpriced = { ...complete, prices: { ...complete.prices, acnee: [] } };
+    expect(launchBlockers({ config: acneUnpriced, conditions })).toEqual([]);
+    expect(launchBlockers({ config: { ...complete, prices: {} }, conditions })).toEqual([
+      "prețul pentru cel puțin o afecțiune (prices)",
+    ]);
+    const broken = { ...complete, prices: { ...complete.prices, acnee: [{ amount: 0, label: "Plan" }] } };
+    expect(launchBlockers({ config: broken, conditions })).toEqual([
+      'prețul pentru acnee este incomplet (prices["acnee"])',
+    ]);
+  });
+
+  it("with APP_LAUNCH=on, the build also needs live keys for every clinical service", () => {
+    expect(clinicalLaunchBlockers(env({}))).toEqual([]);
+    expect(clinicalLaunchBlockers(env({ APP_LAUNCH: "on" }))).toHaveLength(4);
+    const live = {
+      APP_LAUNCH: "on",
+      SUPABASE_URL: "https://x.supabase.co",
+      SUPABASE_ANON_KEY: "a",
+      SUPABASE_SERVICE_ROLE_KEY: "s",
+      DATABASE_URL: "postgres://x",
+      STRIPE_SECRET_KEY: "sk_live_x",
+      STRIPE_WEBHOOK_SECRET: "whsec_x",
+      BREVO_API_KEY: "b",
+      EMAIL_SENDER: "e@x.ro",
+      CRON_SECRET: "c",
+    };
+    expect(clinicalLaunchBlockers(env(live))).toEqual([]);
+    expect(clinicalLaunchBlockers(env({ ...live, STRIPE_SECRET_KEY: "sk_test_x" }))).toEqual([
+      "Stripe live (STRIPE_SECRET_KEY sk_live_…, STRIPE_WEBHOOK_SECRET)",
+    ]);
   });
 
   it("fails production builds only, and only in the open state", () => {
@@ -118,10 +146,13 @@ describe("launch lock", () => {
     expect(launchLocked(env({ VERCEL_ENV: "production" }), "open", [])).toBe(false);
   });
 
-  it("ships with no invented launch values", () => {
+  it("ships with no invented launch values; prices are the owner's hair-loss plan only", () => {
     expect(launchConfig.company).toEqual({ legalName: null, cui: null, regCom: null, address: null });
     expect(launchConfig.contact).toEqual({ email: null, responseTime: null });
-    expect(launchConfig.prices).toEqual({});
+    expect(Object.keys(launchConfig.prices)).toEqual(["caderea-parului"]);
+    expect(launchConfig.prices["caderea-parului"].map((p) => p.amount)).toEqual([320, 870]);
+    for (const p of launchConfig.prices["caderea-parului"])
+      expect(p.label).toMatch(/^Plan pentru căderea părului/);
     expect(launchConfig.legalApproved).toBe(false);
   });
 });
@@ -131,37 +162,25 @@ describe("price answer", () => {
     { slug: "acnee", name: "Acnee" },
     { slug: "caderea-parului", name: "Căderea părului" },
   ];
-  const config: LaunchConfig = {
-    ...launchConfig,
-    prices: { acnee: [{ amount: 149, label: "Evaluare și plan de tratament" }] },
-  };
 
-  it("uses only configured prices; missing ones are owner markers on previews and absent in production", () => {
-    expect(priceAnswer(conditions, config, true)).toBe(
-      "**Acnee:** evaluare și plan de tratament, 149 lei. {{lipsește:prețul pentru căderea părului}}",
+  it("lists only conditions with a configured price, never a marker or an invented price", () => {
+    const config: LaunchConfig = {
+      ...launchConfig,
+      prices: { acnee: [{ amount: 149, label: "Plan pentru acnee" }] },
+    };
+    expect(priceAnswer(conditions, config)).toBe("**Acnee:** plan pentru acnee, 149 lei.");
+    expect(priceAnswer(conditions, { ...launchConfig, prices: {} })).toBeNull();
+    expect(priceAnswer(conditions, launchConfig)).toBe(
+      "**Căderea părului:** plan pentru căderea părului, lunar, 320 lei; plan pentru căderea părului, 3 luni, 870 lei.",
     );
-    expect(priceAnswer(conditions, config, false)).toBe("**Acnee:** evaluare și plan de tratament, 149 lei.");
-    expect(priceAnswer(conditions, launchConfig, false)).toBeNull();
   });
 });
 
 describe("owner markers", () => {
   it("render on previews and locally, never in production", async () => {
     const { showOwnerMarkers } = await import("@/lib/launch-config");
-    const env = (vars: Record<string, string>) => vars as unknown as NodeJS.ProcessEnv;
     expect(showOwnerMarkers(env({ VERCEL_ENV: "production" }))).toBe(false);
     expect(showOwnerMarkers(env({ VERCEL_ENV: "preview" }))).toBe(true);
     expect(showOwnerMarkers(env({}))).toBe(true);
-  });
-
-  it("the clinical app URL counts only when it is https", async () => {
-    const { clinicalAppUrl } = await import("@/lib/launch-config");
-    const env = (vars: Record<string, string>) => vars as unknown as NodeJS.ProcessEnv;
-    expect(clinicalAppUrl(env({ CLINICAL_APP_URL: "https://app.telegen.ro/consult/" }))).toBe(
-      "https://app.telegen.ro/consult",
-    );
-    expect(clinicalAppUrl(env({ CLINICAL_APP_URL: "http://app.telegen.ro" }))).toBeNull();
-    expect(clinicalAppUrl(env({ CLINICAL_APP_URL: "nu e un url" }))).toBeNull();
-    expect(clinicalAppUrl(env({}))).toBeNull();
   });
 });
