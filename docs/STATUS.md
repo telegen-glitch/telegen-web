@@ -1,11 +1,67 @@
 # Status
 
-_Last updated: 2026-10-11 (v5 P2: proposal and payment, branch claude/v5-p2-proposal)_
+_Last updated: 2026-10-11 (v5 P3: doctor, branch claude/v5-p3-doctor)_
 
 ## v5 clinical flow inside the site
 
 Owner decision 2026-10-11: one repo, one Vercel project; the clinical flow is built here with the
 separation enforced in code. Phases P0–P6, one stacked pull request each.
+
+### P3 doctor (branch claude/v5-p3-doctor) — DONE (verified locally, 2026-10-11)
+
+- **/medic** requires sign-in by e-mail code plus **mandatory two-factor** (authenticator app; set up on
+  first use). Without 2FA a doctor sees nothing (RLS + server check).
+  - The queue is sorted by SLA: the doctor's own cases plus the open queue of their specialty, with the
+    time left.
+  - The case view shows the answers (with the question wording), the photos (60-second links, each
+    view audited), the plan the patient chose, and the messages.
+- **Decisions** (`src/clinical/doctor/workflow.ts`):
+  - _Take_ the case: the patient sees the doctor's full name, specialty and parafă in /cont, and gets an
+    e-mail.
+  - _Approve_ with the doctor's instructions per item: capture the authorised amount → prescription
+    (adapter) → order for the pharmacy → `plan_approved` e-mail.
+  - _Adjust_ to another plan with instructions and a message: the patient accepts (capture, prescription)
+    or refuses (hold released in full).
+  - _Decline_ with a reason category and a message with in-person advice: the hold is released in full.
+  - _Ask_: the SLA pauses until the patient answers, then resumes where it stopped.
+  - Free follow-up messages before and after the decision.
+- **Prescription format** behind an adapter (`src/clinical/prescriptions/adapter.ts`, "manual":
+  structured items + the doctor's instructions). The real format and transmission are a blocker for the
+  owner, the lawyer and the pharmacy.
+- **Pay ledger:** one entry per completed review (approve, adjust and decline count the same). The admin
+  downloads a monthly CSV; the fee shows "nestabilit" until the owner sets `SERVICE.doctorFeeRon`.
+- **Scheduled job** `/api/cron/tick` (`Bearer CRON_SECRET`) does the following, each event once:
+  - reminders at 12 h and 20 h to the assigned doctor, or to the specialty;
+  - an admin alert at 24 h;
+  - an admin alert 2 days before a card hold lapses;
+  - expiry of undecided cases after the hold lapses (hold released, patient told);
+  - sending of the e-mail outbox.
+
+  It runs daily via Vercel Cron (the Hobby limit) and every 15 minutes via GitHub Actions once the
+  owner adds the secrets (`docs/EMAIL-AND-JOBS.md`).
+
+- **E-mails** go through Brevo when configured (`src/clinical/email/send.ts`). The text comes from the
+  templates plus a link, never health data; otherwise they wait in the outbox.
+- **/admin** (admin + 2FA) shows:
+  - the launch checks for real patients;
+  - cases by status;
+  - open cases with SLA, doctor and card-hold expiry;
+  - doctor accounts: create (e-mail, name, specialty, parafă; identities only in the database) and
+    activate or deactivate, with 2FA status;
+  - the ledger export.
+
+  It shows no answers, photos or messages.
+
+- **Patient case page** `/cont/[caseId]`: status, the doctor's identity, an adjusted plan to accept or
+  refuse, the decline reason, delivery status, and messages.
+- **Tests:** 120 unit and 185 Playwright pass, 0 failed.
+  - New unit tests cover: queue by specialty and 2FA; take; approve (instructions required, capture,
+    prescription, order, ledger, e-mail); decline (release, reason, ledger); ask (SLA pause and resume);
+    adjust plus accept or refuse; the job's reminders, escalation, hold warning and expiry, each once;
+    admin creating doctors only with 2FA; the ledger CSV.
+  - New e2e tests cover the doctor's 2FA, queue, take, message and approve, with the patient seeing the
+    doctor and the outcome, and axe on the doctor, patient and admin pages. They also check that admins
+    see no health content and that a patient account cannot open /medic or /admin.
 
 ### P2 proposal, pricing, A/B, card authorisation (branch claude/v5-p2-proposal) — DONE (verified locally, 2026-10-11)
 

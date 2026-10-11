@@ -160,3 +160,12 @@ The site now reads as the live service. Production cannot launch until the owner
     (assigned at random on the server, the same patient always sees the same price; the regular price is
     320 lei/month for everyone). To confirm with the lawyer: whether price testing needs disclosure under
     consumer law (OG 21/1992, Law 363/2007 on unfair practices) and in the terms.
+31. **Doctor identity and decisions (P3).** When a doctor takes a case, the patient sees the doctor's full
+    name, specialty and parafă code in the account and is told by e-mail (without the name). Decline
+    reasons shown to the patient: contraindication; needs in-person care; not enough information; not
+    indicated; other (explained in a message). The doctor's message includes where to go in person. To
+    confirm: wording, and the record-keeping duty for telemedicine consultations (retention of the case,
+    messages and prescription).
+32. **Prescription format (P3).** Stored as structured items with the doctor's instructions, the doctor's
+    name and parafă; the pharmacy sees it in its panel. To confirm with the lawyer and the pharmacy: the
+    legally valid format (e.g. electronic prescription), signature, and transmission.

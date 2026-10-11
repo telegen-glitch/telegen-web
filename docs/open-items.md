@@ -70,3 +70,13 @@ Not part of the lock but still needed for indexing: a recorded medical review pe
 - Doctor: confirm the plan rules (finasteride only for men; a history of depression, anxiety or
   self-harm starts the proposal from minoxidil alone) and the plan texts in `src/clinical/config/plans.ts`.
 - Owner: Stripe account (docs/STRIPE.md): test key and webhook for previews now; live keys at launch.
+
+## v5 P3 (doctor)
+
+- Owner: the flat fee per completed review (`SERVICE.doctorFeeRon`, `src/clinical/config/service.ts`).
+- Owner + lawyer + pharmacy: the prescription format and how it reaches the pharmacy (today the
+  structured "manual" prescription the pharmacy sees in /farmacie).
+- Doctor: confirm the 24 h SLA, the 6-month renewal review and the decline reason wording.
+- Owner: Brevo key and sender, `CRON_SECRET` in Vercel, and the GitHub secrets `TICK_URL` + `CRON_SECRET`
+  for the 15-minute job (docs/EMAIL-AND-JOBS.md).
+- Owner (in /admin, after launch set-up): create the two doctors' accounts; each sets up 2FA on first sign-in.
