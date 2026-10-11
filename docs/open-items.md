@@ -103,3 +103,15 @@ Not part of the lock but still needed for indexing: a recorded medical review pe
 - Owner + lawyer: retention periods; then Claude adds the clean-up jobs (unsubmitted evaluations, e-mail
   outbox) listed in `docs/legal/retention.md`.
 - Owner: sign the processors' DPAs (Supabase, Vercel, Stripe, Brevo, SmartBill/Oblio) and the pharmacy contract.
+
+## v5.1 (Supabase project exists)
+
+- Owner: apply the migrations (paste `docs/supabase-setup.sql`, or ask the Claude chat with the Supabase
+  connector) and check `/api/health` (docs/SUPABASE.md §1, §4).
+- Owner: Supabase Auth settings by hand: 6-digit code template, Site URL and redirect URLs, TOTP
+  (docs/SUPABASE.md §2a–c).
+- Owner: Vercel Preview variables `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`,
+  `DATABASE_URL`, `ADMIN_EMAILS`, then Redeploy (docs/SUPABASE.md §3).
+- **Blocker before any real user:** a Brevo account, SMTP key and the telegen.ro sender domain (its DNS
+  records are the owner's decision) for Supabase custom SMTP (docs/SUPABASE.md §2d). Until then the
+  built-in sender allows only a few codes per hour.

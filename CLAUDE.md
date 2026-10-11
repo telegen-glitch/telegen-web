@@ -7,6 +7,7 @@
 - Content lives in `src/content/` (typed, local) behind the interface in `src/content/source.ts`. Sanity plugs in behind the same interface in Phase 5.
 - Indexing: the whole site is `noindex` unless `SITE_INDEXING=on` AND `VERCEL_ENV=production` (see `src/lib/site.ts`). Medical pages are additionally `noindex` unless their data has a real reviewer (name, credential, review date) — `src/lib/indexing.ts`, enforced by `tests/unit/indexing.test.ts`, which runs before every build (`prebuild`).
 - Health data (v5) is stored only server-side in Supabase EU (Frankfurt) after explicit consent; never in URLs, query strings, analytics, logs, localStorage, non-auth cookies, Stripe metadata or e-mail bodies. Clinical code lives in `src/clinical/` and `src/app/(clinical)/` only (lint + `tests/unit/health-data-scan.test.ts`); RLS per role is tested in `tests/unit/rls.test.ts`.
+- Supabase (v5.1): env vars under either naming scheme and key format (`src/lib/supabase-env.ts`); every migration records itself in `clinical_meta.migrations`; `docs/supabase-setup.sql` is generated (`pnpm db:setup-sql`) and tested; the owner applies migrations (SQL Editor or his Claude chat), this session never connects to Supabase.
 - Open items: `docs/open-items.md`. Legal questions: `docs/legal-review-needed.md`. Parity: `docs/parity-spec.md`.
 
 ---
