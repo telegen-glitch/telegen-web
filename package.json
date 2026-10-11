@@ -12,21 +12,26 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "check:content": "vitest run tests/unit",
-    "prebuild": "pnpm run check:content && tsx scripts/launch-lock.ts",
+    "prebuild": "pnpm run check:content && tsx scripts/launch-lock.ts && tsx scripts/db-migrate.ts",
     "e2e": "playwright test",
     "geo:report": "tsx scripts/geo-report.ts && prettier --write docs/geo-status.md",
     "render:posters": "node scripts/render-posters.mjs",
     "postbuild": "tsx scripts/launch-copy-check.ts",
-    "launch:check": "tsx scripts/launch-lock.ts"
+    "launch:check": "tsx scripts/launch-lock.ts",
+    "db:migrate": "tsx scripts/db-migrate.ts"
   },
   "dependencies": {
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.117.3",
     "next": "16.3.8",
+    "postgres": "3.4.9",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
+    "@electric-sql/pglite": "0.5.8",
     "@playwright/test": "1.56.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
