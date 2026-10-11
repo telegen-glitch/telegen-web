@@ -12,3 +12,5 @@ create index if not exists messages_unread on clinical.messages (case_id) where 
 -- The doctor's own instructions for each item of an adjusted plan (used for the prescription once the
 -- patient accepts). Health data: visible to the patient and the doctor on the case, never to admins.
 alter table clinical.proposals add column if not exists instructions jsonb;
+
+insert into clinical_meta.migrations (name) values ('0004_doctor.sql') on conflict do nothing;

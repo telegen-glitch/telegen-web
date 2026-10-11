@@ -18,7 +18,8 @@
     "render:posters": "node scripts/render-posters.mjs",
     "postbuild": "tsx scripts/launch-copy-check.ts",
     "launch:check": "tsx scripts/launch-lock.ts",
-    "db:migrate": "tsx scripts/db-migrate.ts"
+    "db:migrate": "tsx scripts/db-migrate.ts",
+    "db:setup-sql": "tsx scripts/supabase-setup.ts"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

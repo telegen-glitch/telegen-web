@@ -44,3 +44,5 @@ create policy invoices_patient on clinical.invoices for select to authenticated 
 create policy invoices_admin on clinical.invoices for select to authenticated using (clinical.is_admin());
 grant select on clinical.invoices to authenticated;
 grant all on clinical.invoices to service_role;
+
+insert into clinical_meta.migrations (name) values ('0005_pharmacy.sql') on conflict do nothing;

@@ -17,3 +17,5 @@ alter table clinical.price_assignments enable row level security;
 create policy price_assignments_admin on clinical.price_assignments for select to authenticated using (clinical.is_admin());
 grant all on clinical.price_assignments to service_role;
 grant select on clinical.price_assignments to authenticated;
+
+insert into clinical_meta.migrations (name) values ('0003_payments.sql') on conflict do nothing;

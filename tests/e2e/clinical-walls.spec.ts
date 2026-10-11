@@ -31,3 +31,15 @@ test("the evaluation runs under the strict CSP without violations", async ({ pag
   await expect(page.getByRole("button", { name: /^Începe/ })).toBeVisible();
   expect(violations).toEqual([]);
 });
+
+test("the owner's health check reports the database up to date, without data or keys", async ({
+  request,
+}, info) => {
+  test.skip(info.project.name !== "mobile-360");
+  const res = await request.get("/api/health");
+  expect(res.ok()).toBe(true);
+  const body = await res.json();
+  expect(body.database).toBe("ok");
+  expect(body.missingMigrations).toEqual([]);
+  expect(JSON.stringify(body)).not.toMatch(/sb_secret_|sb_publishable_|eyJ|postgres(ql)?:\/\//);
+});

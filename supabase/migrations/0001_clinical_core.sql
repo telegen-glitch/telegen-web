@@ -14,6 +14,20 @@
 --   * every write to a health-data table is audited by trigger, and every read
 --     is audited by the app through clinical.audit(); the log never holds content.
 
+-- Which migrations are applied, whichever way they ran (SQL Editor, the owner's
+-- Claude chat, scripts/db-migrate.ts): every file records its own name at the end.
+-- Not reachable by the app roles.
+create schema if not exists clinical_meta;
+create table if not exists clinical_meta.migrations (
+  name text primary key,
+  applied_at timestamptz not null default now()
+);
+alter table clinical_meta.migrations enable row level security;
+revoke all on schema clinical_meta from public;
+-- The server's health check (/api/health) reads which migrations are applied.
+grant usage on schema clinical_meta to service_role;
+grant select on clinical_meta.migrations to service_role;
+
 create schema if not exists clinical;
 grant usage on schema clinical to authenticated, service_role;
 
@@ -529,3 +543,5 @@ begin
       on conflict (id) do nothing$q$;
   end if;
 end $$;
+
+insert into clinical_meta.migrations (name) values ('0001_clinical_core.sql') on conflict do nothing;

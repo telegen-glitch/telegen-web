@@ -11,3 +11,5 @@ language sql stable security definer set search_path = clinical, auth, pg_temp a
 $$;
 revoke execute on function clinical.doctors_ready(text) from public, authenticated;
 grant execute on function clinical.doctors_ready(text) to service_role;
+
+insert into clinical_meta.migrations (name) values ('0002_intake.sql') on conflict do nothing;

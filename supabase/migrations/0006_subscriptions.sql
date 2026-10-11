@@ -57,3 +57,5 @@ end $$;
 alter table clinical.doctor_ledger add column if not exists ref text not null default '';
 alter table clinical.doctor_ledger drop constraint if exists doctor_ledger_case_id_kind_doctor_id_key;
 create unique index if not exists doctor_ledger_once on clinical.doctor_ledger (case_id, kind, doctor_id, ref);
+
+insert into clinical_meta.migrations (name) values ('0006_subscriptions.sql') on conflict do nothing;
