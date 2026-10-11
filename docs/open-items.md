@@ -80,3 +80,10 @@ Not part of the lock but still needed for indexing: a recorded medical review pe
 - Owner: Brevo key and sender, `CRON_SECRET` in Vercel, and the GitHub secrets `TICK_URL` + `CRON_SECRET`
   for the 15-minute job (docs/EMAIL-AND-JOBS.md).
 - Owner (in /admin, after launch set-up): create the two doctors' accounts; each sets up 2FA on first sign-in.
+
+## v5 P4 (pharmacy)
+
+- Owner + pharmacy: the partner pharmacy, its Stripe Connect (Express) onboarding, and the split per
+  product and billing period (docs/PHARMACY.md). Production takes no real payments until it exists.
+- Owner: invoicing credentials (SmartBill or Oblio) and the invoice series.
+- Owner + pharmacy: courier and parcel standard (discreet packaging, no condition or medicine on the outside).

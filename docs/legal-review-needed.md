@@ -169,3 +169,8 @@ The site now reads as the live service. Production cannot launch until the owner
 32. **Prescription format (P3).** Stored as structured items with the doctor's instructions, the doctor's
     name and parafă; the pharmacy sees it in its panel. To confirm with the lawyer and the pharmacy: the
     legally valid format (e.g. electronic prescription), signature, and transmission.
+33. **Pharmacy and money flow (P4).** The patient pays Telegen (card captured after approval); the partner
+    pharmacy receives its share by Stripe Connect transfer; Telegen invoices the service ("Plan Telegen").
+    To confirm: who sells and invoices the medicines (the pharmacy, to the patient?), the contract and
+    data-processing agreement with the pharmacy (it receives the prescription, the doctor's name and
+    parafă, and the delivery address), and the distance sale of prescription medicines by the pharmacy.
