@@ -24,3 +24,5 @@ for (const key of [
   "ADMIN_EMAILS",
 ])
   delete process.env[key];
+// Vercel builds run with NODE_ENV=production, which alone switches the stand-ins off.
+process.env.CLINICAL_LOCAL = "on";
