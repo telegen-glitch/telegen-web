@@ -174,3 +174,10 @@ The site now reads as the live service. Production cannot launch until the owner
     To confirm: who sells and invoices the medicines (the pharmacy, to the patient?), the contract and
     data-processing agreement with the pharmacy (it receives the prescription, the doctor's name and
     parafă, and the delivery address), and the distance sale of prescription medicines by the pharmacy.
+34. **Subscriptions and data rights (P5), DRAFT FOR LAWYER.** The plan renews automatically from the next
+    cycle (e-mail 3 days before each charge), can be paused or cancelled in one tap, and needs the doctor's
+    re-review every 6 months (charges stop until then). The patient can export all data (JSON), withdraw the
+    health-data consent (open cases and plans stop) and delete the account (full erasure only without a
+    medical decision or payment; otherwise a recorded request). To confirm: auto-renewal disclosure and
+    cancellation terms for distance contracts; retention periods for medical and financial records; what a
+    deletion request must erase and when; the wording on the screens.

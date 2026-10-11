@@ -87,3 +87,10 @@ Not part of the lock but still needed for indexing: a recorded medical review pe
   product and billing period (docs/PHARMACY.md). Production takes no real payments until it exists.
 - Owner: invoicing credentials (SmartBill or Oblio) and the invoice series.
 - Owner + pharmacy: courier and parcel standard (discreet packaging, no condition or medicine on the outside).
+
+## v5 P5 (plans and data rights)
+
+- Doctor: confirm the 6-month re-review, the check-in months (1 and 3) and the check-in questions.
+- Owner + lawyer + pharmacy: how long one prescription covers refills (each paid cycle reuses the latest
+  prescription until the doctor's re-review).
+- Lawyer: retention periods for medical records, and what a deletion request erases (docs/legal-review-needed.md #34).
