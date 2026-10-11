@@ -4,12 +4,17 @@ import type { Actor, Driver, Executor } from "./types";
 
 export type { Actor, Executor } from "./types";
 
-let driver: Promise<Driver> | null = null;
+/**
+ * One driver per server process. Kept on globalThis because Next.js bundles
+ * pages, Server Actions and route handlers separately: a module-level variable
+ * would give each its own connection pool, or its own in-memory local database.
+ */
+const shared = globalThis as typeof globalThis & { __telegenClinicalDriver?: Promise<Driver> | null };
 
 /** The configured database: Supabase Postgres when DATABASE_URL is set, otherwise local PGlite (never on Vercel). */
 export function getDriver(): Promise<Driver> {
-  if (!driver) {
-    driver = (async () => {
+  if (!shared.__telegenClinicalDriver) {
+    shared.__telegenClinicalDriver = (async () => {
       const env = clinicalEnv();
       if (env.databaseUrl) {
         const { postgresDriver } = await import("./postgres");
@@ -24,12 +29,12 @@ export function getDriver(): Promise<Driver> {
       return d;
     })();
   }
-  return driver;
+  return shared.__telegenClinicalDriver;
 }
 
 /** Test hook: use a specific driver (unit tests with their own PGlite). */
 export function setDriverForTests(d: Driver | null): void {
-  driver = d ? Promise.resolve(d) : null;
+  shared.__telegenClinicalDriver = d ? Promise.resolve(d) : null;
 }
 
 const claimsFor = (actor: Actor) => JSON.stringify({ sub: actor.id, role: "authenticated", aal: actor.aal });

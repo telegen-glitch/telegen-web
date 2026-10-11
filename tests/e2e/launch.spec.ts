@@ -23,10 +23,17 @@ test("missing launch values appear only as owner markers, never as invented valu
   await page.goto("/contact");
   await expect(page.getByText("[lipsește: adresa de e-mail de contact]")).toBeVisible();
   await expect(page.getByText("[lipsește: CUI]").first()).toBeVisible();
+});
+
+test("public prices are the owner's plan prices only, never with a medicine name", async ({ page }) => {
   await page.goto("/cum-functioneaza");
-  await expect(page.getByRole("heading", { name: "Cât costă" })).toBeVisible();
-  await expect(page.locator("[data-owner-marker]").first()).toContainText("[lipsește: prețul pentru");
-  await expect(page.locator("main")).not.toContainText(/\d+\s?lei/);
+  const section = page.locator("section", { has: page.getByRole("heading", { name: "Cât costă" }) });
+  await expect(section).toContainText("Plan pentru căderea părului, lunar");
+  await expect(section).toContainText("320 lei");
+  await expect(section).toContainText("870 lei");
+  await expect(section).not.toContainText(/acnee|erectil/i);
+  await expect(section).not.toContainText(/finasterid|minoxidil|sildenafil|tadalafil/i);
+  await expect(section.locator("[data-owner-marker]")).toHaveCount(0);
 });
 
 test("pages without a recorded review make no review claim", async ({ page }) => {

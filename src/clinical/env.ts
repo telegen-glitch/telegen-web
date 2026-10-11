@@ -4,12 +4,15 @@ import "server-only";
  * Clinical configuration from environment variables, validated in one place.
  * Real services (Supabase, Stripe, Brevo) are used when their variables are set.
  * The local stand-ins (PGlite database, development sign-in, fake payments,
- * e-mail outbox) are allowed only outside Vercel: local development, CI and e2e.
+ * e-mail outbox) are allowed only outside Vercel, and only in development or
+ * with CLINICAL_LOCAL=on (CI and e2e): a production server never falls back to them.
  */
 export interface ClinicalEnv {
   vercelEnv: "production" | "preview" | "development" | null;
   /** Local stand-ins allowed (never on Vercel). */
   localDrivers: boolean;
+  /** E-mail addresses that get the admin role on first sign-in (ADMIN_EMAILS, comma-separated). */
+  adminEmails: string[];
   databaseUrl: string | null;
   supabase: { url: string; anonKey: string; serviceKey: string } | null;
   stripe: { secretKey: string; webhookSecret: string | null; mode: "test" | "live" } | null;
@@ -55,9 +58,15 @@ export function readClinicalEnv(env: NodeJS.ProcessEnv = process.env): ClinicalE
   const sender = trim(env.EMAIL_SENDER);
   const brevo = brevoKey && sender ? { apiKey: brevoKey, senderEmail: sender, senderName: "Telegen" } : null;
 
+  const adminEmails = (env.ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+
   return {
     vercelEnv,
-    localDrivers: !onVercel,
+    localDrivers: !onVercel && (env.NODE_ENV !== "production" || env.CLINICAL_LOCAL === "on"),
+    adminEmails,
     databaseUrl: trim(env.DATABASE_URL),
     supabase,
     stripe,

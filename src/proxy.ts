@@ -1,17 +1,17 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { refreshSupabaseSession } from "@/clinical/auth/refresh";
 import { clinicalCsp } from "@/lib/clinical-csp";
 
 /**
  * Runs only on the clinical area (see `config.matcher`). Public pages are static
  * and never pass through here. Every clinical response gets a fresh nonce-based
- * CSP, is never cached and never indexed.
+ * CSP, is never cached and never indexed, and keeps the Supabase session fresh.
  */
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   const csp = clinicalCsp({
     nonce,
     supabaseUrl: process.env.SUPABASE_URL,
-    clinicalAppUrl: process.env.CLINICAL_APP_URL,
     dev: process.env.NODE_ENV === "development",
   });
   const headers = new Headers(request.headers);
@@ -22,6 +22,15 @@ export function proxy(request: NextRequest) {
   response.headers.set("Cache-Control", "private, no-store, max-age=0");
   response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
   response.headers.set("Referrer-Policy", "no-referrer");
+  const url = process.env.SUPABASE_URL;
+  const anonKey = process.env.SUPABASE_ANON_KEY;
+  if (url && anonKey) {
+    try {
+      await refreshSupabaseSession(request, response, { url, anonKey });
+    } catch {
+      // A failed refresh only means the user signs in again.
+    }
+  }
   return response;
 }
 

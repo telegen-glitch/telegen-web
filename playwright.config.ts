@@ -16,6 +16,8 @@ export default defineConfig({
   ],
   webServer: {
     command: `pnpm start -p ${PORT}`,
+    // Local stand-ins for the clinical services (PGlite, test sign-in, file storage); never on Vercel.
+    env: { CLINICAL_LOCAL: "on" },
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,

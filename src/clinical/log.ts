@@ -6,7 +6,10 @@ import "server-only";
  * free text, so answers, conditions, names or addresses never reach a log.
  */
 export type LogEvent =
+  | "account.created"
   | "case.created"
+  | "case.stopped"
+  | "photo.stored"
   | "case.submitted"
   | "case.decided"
   | "payment.authorized"
