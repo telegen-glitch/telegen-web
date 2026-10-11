@@ -11,6 +11,7 @@ export function proxy(request: NextRequest) {
   const csp = clinicalCsp({
     nonce,
     supabaseUrl: process.env.SUPABASE_URL,
+    clinicalAppUrl: process.env.CLINICAL_APP_URL,
     dev: process.env.NODE_ENV === "development",
   });
   const headers = new Headers(request.headers);
