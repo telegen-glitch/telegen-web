@@ -37,7 +37,7 @@ everything, and PRs #3–#9 have no remaining diff.
   - Acne and ED run the full questionnaire with every hard stop, in memory only.
   - They end on "next steps": no online plan, see the right doctor, nothing sent or saved.
   - The hard-stop e2e covers all three topics again; new `topics.spec.ts`.
-- **Tests:** format, lint, typecheck and build pass; 165 unit tests pass (also with Vercel's environment); the new and changed e2e specs pass. Full e2e: result in the next commit.
+- **Tests:** format, lint, typecheck and build pass. 161 unit tests pass, also with Vercel's environment. Playwright: 226 passed, 0 failed (89 per-viewport skips; hard stops run at 360 px). Not verifiable here: the real Supabase project (this session must not connect to it; the preview host is blocked from this container).
 
 ## v5 clinical flow inside the site
 
