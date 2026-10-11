@@ -4,15 +4,18 @@ import { expect, type Page } from "@playwright/test";
 /**
  * WCAG A/AA violations on a settled page. After a Server Action refresh,
  * Next.js streams the page metadata back in, so the <title> can be briefly
- * empty: wait for it first. Colour transitions (e.g. a selected answer turning
- * navy) are waited out too, so contrast is measured on the final colours.
+ * empty: wait for it first. Transitions and entrance animations (a selected
+ * answer turning navy, a question fading in) are waited out too, so contrast is
+ * measured on the final colours; only endless animations are not waited for.
  * A "document-title" result caught mid-refresh is re-checked once the title is
  * back. Returns "rule: targets" lines.
  */
 async function settle(page: Page) {
   await expect(page).toHaveTitle(/\S/);
   await page.waitForFunction(() =>
-    document.getAnimations().every((a) => a.playState !== "running" || a instanceof CSSAnimation),
+    document
+      .getAnimations()
+      .every((a) => a.playState !== "running" || a.effect?.getComputedTiming().iterations === Infinity),
   );
   await expect(page).toHaveTitle(/\S/);
 }
