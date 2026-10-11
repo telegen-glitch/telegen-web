@@ -15,7 +15,7 @@ export type StaffGate =
   | { state: "needs_2fa"; enrolled: boolean }
   | { state: "ok"; session: Session; role: Role };
 
-const NEEDS_2FA: Role[] = ["doctor", "admin"];
+const NEEDS_2FA: Role[] = ["doctor", "admin", "pharmacy"];
 
 export async function staffGate(role: Role): Promise<StaffGate> {
   const auth = authAdapter();

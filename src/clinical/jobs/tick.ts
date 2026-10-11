@@ -5,6 +5,7 @@ import { releaseFor } from "../doctor/workflow";
 import { deliverPending } from "../email/send";
 import { enqueue } from "../email/outbox";
 import { logEvent } from "../log";
+import { issuePendingInvoices } from "../pharmacy/orders";
 
 /**
  * The scheduled job (CLAUDE.md v5): doctor reminders at 12 h and 20 h, admin
@@ -37,6 +38,7 @@ export interface TickResult {
   escalations: number;
   expiring: number;
   expired: number;
+  invoices: number;
   emails: { sent: number; failed: number };
 }
 
@@ -46,6 +48,7 @@ export async function tick(now: Date = new Date()): Promise<TickResult> {
     escalations: 0,
     expiring: 0,
     expired: 0,
+    invoices: 0,
     emails: { sent: 0, failed: 0 },
   };
   const scale = SERVICE.slaHours / 24;
@@ -120,6 +123,7 @@ export async function tick(now: Date = new Date()): Promise<TickResult> {
   );
   for (const e of expired) await releaseFor(e.case_id);
 
+  result.invoices = await issuePendingInvoices();
   result.emails = await deliverPending(50);
   return result;
 }

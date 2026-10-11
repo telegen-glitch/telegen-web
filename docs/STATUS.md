@@ -1,11 +1,35 @@
 # Status
 
-_Last updated: 2026-10-11 (v5 P3: doctor, branch claude/v5-p3-doctor)_
+_Last updated: 2026-10-11 (v5 P4: pharmacy, branch claude/v5-p4-pharmacy)_
 
 ## v5 clinical flow inside the site
 
 Owner decision 2026-10-11: one repo, one Vercel project; the clinical flow is built here with the
 separation enforced in code. Phases P0–P6, one stacked pull request each.
+
+### P4 pharmacy, split, invoices (branch claude/v5-p4-pharmacy) — DONE (verified locally, 2026-10-11)
+
+- **/farmacie** (pharmacy account + mandatory 2FA, now also enforced in RLS):
+  - orders through the narrow view: prescription items with the doctor's instructions, the doctor's
+    name and parafă, delivery name, address and phone, TEST marking; never the condition, answers or
+    photos (tested);
+  - a printable packing slip with no condition;
+  - order steps: packing → shipped (courier + AWB required; the patient gets `order_shipped` and sees
+    the AWB in /cont) → delivered.
+- **After approval** (`fulfil`): the order is assigned to the active partner pharmacy, an invoice for
+  the service is queued, and the pharmacy's share is transferred with Stripe Connect when a split
+  exists (`src/clinical/config/pharmacy.ts`, **empty**: owner + pharmacy decision).
+- **Invoicing adapter** (`src/clinical/invoicing/adapter.ts`): SmartBill or Oblio, disabled until
+  credentials exist. The single item is "Plan Telegen"; pending invoices are issued by the scheduled job.
+- **Launch gate** additionally needs the split per product, invoicing, and an active pharmacy with a
+  Stripe Connect account; production takes no real payments without them.
+- **/admin:** partner pharmacies (name, Stripe Connect account, staff sign-in).
+- **Tests:** 127 unit and 186 Playwright pass. Clinical e2e passed 36 of 36 over 4 repeats.
+  - New unit tests cover: pharmacy assignment; invoice queue; transfer when a split exists; 2FA and
+    own-orders-only; AWB required; the patient is told; adapter selection; launch checks.
+  - New e2e covers the doctor approving, then the pharmacy (2FA) seeing the order without the
+    condition, the packing slip, and shipping with an AWB, which the patient sees.
+- **Not verifiable here:** Stripe Connect transfers and SmartBill/Oblio calls (need accounts and keys).
 
 ### P3 doctor (branch claude/v5-p3-doctor) — DONE (verified locally, 2026-10-11)
 

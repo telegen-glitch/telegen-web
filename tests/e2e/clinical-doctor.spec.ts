@@ -1,16 +1,6 @@
 import { expect, test } from "@playwright/test";
-import AxeBuilder from "@axe-core/playwright";
-import type { Page } from "@playwright/test";
+import { axeViolations as axe } from "./helpers/axe";
 import { signIn, submitHairCase, twoFactor } from "./helpers/patient";
-
-/** axe on a settled page (after a Server Action refresh, Next.js streams the title back in). */
-const axe = async (page: Page) => {
-  await expect(page).toHaveTitle(/\S/);
-  return (await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze()).violations.map(
-    (v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`,
-  );
-};
-
 /**
  * The doctor's side end to end (CLAUDE.md v5 P3) with the local stand-ins: the
  * seeded TEST dermatologist signs in with an e-mail code and mandatory 2FA,
