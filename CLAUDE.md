@@ -6,7 +6,7 @@
 - Package manager: pnpm. Checks: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm e2e`.
 - Content lives in `src/content/` (typed, local) behind the interface in `src/content/source.ts`. Sanity plugs in behind the same interface in Phase 5.
 - Indexing: the whole site is `noindex` unless `SITE_INDEXING=on` AND `VERCEL_ENV=production` (see `src/lib/site.ts`). Medical pages are additionally `noindex` unless their data has a real reviewer (name, credential, review date) — `src/lib/indexing.ts`, enforced by `tests/unit/indexing.test.ts`, which runs before every build (`prebuild`).
-- Health answers from `/evaluare` stay in React state only. Never in URL, cookies, storage, logs or analytics.
+- Health data (v5) is stored only server-side in Supabase EU (Frankfurt) after explicit consent; never in URLs, query strings, analytics, logs, localStorage, non-auth cookies, Stripe metadata or e-mail bodies. Clinical code lives in `src/clinical/` and `src/app/(clinical)/` only (lint + `tests/unit/health-data-scan.test.ts`); RLS per role is tested in `tests/unit/rls.test.ts`.
 - Open items: `docs/open-items.md`. Legal questions: `docs/legal-review-needed.md`. Parity: `docs/parity-spec.md`.
 
 ---
@@ -26,9 +26,7 @@ Repo: telegen-web (empty, private). Build from scratch.
 Build telegen.ro as a production Next.js site and deploy it to a Vercel preview, ready for telegen.ro.
 Quality target: a premium UI VERY CLOSE in structure and feel to Fellos (fellos.nl), the primary reference, and to the Numan / Manual / Hims-class sites. A visitor comparing screenshots should read Telegen as the same product category at the same polish.
 Launch topic: hair loss (androgenetic alopecia), architected for more dermatology topics later. SEO and GEO are built in from the first commit.
-Two systems, strictly separated:
-- telegen.ro: this repo. Public site: brand, conditions, education, trust, SEO/GEO, conversion.
-- app.telegen.ro: future clinical app. Out of scope. No patient accounts, prescriptions or clinical logic here.
+Two systems, strictly separated: SUPERSEDED by v5 (2026-10-11): the clinical flow is built in this repo and served on telegen.ro; separation is enforced inside the code (see "v5 CLINICAL FLOW").
 No third-party form tools (no Tally or similar). The evaluation flow is built in-house (section 7b).
 
 ## 2. START NOW (first session, in this order)
@@ -104,7 +102,7 @@ Next.js App Router, TypeScript strict, Tailwind plus a small custom design syste
 ## 7. Launch scope (one reusable system)
 Home; conditions hub; hair-loss page; guide/article template; treatment-information template; how Telegen works; clinical standards/about; clinician/reviewer template; evaluation flow; legal foundation (terms, privacy, cookies). Acne and other topics: modelled in taxonomy and templates, NOT published. Natural Romanian copy, never translated-SaaS tone. No lorem ipsum.
 
-## 7b. Evaluation flow (in-house, UI only for now)
+## 7b. Evaluation flow (in-house, UI only for now) — SUPERSEDED by v5: answers are stored server-side after consent
 - Build a mobile questionnaire modelled on the Fellos-class assessment: one question per screen, progress indicator, back/next, plain-language wording, summary screen.
 - Health answers stay client-side in memory only. Never send, store, log, or put them in URLs, cookies or localStorage. No photo upload.
 - The real intake (health data, photos, prescriptions) belongs in app.telegen.ro under a separate reviewed architecture (GDPR special-category data, explicit consent, EU hosting, encryption, processor agreements). Do not build it here.
@@ -225,6 +223,13 @@ Format, lint, typecheck, unit, build, e2e (all routes at 360/768/1280, axe AA, h
 - `serviceOpen` follows the launch state (open for every condition when "open"); this replaces "serviceOpen stays OFF" and the §7b "not open yet" final screen. The evaluation ends with "Continuă către consult": a POST of the chosen condition only to `CLINICAL_APP_URL`; answers never leave the browser and the app asks again (docs/clinical-app-architecture.md §4b).
 - No "TEMPORARY", pre-launch or waitlist wording on public pages (replaces the visible TEMPORARY labels of §9.1 and §9.6). Owner values live in `src/lib/launch-config.ts`; a missing one shows "[lipsește: …]" on previews only and the prebuild launch lock fails the production build until it is supplied. Never invent a value to pass the lock.
 - Unreviewed medical pages show "Scris de echipa editorială Telegen pe baza ghidurilor citate · actualizat {dată}" and stay noindex. Indexing rules, DNS rules and every other hard rule are unchanged.
+
+## v5 CLINICAL FLOW INSIDE THIS SITE (owner decision 2026-10-11; overrides §1 "two systems", §7b and the v4.7 hand-over)
+- One repo, one Vercel project. Clinical code: `src/clinical/` (`import "server-only"` for data access) and the route group `src/app/(clinical)/`: /evaluare, /cont, /medic (2FA mandatory), /farmacie, /admin, plus `src/app/api/`. ESLint forbids importing clinical code anywhere else. Clinical routes are dynamic, noindex, disallowed in robots.txt, out of the sitemap, without analytics or third-party scripts, with a nonce CSP (src/proxy.ts).
+- Data: Supabase EU (Frankfurt), schema `clinical` (not exposed to Supabase's REST API), RLS on every table, queries run as the signed-in user's role; doctors need aal2; pharmacies see a narrow view without the condition; admins see operations, never answers, photos or messages; every read/write of health data is audited (who, when, which record, never content). Local/CI use PGlite with the same migrations.
+- Model: free evaluation (all hard stops kept) → personal proposed plan with the medicine named and the price (logged-in only) → pay at the end, card authorised not charged → a Telegen doctor reviews within the SLA (default 24 h) → approved: capture, prescription, partner pharmacy delivers free and discreetly; not prescribed: authorisation released in full → free follow-up messages, pause or cancel anytime, periodic re-review.
+- Lawyer (reported by the owner, 2026-10-11): medicine names with a price only inside the logged-in proposal and checkout; public pages keep the old rule (no medicine names in hero, CTA, price or ad blocks; public price blocks say "Plan pentru căderea părului").
+- Real patients only when APP_LAUNCH=on in production and the launch checks pass (company details, Stripe live keys, pharmacy split, doctor accounts with 2FA, legal texts). Previews: Stripe test mode, seeded data marked TEST. Doctor identities live only in the database.
 
 ## 8. GEO/SEO from the first commit
 - Semantic HTML, one H1, descriptive Romanian URLs, canonicals, title templates, meta descriptions, Open Graph, sitemap.xml, robots.txt, breadcrumbs, redirects, 404, alt text, responsive images.

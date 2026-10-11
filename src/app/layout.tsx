@@ -4,6 +4,7 @@ import { ConsentProvider } from "@/components/consent/ConsentProvider";
 import { RevealObserver } from "@/components/motion/RevealObserver";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { AnalyticsGate } from "@/lib/analytics";
+import { JS_CLASS_SCRIPT } from "@/lib/clinical-paths";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 import { isSiteIndexable, siteConfig } from "@/lib/site";
 import "./globals.css";
@@ -57,7 +58,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="ro" className={`${sans.variable} ${serif.variable}`} suppressHydrationWarning>
       <head>
         {/* Enables reveal-on-scroll styles only when JS runs, so content is never hidden without it. */}
-        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        <script dangerouslySetInnerHTML={{ __html: JS_CLASS_SCRIPT }} />
       </head>
       <body className="flex min-h-dvh flex-col">
         <a

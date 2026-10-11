@@ -1,7 +1,12 @@
-# app.telegen.ro — clinical app architecture (proposal, not built)
+# Clinical architecture
 
-Status: **design for owner and lawyer review.** Nothing here is implemented. The public site
-(telegen.ro) stays strictly separate: it never receives, stores or forwards health data.
+> **v5 (2026-10-11): superseded in part.** The owner decided on one repo and one Vercel project: the
+> clinical flow is built inside telegen.ro (`src/clinical/`, `src/app/(clinical)/`), with the
+> separation enforced in code (lint walls, RLS per role, nonce CSP, health-data scan). See CLAUDE.md
+> "v5 CLINICAL FLOW" and docs/STATUS.md. The sections below remain the requirements list; the
+> "app.telegen.ro" hand-over in §4b no longer applies.
+
+Status of the original proposal: design for owner and lawyer review.
 
 ## 1. What the app must do
 

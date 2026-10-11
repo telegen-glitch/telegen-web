@@ -120,3 +120,16 @@ The site now reads as the live service. Production cannot launch until the owner
     "review pending" badge. Confirm this is acceptable together with item 12 (AI assistance).
 24. **Item 6 (pre-launch email consent)** now applies only to the "prelaunch" fallback mode, which is
     not the default.
+
+## v5: clinical flow inside telegen.ro (2026-10-11)
+
+25. **Recorded as reported by the owner, 2026-10-11:** the owner's lawyer confirmed that the
+    Fellos-class model (free evaluation → personal proposed plan with the medicine and the price →
+    card authorised, not charged → doctor review → capture, prescription and pharmacy delivery, or full
+    release when not prescribed) is lawful **if the site describes it exactly**, and that medicine names
+    together with a price may appear **only inside the logged-in personal proposal and checkout**.
+    Public pages keep the earlier rule: no medicine names in hero, CTA, price or ad blocks; public price
+    blocks say "Plan pentru căderea părului". Claude did not see the lawyer's opinion; the owner should
+    keep it on file. Still to be confirmed in writing: the prescription format and transmission to the
+    pharmacy, the Stripe Connect split with the pharmacy, invoicing (e-Factura), and the terms and
+    privacy drafts that describe the flow (marked DRAFT FOR LAWYER).
