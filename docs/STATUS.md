@@ -35,7 +35,13 @@ separation enforced in code. Phases P0–P6, one stacked pull request each.
     account, at 360/768/1280.
   - e2e `promise.spec.ts`: /, /cum-functioneaza, /caderea-parului.
   - The axe helper waits for colour transitions to finish (a selected answer was measured mid-fade).
-- **Results:** lint, typecheck, format and the build pass; the new unit and e2e specs pass (12/12 e2e). Full e2e and Lighthouse: in progress, results follow in the next commit.
+- **Results:** format, lint, typecheck and build pass. 147 unit tests pass, also with Vercel's environment.
+  Full Playwright suite: 200 passed, 0 failed (49 per-viewport skips, as before).
+  - Lighthouse mobile (local `next start`):
+    - home: Perf 95/95/98 on warm runs (the first, cold run scored 77);
+    - /caderea-parului, /acnee, /disfunctie-erectila and /cum-functioneaza: 95 each;
+    - Accessibility and Best practices 100 everywhere, CLS 0;
+    - SEO 66 only because of the intended noindex.
 - **Not verifiable here:** Lighthouse on the real Vercel preview (measured locally on `next start`).
 
 ### P5 subscriptions, renewals, check-ins, data rights (branch claude/v5-p5-subscriptions) — DONE (verified locally, 2026-10-11)
