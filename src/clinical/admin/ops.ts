@@ -1,5 +1,6 @@
 import "server-only";
 import { normalEmail } from "../auth/types";
+import { secretKeyHeaders } from "@/lib/supabase-env";
 import { asService, asUser } from "../db";
 import { clinicalEnv } from "../env";
 import { IntakeError, type CaseStatus } from "../intake/cases";
@@ -107,8 +108,7 @@ async function createAuthUser(email: string): Promise<string> {
     const res = await fetch(`${env.supabase.url}/auth/v1/admin/users`, {
       method: "POST",
       headers: {
-        apikey: env.supabase.serviceKey,
-        Authorization: `Bearer ${env.supabase.serviceKey}`,
+        ...secretKeyHeaders(env.supabase.secretKey),
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ email, email_confirm: true }),

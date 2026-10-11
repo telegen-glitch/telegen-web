@@ -1,5 +1,6 @@
 import "server-only";
 import { CONSENT_VERSION } from "../config/consents";
+import { secretKeyHeaders } from "@/lib/supabase-env";
 import { asService, asUser } from "../db";
 import { releaseFor } from "../doctor/workflow";
 import { clinicalEnv } from "../env";
@@ -158,7 +159,7 @@ export async function deleteAccount(session: Session): Promise<"deleted" | "requ
   if (env.supabase) {
     const res = await fetch(`${env.supabase.url}/auth/v1/admin/users/${session.userId}`, {
       method: "DELETE",
-      headers: { apikey: env.supabase.serviceKey, Authorization: `Bearer ${env.supabase.serviceKey}` },
+      headers: secretKeyHeaders(env.supabase.secretKey),
     });
     if (!res.ok) throw new Error("auth delete failed");
   }

@@ -1,6 +1,7 @@
 import "server-only";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { secretKeyHeaders } from "@/lib/supabase-env";
 import { clinicalEnv } from "../env";
 
 /**
@@ -25,8 +26,8 @@ function checkPath(objectPath: string) {
   if (!SAFE_PATH.test(objectPath)) throw new Error("unsafe storage path");
 }
 
-function supabaseStorage(config: { url: string; serviceKey: string }): PhotoStorage {
-  const headers = { Authorization: `Bearer ${config.serviceKey}`, apikey: config.serviceKey };
+function supabaseStorage(config: { url: string; secretKey: string }): PhotoStorage {
+  const headers = secretKeyHeaders(config.secretKey);
   return {
     kind: "supabase",
     async put(objectPath, bytes) {

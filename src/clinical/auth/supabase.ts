@@ -11,7 +11,7 @@ import type { AuthAdapter, Session } from "./types";
  */
 async function client(config: NonNullable<ClinicalEnv["supabase"]>) {
   const store = await cookies();
-  return createServerClient(config.url, config.anonKey, {
+  return createServerClient(config.url, config.publicKey, {
     cookieOptions: { httpOnly: true, secure: true, sameSite: "lax", path: "/" },
     cookies: {
       getAll: () => store.getAll(),

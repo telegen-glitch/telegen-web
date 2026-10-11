@@ -1,3 +1,4 @@
+import { supabaseMissing } from "./supabase-env";
 import type { LaunchConfig } from "./launch-config";
 
 /**
@@ -41,8 +42,8 @@ export function launchBlockers(input: {
 export function clinicalLaunchBlockers(env: NodeJS.ProcessEnv): string[] {
   if (env.APP_LAUNCH !== "on") return [];
   const missing: string[] = [];
-  if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY || !env.SUPABASE_SERVICE_ROLE_KEY || !env.DATABASE_URL)
-    missing.push("Supabase (SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, DATABASE_URL)");
+  const supabase = supabaseMissing(env);
+  if (supabase.length) missing.push(`Supabase (${supabase.join(", ")})`);
   if (!env.STRIPE_SECRET_KEY?.startsWith("sk_live_") || !env.STRIPE_WEBHOOK_SECRET)
     missing.push("Stripe live (STRIPE_SECRET_KEY sk_live_…, STRIPE_WEBHOOK_SECRET)");
   if (!env.BREVO_API_KEY || !env.EMAIL_SENDER) missing.push("Brevo (BREVO_API_KEY, EMAIL_SENDER)");

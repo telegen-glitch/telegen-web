@@ -9,9 +9,9 @@ import type { NextRequest, NextResponse } from "next/server";
 export async function refreshSupabaseSession(
   request: NextRequest,
   response: NextResponse,
-  config: { url: string; anonKey: string },
+  config: { url: string; publicKey: string },
 ): Promise<void> {
-  const sb = createServerClient(config.url, config.anonKey, {
+  const sb = createServerClient(config.url, config.publicKey, {
     cookieOptions: { httpOnly: true, secure: true, sameSite: "lax", path: "/" },
     cookies: {
       getAll: () => request.cookies.getAll(),

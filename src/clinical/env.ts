@@ -1,4 +1,5 @@
 import "server-only";
+import { readSupabaseEnv } from "@/lib/supabase-env";
 
 /**
  * Clinical configuration from environment variables, validated in one place.
@@ -14,7 +15,8 @@ export interface ClinicalEnv {
   /** E-mail addresses that get the admin role on first sign-in (ADMIN_EMAILS, comma-separated). */
   adminEmails: string[];
   databaseUrl: string | null;
-  supabase: { url: string; anonKey: string; serviceKey: string } | null;
+  /** Either naming scheme and either key format (src/lib/supabase-env.ts). */
+  supabase: { url: string; publicKey: string; secretKey: string } | null;
   stripe: { secretKey: string; webhookSecret: string | null; mode: "test" | "live" } | null;
   brevo: { apiKey: string; senderEmail: string; senderName: string } | null;
   /** APP_LAUNCH=on: real patients may be accepted (production only, with the launch checks). */
@@ -33,14 +35,14 @@ export function readClinicalEnv(env: NodeJS.ProcessEnv = process.env): ClinicalE
   const vercelEnv = (trim(env.VERCEL_ENV) as ClinicalEnv["vercelEnv"]) ?? null;
   const onVercel = Boolean(trim(env.VERCEL));
 
-  const supabaseUrl = trim(env.SUPABASE_URL);
-  const anonKey = trim(env.SUPABASE_ANON_KEY);
-  const serviceKey = trim(env.SUPABASE_SERVICE_ROLE_KEY);
+  const sb = readSupabaseEnv(env);
+  problems.push(...sb.problems);
   const supabase =
-    supabaseUrl && anonKey && serviceKey
-      ? { url: supabaseUrl.replace(/\/$/, ""), anonKey, serviceKey }
+    sb.url && sb.publicKey && sb.secretKey
+      ? { url: sb.url, publicKey: sb.publicKey, secretKey: sb.secretKey }
       : null;
-  if (supabaseUrl && !supabase) problems.push("SUPABASE_URL is set but a Supabase key is missing");
+  if (sb.url && !supabase)
+    problems.push("the Supabase URL is set but the publishable or the secret key is missing");
 
   const secretKey = trim(env.STRIPE_SECRET_KEY);
   let stripe: ClinicalEnv["stripe"] = null;
@@ -69,7 +71,7 @@ export function readClinicalEnv(env: NodeJS.ProcessEnv = process.env): ClinicalE
     vercelEnv,
     localDrivers: !onVercel && (env.NODE_ENV !== "production" || env.CLINICAL_LOCAL === "on"),
     adminEmails,
-    databaseUrl: trim(env.DATABASE_URL),
+    databaseUrl: sb.databaseUrl,
     supabase,
     stripe,
     brevo,
