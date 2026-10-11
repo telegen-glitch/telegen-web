@@ -11,8 +11,8 @@ import { DataRights } from "@/clinical/ui/DataRights";
 import { Card, Screen } from "@/clinical/ui/parts";
 import { PATIENT_STATUS } from "@/clinical/ui/status";
 import { Arrow, buttonClasses } from "@/components/ui/Button";
-import { MissingMark } from "@/components/ui/MissingMark";
-import { showOwnerMarkers } from "@/lib/launch-config";
+import { notReadyDetail } from "@/clinical/launch";
+import { ServiceNotReady } from "@/clinical/ui/ServiceNotReady";
 
 export const metadata: Metadata = { title: "Contul tău", robots: { index: false, follow: false } };
 
@@ -34,11 +34,7 @@ export default async function AccountPage() {
         {auth ? (
           <AccountSignIn devCode={auth.kind === "dev" ? DEV_CODE : null} />
         ) : (
-          showOwnerMarkers() && (
-            <p className="mt-8">
-              <MissingMark what="Supabase (SUPABASE_URL, chei, DATABASE_URL)" />
-            </p>
-          )
+          <ServiceNotReady detail={notReadyDetail()} />
         )}
       </Screen>
     );

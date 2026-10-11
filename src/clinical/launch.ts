@@ -1,4 +1,6 @@
 import "server-only";
+import { showOwnerMarkers } from "@/lib/launch-config";
+import { supabaseMissing } from "@/lib/supabase-env";
 import { evaluations } from "@/content/evaluations";
 import { launchConfig } from "@/lib/launch-config";
 import { isPurchasable } from "@/lib/purchasable";
@@ -78,4 +80,14 @@ export async function intakeGate(): Promise<IntakeGate> {
   if (env.vercelEnv !== "production") return { mode: "test", problems: [] };
   const problems = await launchProblems();
   return { mode: problems.length ? "closed" : "live", problems };
+}
+
+/**
+ * What the "service not ready" screen may name: the missing Supabase variables on
+ * previews and locally (names only), nothing in production (src/clinical/ui/ServiceNotReady.tsx).
+ */
+export function notReadyDetail(): string | null {
+  if (!showOwnerMarkers()) return null;
+  const missing = supabaseMissing();
+  return missing.length ? `Supabase (${missing.join(", ")})` : "configurarea Supabase (vezi /api/health)";
 }

@@ -1,10 +1,10 @@
-import { MissingMark } from "@/components/ui/MissingMark";
-import { showOwnerMarkers } from "@/lib/launch-config";
+import { notReadyDetail } from "../launch";
 import { authAdapter } from "../auth";
 import { DEV_CODE, DEV_TOTP } from "../auth/dev";
 import type { StaffGate } from "../staff";
 import { AccountSignIn, SignOutButton } from "./AccountSignIn";
 import { Card, Screen } from "./parts";
+import { ServiceNotReady } from "./ServiceNotReady";
 import { TwoFactor } from "./TwoFactor";
 
 /** What a staff area shows before access is granted: sign-in, 2FA, or "no access". */
@@ -13,12 +13,7 @@ export function StaffGateView({ gate, title }: { gate: Exclude<StaffGate, { stat
   return (
     <Screen>
       <h1 className="text-display-2">{title}</h1>
-      {gate.state === "unconfigured" &&
-        (showOwnerMarkers() ? (
-          <p className="mt-8">
-            <MissingMark what="Supabase (SUPABASE_URL, chei, DATABASE_URL)" />
-          </p>
-        ) : null)}
+      {gate.state === "unconfigured" && <ServiceNotReady detail={notReadyDetail()} />}
       {gate.state === "signed_out" && (
         <>
           <p className="mt-4 text-lead">

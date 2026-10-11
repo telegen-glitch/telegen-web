@@ -40,3 +40,18 @@ describe("consents", () => {
     expect(new Set(CONSENTS.map((c) => c.text)).size).toBe(4);
   });
 });
+
+describe("service not ready (CLAUDE.md v5.1)", () => {
+  it("names the missing variables on previews, nothing in production", async () => {
+    const { notReadyDetail } = await import("@/clinical/launch");
+    const saved = { ...process.env };
+    try {
+      process.env.VERCEL_ENV = "preview";
+      expect(notReadyDetail()).toMatch(/SUPABASE_URL/);
+      process.env.VERCEL_ENV = "production";
+      expect(notReadyDetail()).toBeNull();
+    } finally {
+      process.env = saved;
+    }
+  });
+});
