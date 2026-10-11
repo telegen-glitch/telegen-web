@@ -38,6 +38,8 @@ const csp = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Local/CI database only (src/clinical/db/pglite.ts); loaded at run time, never bundled.
+  serverExternalPackages: ["@electric-sql/pglite"],
   reactStrictMode: true,
   async headers() {
     const security = [
@@ -50,7 +52,18 @@ const nextConfig: NextConfig = {
     ];
     // Belt and braces: non-production and pre-launch responses carry noindex as a header too.
     const robots = indexable ? [] : [{ key: "X-Robots-Tag", value: "noindex, nofollow" }];
-    return [{ source: "/:path*", headers: [...security, ...robots] }];
+    // The clinical area gets its own, stricter, per-request CSP from src/proxy.ts;
+    // two policies would both apply, so the public one skips those paths.
+    const publicPaths = "/:path((?!(?:evaluare|cont|medic|farmacie|admin)(?:/|$)).*)";
+    const clinicalPaths = "/:area(evaluare|cont|medic|farmacie|admin)/:rest*";
+    const withoutCsp = security.filter((h) => h.key !== "Content-Security-Policy");
+    return [
+      { source: publicPaths, headers: [...security, ...robots] },
+      {
+        source: clinicalPaths,
+        headers: [...withoutCsp, { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
+      },
+    ];
   },
   async redirects() {
     return [

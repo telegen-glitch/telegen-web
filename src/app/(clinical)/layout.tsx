@@ -1,8 +1,19 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
 
-/** Focused full-screen layout for the evaluation: logo and a way out, nothing else. */
-export default function FlowLayout({ children }: { children: React.ReactNode }) {
+/**
+ * The clinical area (CLAUDE.md v5): /evaluare, /cont, /medic, /farmacie, /admin.
+ * Always rendered per request (never cached or prerendered), never indexed, no
+ * analytics or third-party scripts, and a stricter, nonce-based CSP (src/proxy.ts).
+ */
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false, nocache: true },
+};
+
+export default function ClinicalLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <header className="border-b border-line-soft bg-white">
