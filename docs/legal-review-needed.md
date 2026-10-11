@@ -181,3 +181,15 @@ The site now reads as the live service. Production cannot launch until the owner
     medical decision or payment; otherwise a recorded request). To confirm: auto-renewal disclosure and
     cancellation terms for distance contracts; retention periods for medical and financial records; what a
     deletion request must erase and when; the wording on the screens.
+35. **TEMPORARY until signed off: /termeni-si-conditii and /politica-de-confidentialitate (v5, 2026-10-11).**
+    Rewritten for the v5 model: free evaluation, plan and price before payment, card authorised and captured
+    only on approval, full release when not prescribed, automatic renewal with a 3-day e-mail, pause and
+    cancel any time, no returns of delivered medicines (health protection, OUG 34/2014 art. 16 — to confirm),
+    who sees what (doctor, pharmacy, operations), the processors by name and region, legal bases per
+    purpose, retention by category and the in-account export, consent withdrawal and deletion request.
+    The TEMPORARY status lives here and as "DRAFT FOR LAWYER" in the page source, not on the page (CLAUDE.md v4.7 forbids
+    visible TEMPORARY labels). Lawyer to correct and sign off before APP_LAUNCH=on.
+36. **DRAFT FOR LAWYER: docs/legal/** — DPIA (art. 35), art. 30 record, processors and recipients,
+    retention, breach procedure (arts. 33–34). Open questions inside each: DPO (art. 37), role of the
+    doctors (art. 28/29 or separate controllers), Stripe's role split, identity verification of patients,
+    retention periods (medical, accounting, drafts, audit log), prior consultation (art. 36).
