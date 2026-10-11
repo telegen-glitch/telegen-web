@@ -149,3 +149,14 @@ The site now reads as the live service. Production cannot launch until the owner
     re-encodes them (≤1600 px, no EXIF/location) and the server strips metadata again. Stored in a
     private Supabase bucket in Frankfurt; viewed only through 60-second links by the patient and the
     doctor on the case; each view is audited.
+29. **Proposal and checkout (P2).** Signed-in only, the proposal names the medicine (e.g. "Finasteridă
+    1 mg și minoxidil pentru scalp") next to the price, with purpose, time to results, main side effects
+    (incl. the EMA 2025 finasteride warning), links to /tratamente and official product information, what
+    the price includes, and: "Decizia finală aparține medicului. Dacă nu primești rețetă, nu plătești
+    nimic." No urgency, timers or "cumpără". Checkout: "Suma este doar rezervată pe card până la decizia
+    medicului." To confirm: the pre-contract information required for distance contracts (OUG 34/2014,
+    incl. whether the right of withdrawal applies to a prescribed, dispensed medicine), and the wording.
+30. **A/B first-month price.** Half of new patients see 320 lei for the first month, half 199 lei
+    (assigned at random on the server, the same patient always sees the same price; the regular price is
+    320 lei/month for everyone). To confirm with the lawyer: whether price testing needs disclosure under
+    consumer law (OG 21/1992, Law 363/2007 on unfair practices) and in the terms.
