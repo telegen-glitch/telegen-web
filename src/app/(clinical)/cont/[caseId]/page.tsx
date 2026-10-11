@@ -3,6 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { authAdapter } from "@/clinical/auth";
 import { patientCase } from "@/clinical/patient/case";
+import { caseCheckins } from "@/clinical/patient/checkins";
+import { planFor } from "@/clinical/subscriptions";
+import { CheckinForm } from "@/clinical/ui/CheckinForm";
+import { PlanControls } from "@/clinical/ui/PlanControls";
 import { AdjustmentAnswer } from "@/clinical/ui/AdjustmentAnswer";
 import { conditionName } from "@/clinical/ui/labels";
 import { Messages } from "@/clinical/ui/Messages";
@@ -26,6 +30,10 @@ export default async function PatientCasePage({ params }: PageProps<"/cont/[case
   if (!/^[0-9a-f-]{36}$/.test(caseId)) notFound();
   const view = await patientCase(session, caseId);
   if (!view) notFound();
+  const [plan, checkins] = await Promise.all([planFor(session, caseId), caseCheckins(session, caseId)]);
+  const due = checkins.filter(
+    (c) => !c.completedAt && (c.kind === "renewal" || new Date(c.dueAt) <= new Date()),
+  );
   return (
     <Screen wide>
       <Link href="/cont" className="text-sm font-semibold text-blue-700 underline underline-offset-2">
@@ -103,6 +111,11 @@ export default async function PatientCasePage({ params }: PageProps<"/cont/[case
           )}
         </Card>
       )}
+
+      {plan && <PlanControls caseId={view.id} plan={plan} />}
+      {due.map((c) => (
+        <CheckinForm key={c.id} checkinId={c.id} kind={c.kind} />
+      ))}
 
       <Messages caseId={view.id} messages={view.messages} me="patient" canSend={view.canMessage} />
     </Screen>

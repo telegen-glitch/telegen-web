@@ -1,11 +1,45 @@
 # Status
 
-_Last updated: 2026-10-11 (v5 P4: pharmacy, branch claude/v5-p4-pharmacy)_
+_Last updated: 2026-10-11 (v5 P5: subscriptions and data rights, branch claude/v5-p5-subscriptions)_
 
 ## v5 clinical flow inside the site
 
 Owner decision 2026-10-11: one repo, one Vercel project; the clinical flow is built here with the
 separation enforced in code. Phases P0–P6, one stacked pull request each.
+
+### P5 subscriptions, renewals, check-ins, data rights (branch claude/v5-p5-subscriptions) — DONE (verified locally, 2026-10-11)
+
+- **Plan after approval** (`src/clinical/subscriptions`): a Stripe subscription on the saved card, first
+  charged at the next cycle (`trial_end`); product "Plan Telegen", metadata ids only.
+  - Each paid cycle (`invoice.paid`; locally a fake charge from the job) records the payment, sends a new
+    pharmacy order with the latest prescription and queues an invoice.
+  - The patient gets an e-mail 3 days before each payment; a failed payment e-mails them (no health data).
+- **Check-ins** at month 1 and 3 (`src/clinical/config/checkins.ts`): tolerance, mood, results, a note.
+  - Due check-ins appear in /cont, with one e-mail each. The doctor sees the answers on the case.
+  - Mood changes or worrying side effects show urgent advice at once (112, write to the doctor) and alert
+    the doctor.
+- **Periodic re-review** (default 6 months, doctor to confirm):
+  - the renewal check-in opens 2 weeks before;
+  - at the date, charges stop (Stripe collection paused) until the doctor decides;
+  - _continue_ issues the prescription again and sets the next review; _stop_ cancels the plan;
+  - a ledger entry per review.
+- **Pause / resume / cancel** any time in /cont (Stripe pause_collection / cancel); a cancelled plan has no
+  further charges.
+- **Data rights** in /cont:
+  - JSON export of everything stored, read under RLS and audited;
+  - withdrawal of the health-data consent: open cases are cancelled with holds released, and plans
+    are cancelled;
+  - account deletion: immediate full erasure (photos and the sign-in included) when there is no medical
+    decision or payment on record; otherwise everything stops and a deletion request goes to the admin,
+    with retention per the lawyer (draft).
+- **Tests:** 135 unit and 188 Playwright pass, 0 failed. The unit tests also pass with Vercel's
+  environment (`VERCEL=1`, `NODE_ENV=production`).
+  - New unit tests cover: the plan start; upcoming notice once; one charge per cycle with order and
+    invoice; pause/resume/cancel; check-in reminders and urgent answers; re-review stopping charges, then
+    continue; export isolation; consent withdrawal; deletion versus deletion request.
+  - New e2e covers: plan controls after a real doctor approval, the data export download, and full
+    deletion with its confirmation page.
+- **Not verifiable here:** real Stripe subscriptions and invoices (need test keys and a webhook).
 
 ### P4 pharmacy, split, invoices (branch claude/v5-p4-pharmacy) — DONE (verified locally, 2026-10-11)
 

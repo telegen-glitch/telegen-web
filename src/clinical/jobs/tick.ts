@@ -6,6 +6,7 @@ import { deliverPending } from "../email/send";
 import { enqueue } from "../email/outbox";
 import { logEvent } from "../log";
 import { issuePendingInvoices } from "../pharmacy/orders";
+import { subscriptionTick } from "../subscriptions";
 
 /**
  * The scheduled job (CLAUDE.md v5): doctor reminders at 12 h and 20 h, admin
@@ -123,6 +124,7 @@ export async function tick(now: Date = new Date()): Promise<TickResult> {
   );
   for (const e of expired) await releaseFor(e.case_id);
 
+  await subscriptionTick(now);
   result.invoices = await issuePendingInvoices();
   result.emails = await deliverPending(50);
   return result;

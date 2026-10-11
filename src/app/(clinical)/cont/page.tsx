@@ -7,6 +7,7 @@ import { ensureAccount } from "@/clinical/intake/account";
 import { listCases } from "@/clinical/intake/cases";
 import { syncOpenCheckouts } from "@/clinical/payments/stripe-events";
 import { AccountSignIn, SignOutButton } from "@/clinical/ui/AccountSignIn";
+import { DataRights } from "@/clinical/ui/DataRights";
 import { Card, Screen } from "@/clinical/ui/parts";
 import { PATIENT_STATUS } from "@/clinical/ui/status";
 import { Arrow, buttonClasses } from "@/components/ui/Button";
@@ -111,6 +112,14 @@ export default async function AccountPage() {
               </li>
             ))}
           </ul>
+        </section>
+      )}
+      {role === "patient" && (
+        <section aria-labelledby="datele-tale" className="mt-10">
+          <h2 id="datele-tale" className="text-xl font-semibold text-navy-950">
+            Datele tale
+          </h2>
+          <DataRights />
         </section>
       )}
       <div className="mt-10">

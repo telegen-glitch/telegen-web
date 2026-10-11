@@ -77,6 +77,18 @@ O evaluare din coada ta se apropie de termenul de răspuns. Detalii în panoul m
 
 Un caz a depășit termenul sau are o rezervare de card aproape de expirare. Detalii în panoul de administrare: ${i.link}${footer}`,
   }),
+  payment_failed: (i: EmailInput): RenderedEmail => ({
+    subject: "Plata pentru planul tău nu a reușit",
+    text: `${hello(i)}\n\nPlata pentru următoarea perioadă nu a reușit. Verifică sau schimbă cardul din cont: ${i.link}${footer}`,
+  }),
+  checkin_answered: (i: EmailInput): RenderedEmail => ({
+    subject: "Un pacient a răspuns la o verificare",
+    text: `${hello(i)}\n\nUn pacient a răspuns la o verificare de urmărire. Detalii în panoul medicului: ${i.link}${footer}`,
+  }),
+  renewal_review_due: (i: EmailInput): RenderedEmail => ({
+    subject: "O reevaluare așteaptă decizia ta",
+    text: `${hello(i)}\n\nUn tratament ajunge la reevaluarea periodică. Plățile sunt oprite până la decizia ta. Detalii în panoul medicului: ${i.link}${footer}`,
+  }),
   payment_upcoming: (i: EmailInput): RenderedEmail => ({
     subject: "Următoarea plată",
     text: `${hello(i)}\n\nUrmătoarea plată pentru planul tău se apropie. O poți amâna sau anula din cont, înainte de data plății: ${i.link}${footer}`,

@@ -3,6 +3,7 @@
 import { authAdapter } from "./auth";
 import { normalCode } from "./auth/types";
 import { createDoctor, createPharmacy, setDoctorActive } from "./admin/ops";
+import { decideRenewal } from "./patient/checkins";
 import { updateOrder } from "./pharmacy/orders";
 import { adjust, approve, askPatient, decline, doctorMessage, takeCase } from "./doctor/workflow";
 import { IntakeError } from "./intake/cases";
@@ -109,4 +110,8 @@ export async function updateOrderAction(
   tracking: unknown,
 ) {
   return as("pharmacy", (s) => updateOrder(s, { orderId: caseIdOf(orderId), status, carrier, tracking }));
+}
+
+export async function decideRenewalAction(caseId: unknown, decision: unknown, message: unknown) {
+  return as("doctor", (s) => decideRenewal(s, { caseId: caseIdOf(caseId), decision, message }));
 }

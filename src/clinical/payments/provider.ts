@@ -36,6 +36,16 @@ export interface PaymentProvider {
   cancel(intentId: string): Promise<void>;
   /** Pays the pharmacy's share of a captured payment to its Stripe Connect account. */
   transfer(input: { intentId: string; amount: number; destination: string; caseId: string }): Promise<string>;
+  /** Renewals: the saved card is charged from the next cycle (first charge at `firstChargeAt`). */
+  startSubscription(input: {
+    caseId: string;
+    intentId: string;
+    amount: number;
+    intervalMonths: 1 | 3;
+    firstChargeAt: Date;
+  }): Promise<string>;
+  pauseSubscription(id: string, paused: boolean): Promise<void>;
+  cancelSubscription(id: string): Promise<void>;
 }
 
 /** Lei to the smallest unit Stripe expects (bani). */
@@ -43,6 +53,7 @@ export const toMinor = (lei: number) => Math.round(lei * 100);
 
 /** The only product name Stripe, the card statement and the receipt ever see. */
 export const PRODUCT_NAME = "Plan Telegen";
+const PRODUCT_ID = "plan_telegen";
 
 export function stripeClient(secretKey: string): Stripe {
   return new Stripe(secretKey, { appInfo: { name: "telegen-web" } });
@@ -119,6 +130,41 @@ function stripeProvider(secretKey: string): PaymentProvider {
       );
       return tr.id;
     },
+    async startSubscription({ caseId, intentId, amount, intervalMonths, firstChargeAt }) {
+      const pi = await stripe.paymentIntents.retrieve(intentId);
+      const customer = typeof pi.customer === "string" ? pi.customer : pi.customer?.id;
+      const method = typeof pi.payment_method === "string" ? pi.payment_method : pi.payment_method?.id;
+      if (!customer || !method) throw new Error("no saved card");
+      const product = await stripe.products
+        .retrieve(PRODUCT_ID)
+        .catch(() => stripe.products.create({ id: PRODUCT_ID, name: PRODUCT_NAME }));
+      const sub = await stripe.subscriptions.create(
+        {
+          customer,
+          default_payment_method: method,
+          items: [
+            {
+              price_data: {
+                currency: "ron",
+                product: product.id,
+                unit_amount: toMinor(amount),
+                recurring: { interval: "month", interval_count: intervalMonths },
+              },
+            },
+          ],
+          trial_end: Math.floor(firstChargeAt.getTime() / 1000),
+          metadata: stripeMetadata({ caseId, purpose: "renewal" }),
+        },
+        { idempotencyKey: `subscription-${caseId}` },
+      );
+      return sub.id;
+    },
+    async pauseSubscription(id, paused) {
+      await stripe.subscriptions.update(id, { pause_collection: paused ? { behavior: "void" } : "" });
+    },
+    async cancelSubscription(id) {
+      await stripe.subscriptions.cancel(id);
+    },
   };
 }
 
@@ -138,6 +184,11 @@ function fakeProvider(): PaymentProvider {
     async transfer({ intentId }) {
       return `fake_tr_${intentId.replace(/^fake_pi_/, "")}`;
     },
+    async startSubscription({ caseId }) {
+      return `fake_sub_${caseId.replace(/-/g, "")}`;
+    },
+    async pauseSubscription() {},
+    async cancelSubscription() {},
   };
 }
 

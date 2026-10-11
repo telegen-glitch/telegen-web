@@ -68,3 +68,17 @@ export async function submitHairCase(page: Page, email: string, name = "Pacient 
   expect(id).toMatch(/^[0-9a-f-]{36}$/);
   return id!;
 }
+
+/** The seeded TEST dermatologist takes and approves a case (own browser context). */
+export async function approveAsDoctor(browser: import("@playwright/test").Browser, caseId: string) {
+  const doctor = await (await browser.newContext()).newPage();
+  await doctor.goto(`/medic/${caseId}`);
+  await signIn(doctor, "medic.derm@telegen.test");
+  await twoFactor(doctor);
+  await doctor.getByRole("button", { name: "Preiau cazul" }).click();
+  await expect(doctor.getByText("Decizia ta")).toBeVisible();
+  for (const input of await doctor.getByLabel(/^Indicații:/).all()) await input.fill("conform schemei");
+  await doctor.getByRole("button", { name: "Aprob și emit rețeta" }).click();
+  await expect(doctor.getByText(/^Aprobat/)).toBeVisible();
+  await doctor.context().close();
+}

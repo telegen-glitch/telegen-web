@@ -8,6 +8,7 @@ import { IntakeError, type CaseStatus } from "../intake/cases";
 import { logEvent } from "../log";
 import { paymentProvider } from "../payments/provider";
 import { fulfil } from "../pharmacy/orders";
+import { startPlan } from "../subscriptions";
 import { prescriptionAdapter, type PrescriptionItem } from "../prescriptions/adapter";
 import type { Session } from "../auth";
 
@@ -289,6 +290,7 @@ export async function afterApproval(
   });
   await recordReview(caseId, doctorId);
   await fulfil(caseId);
+  await startPlan(caseId);
   logEvent("case.decided", { case: caseId });
 }
 

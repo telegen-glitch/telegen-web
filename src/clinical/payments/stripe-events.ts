@@ -4,6 +4,8 @@ import { asService, asUser } from "../db";
 import { clinicalEnv } from "../env";
 import { logEvent } from "../log";
 import type { Session } from "../auth";
+import { enqueue } from "../email/outbox";
+import { recordRenewal } from "../subscriptions";
 import { markAuthorized, markCheckoutExpired } from "./flow";
 import { stripeClient } from "./provider";
 
@@ -41,6 +43,30 @@ export async function handleStripeEvent(stripe: Stripe, event: Stripe.Event): Pr
     case "checkout.session.async_payment_succeeded":
     case "checkout.session.expired":
       return handleCheckoutSession(stripe, event.data.object);
+    case "invoice.paid": {
+      const inv = event.data.object;
+      const caseId = inv.parent?.subscription_details?.metadata?.case_id;
+      if (!caseId || !inv.amount_paid) return; // the first, free "trial" invoice
+      await recordRenewal({
+        caseId,
+        amount: inv.amount_paid / 100,
+        ref: inv.id ?? event.id,
+        provider: "stripe",
+      });
+      return;
+    }
+    case "invoice.payment_failed": {
+      const caseId = event.data.object.parent?.subscription_details?.metadata?.case_id;
+      if (!caseId) return;
+      await asService(async (q) => {
+        const [c] = await q.query<{ patient_id: string }>(
+          "select patient_id from clinical.cases where id = $1",
+          [caseId],
+        );
+        if (c) await enqueue(q, c.patient_id, "payment_failed", caseId);
+      });
+      return;
+    }
     case "payment_intent.canceled":
       await asService((q) =>
         q.query(
