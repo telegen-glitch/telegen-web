@@ -94,3 +94,12 @@ Not part of the lock but still needed for indexing: a recorded medical review pe
 - Owner + lawyer + pharmacy: how long one prescription covers refills (each paid cycle reuses the latest
   prescription until the doctor's re-review).
 - Lawyer: retention periods for medical records, and what a deletion request erases (docs/legal-review-needed.md #34).
+
+## v5 P6 (site alignment and legal drafts)
+
+- Lawyer: sign off the v5 terms and privacy pages (docs/legal-review-needed.md #35) and the drafts in
+  `docs/legal/` (#36): DPIA, art. 30 record, processors, retention, breach procedure. Open inside them:
+  DPO, the doctors' role, Stripe's role, patient identity checks, prior consultation.
+- Owner + lawyer: retention periods; then Claude adds the clean-up jobs (unsubmitted evaluations, e-mail
+  outbox) listed in `docs/legal/retention.md`.
+- Owner: sign the processors' DPAs (Supabase, Vercel, Stripe, Brevo, SmartBill/Oblio) and the pharmacy contract.

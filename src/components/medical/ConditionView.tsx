@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PROMISE_SHORT } from "@/lib/promise";
 import { content } from "@/content/source";
 import type { Condition } from "@/content/types";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -135,10 +136,7 @@ export function ConditionView({ condition }: { condition: Condition }) {
                   {condition.presentation.asideTitle}{" "}
                   <span className="accent text-blue-200">{condition.presentation.asideAccent}</span>
                 </p>
-                <p className="mt-3 text-sm text-white/70">
-                  Evaluarea e gratuită și durează câteva minute. La final suma doar se rezervă pe card și se
-                  încasează numai dacă medicul aprobă planul.
-                </p>
+                <p className="mt-3 text-sm text-white/70">{PROMISE_SHORT}</p>
                 <StartButton topic={condition.slug} variant="inverse" size="md" className="mt-6 w-full" />
               </div>
             )}

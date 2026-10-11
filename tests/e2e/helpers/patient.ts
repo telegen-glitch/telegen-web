@@ -27,29 +27,51 @@ export async function twoFactor(page: Page) {
   await page.getByRole("button", { name: "Confirmă" }).click();
 }
 
+/** Called on each screen of the flow, e.g. for axe and CSP checks (tests/e2e/clinical-screens.spec.ts). */
+export type Checkpoint = (screen: string) => Promise<void>;
+
 /** A complete hair-loss case, authorised with the test provider; returns its id. */
-export async function submitHairCase(page: Page, email: string, name = "Pacient Test"): Promise<string> {
+export async function submitHairCase(
+  page: Page,
+  email: string,
+  name = "Pacient Test",
+  check: Checkpoint = async () => {},
+): Promise<string> {
   await page.goto("/evaluare");
+  await check("topic");
   await page.getByRole("button", { name: "Căderea părului" }).click();
+  await expect(page.getByRole("button", { name: /^Începe/ })).toBeVisible();
+  await check("intro");
   await page.getByRole("button", { name: /^Începe/ }).click();
+  await expect(page.getByRole("button", { name: "Masculin" })).toBeVisible();
+  await check("question");
   for (const label of ["Masculin", "25–34 de ani", "De 1–3 ani", "Pe creștet"]) await pick(page, label);
+  await check("multi-select question");
   await pick(page, /Continuă/);
   await pick(page, "Treptat, în luni sau ani");
   await pick(page, "Niciunul");
   await pick(page, /Continuă/);
   for (const label of ["Da", "Nu, nimic", "Nu", "Nu", "Să opresc căderea"]) await pick(page, label);
   await expect(page.getByRole("heading", { name: "Rezumatul răspunsurilor" })).toBeVisible();
+  await check("summary");
   await pick(page, /^Continuă/);
+  await expect(page.getByLabel("Adresa de e-mail")).toBeVisible();
+  await check("sign-in");
   await signIn(page, email);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("înainte să salvăm");
+  await check("consents");
   for (const box of await page.getByRole("checkbox").all()) await box.check();
   await page.getByRole("button", { name: "Salvează evaluarea" }).click();
   for (const slot of ["front", "top", "crown"])
     await page.locator(`#foto-${slot}`).setInputFiles({ name: "p.png", mimeType: "image/png", buffer: PNG });
   await expect(page.getByText("Salvată", { exact: true })).toHaveCount(3);
+  await check("photos");
   await pick(page, /^Continuă/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("verificat de medic");
+  await check("proposal");
   await pick(page, /^Continuă/);
+  await expect(page.getByLabel("Nume și prenume")).toBeVisible();
+  await check("delivery");
   await page.getByLabel("Nume și prenume").fill(name);
   await page.getByLabel("Telefon (pentru curier)").fill("0712345678");
   await page.getByLabel("Adresa (stradă, număr, bloc, apartament)").fill("Str. Exemplu 1");
@@ -57,9 +79,14 @@ export async function submitHairCase(page: Page, email: string, name = "Pacient 
   await page.getByLabel("Județul").fill("Iași");
   await page.getByLabel("Codul poștal").fill("700001");
   await page.getByRole("button", { name: /Salvează și continuă/ }).click();
+  await expect(page.getByRole("button", { name: /^Rezervă .* pe card$/ })).toBeVisible();
+  await check("checkout");
   await page.getByRole("button", { name: /^Rezervă .* pe card$/ }).click();
   await expect(page.getByRole("heading", { level: 1 })).toContainText("a ajuns la medic");
+  await check("submitted");
   await page.goto("/cont");
+  await expect(page.getByRole("link", { name: /Detalii și mesaje/ }).first()).toBeVisible();
+  await check("account");
   const href = await page
     .getByRole("link", { name: /Detalii și mesaje/ })
     .first()

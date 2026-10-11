@@ -1,11 +1,48 @@
 # Status
 
-_Last updated: 2026-10-11 (v5 P5: subscriptions and data rights, branch claude/v5-p5-subscriptions)_
+_Last updated: 2026-10-11 (v5 P6: site alignment, legal drafts, checks, branch claude/v5-p6-alignment)_
 
 ## v5 clinical flow inside the site
 
 Owner decision 2026-10-11: one repo, one Vercel project; the clinical flow is built here with the
 separation enforced in code. Phases P0–P6, one stacked pull request each.
+
+### P6 site alignment, legal drafts, checks (branch claude/v5-p6-alignment) — DONE (verified locally, 2026-10-11)
+
+- **One promise, one place** (`src/lib/promise.ts`, map in docs/promise-map.md): the seven steps
+  (evaluare gratuită → planul și prețul → plata doar rezervată → medic în 24 de ore → fără rețetă, fără
+  plată → livrare gratuită și discretă → mesaje, pauză, anulare). `SLA_HOURS` is shared with the clinical
+  `SERVICE.slaHours`.
+  - Used by the home step strip and "How we help", a new 7-step section and FAQ (FAQPage JSON-LD) on
+    /cum-functioneaza, the condition page aside, the closing CTA and the terms.
+  - FAQ (`src/lib/promise-faqs.ts`): Cât costă? Când plătesc? Ce se întâmplă dacă medicul nu îmi
+    prescrie? Cine este medicul meu? Cât durează? Cum se face livrarea? Pot anula?
+  - Shown only while a condition can be bought. With none (production before `APP_LAUNCH`), the pages keep
+    the education copy and the closing CTA disappears.
+- **Copy aligned:** home hero, FAQ and value list (no more "Datele medicale nu ajung pe acest site");
+  acne and ED pages no longer promise an evaluation; meta descriptions of /, /afectiuni, /cum-functioneaza,
+  /evaluare.
+- **Terms and privacy rewritten for v5** (DRAFT FOR LAWYER, legal #35): payment model, renewal, pause and
+  cancel, returns, who sees what, processors by name and region, legal bases, retention, in-account rights.
+- **Lawyer drafts** in `docs/legal/`: DPIA, art. 30 record, processors, retention, breach procedure (legal #36).
+- **docs/LAUNCH.md rewritten:** the two switches (`APP_LAUNCH`, `SITE_INDEXING`), owner values, accounts,
+  the real-patient checklist, then domain, indexing and search engines.
+- **New checks:**
+  - RLS per role for the newer tables (invoices, price variants, deletion requests, subscriptions,
+    check-ins, doctor ledger): 6 tests.
+  - `tests/unit/promise.test.ts`: order, one SLA, no medicine names or pre-launch phrases.
+  - e2e `clinical-screens.spec.ts`: axe and CSP-violation listeners on all 14 patient screens, topic to
+    account, at 360/768/1280.
+  - e2e `promise.spec.ts`: /, /cum-functioneaza, /caderea-parului.
+  - The axe helper waits for colour transitions to finish (a selected answer was measured mid-fade).
+- **Results:** format, lint, typecheck and build pass. 147 unit tests pass, also with Vercel's environment.
+  Full Playwright suite: 200 passed, 0 failed (49 per-viewport skips, as before).
+  - Lighthouse mobile (local `next start`):
+    - home: Perf 95/95/98 on warm runs (the first, cold run scored 77);
+    - /caderea-parului, /acnee, /disfunctie-erectila and /cum-functioneaza: 95 each;
+    - Accessibility and Best practices 100 everywhere, CLS 0;
+    - SEO 66 only because of the intended noindex.
+- **Not verifiable here:** Lighthouse on the real Vercel preview (measured locally on `next start`).
 
 ### P5 subscriptions, renewals, check-ins, data rights (branch claude/v5-p5-subscriptions) — DONE (verified locally, 2026-10-11)
 

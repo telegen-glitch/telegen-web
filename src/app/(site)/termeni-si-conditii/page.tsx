@@ -4,11 +4,14 @@ import { ContactEmail } from "@/components/layout/ContactEmail";
 import { LegalPage } from "@/components/layout/LegalPage";
 import { staticPageMetadata } from "@/lib/page-meta";
 import { publishedConditionList } from "@/lib/positioning";
+import { PROMISE_STEPS } from "@/lib/promise";
+import { purchasableConditionNames } from "@/lib/purchasable-names";
 
 export const metadata = staticPageMetadata("/termeni-si-conditii");
 
-/** Launch version (v4.7). Requires the lawyer's sign-off: docs/legal-review-needed.md. */
+/** v5 version, DRAFT FOR LAWYER: not final until signed off (docs/legal-review-needed.md #35). */
 export default function TermsPage() {
+  const open = purchasableConditionNames();
   return (
     <LegalPage title="Termeni și condiții" path="/termeni-si-conditii" updatedAt="2026-10-11">
       <h2>Cine suntem</h2>
@@ -25,27 +28,24 @@ export default function TermsPage() {
 
       <h2>Ce oferă Telegen</h2>
       <p>
-        Telegen oferă evaluare medicală online pentru {publishedConditionList()}. Evaluarea este analizată de
-        un medic cu drept de liberă practică în România și cu specialitatea potrivită afecțiunii. Site-ul
-        telegen.ro conține informații medicale educative și evaluarea inițială; serviciul medical propriu-zis
-        se desfășoară în contul tău Telegen.
+        Pe telegen.ro găsești ghiduri medicale despre {publishedConditionList()}.
+        {open.length > 0 && (
+          <>
+            {" "}
+            Pentru {open.join(", ").toLowerCase()} oferim și evaluare medicală online: un medic cu drept de
+            liberă practică în România și cu specialitatea potrivită îți analizează evaluarea și decide dacă
+            îți prescrie un tratament, pe care o farmacie parteneră ți-l livrează acasă.
+          </>
+        )}
       </p>
 
       <h2>Cum funcționează serviciul</h2>
       <ol>
-        <li>
-          Răspunzi la câteva întrebări. Până să îți creezi contul, răspunsurile rămân doar în pagina deschisă.
-        </li>
-        <li>
-          Îți creezi contul cu un cod primit pe e-mail și îți dai acordul explicit pentru prelucrarea datelor
-          medicale; abia apoi răspunsurile se salvează.
-        </li>
-        <li>
-          Un medic îți analizează evaluarea, îți poate pune întrebări și decide ce recomandă: un plan de
-          tratament, investigații sau un consult în persoană. Înainte de consult afli numele medicului și
-          codul lui de parafă.
-        </li>
-        <li>Primești planul în cont, împreună cu reevaluările stabilite de medic.</li>
+        {PROMISE_STEPS.map((step) => (
+          <li key={step.id}>
+            <strong>{step.title}.</strong> {step.text}
+          </li>
+        ))}
       </ol>
 
       <h2>Limitele evaluării online</h2>
@@ -53,30 +53,52 @@ export default function TermsPage() {
         <li>Telegen nu tratează urgențe. În caz de urgență, sună la 112.</li>
         <li>
           Medicul poate decide că evaluarea online nu este potrivită pentru situația ta și îți poate recomanda
-          un consult în persoană.
+          un consult în persoană. În acest caz nu plătești nimic.
         </li>
         <li>Răspunsul la tratament diferă de la o persoană la alta. Nu promitem un anumit rezultat.</li>
         <li>
-          Recomandarea medicului se bazează pe informațiile pe care le dai. Te rugăm să răspunzi complet și
-          corect, inclusiv despre medicamentele pe care le iei.
+          Decizia medicului se bazează pe informațiile pe care le dai. Te rugăm să răspunzi complet și corect,
+          inclusiv despre medicamentele pe care le iei.
         </li>
       </ul>
 
       <h2>Cine poate folosi serviciul</h2>
-      <p>Serviciul medical este destinat persoanelor de cel puțin 18 ani.</p>
+      <p>Serviciul medical este destinat persoanelor de cel puțin 18 ani, cu adresă de livrare în România.</p>
 
       <h2>Prețuri și plată</h2>
-      <p>
-        Prețurile sunt publicate pe pagina <Link href="/cum-functioneaza">Cum funcționează</Link> și sunt
-        afișate din nou în cont, înainte de plată. Ce include fiecare preț este descris lângă preț. Plata se
-        face online, în contul tău.
-      </p>
+      <ul>
+        <li>Evaluarea este gratuită.</li>
+        <li>
+          Prețul planului îl vezi în cont, înainte să plătești. Include analiza medicului, mesajele cu medicul
+          și livrarea; ce mai include este scris lângă preț.
+        </li>
+        <li>
+          La final, suma doar se rezervă pe card. O încasăm numai după ce medicul aprobă planul. Dacă medicul
+          nu îți prescrie tratamentul, rezervarea se anulează integral.
+        </li>
+        <li>
+          Dacă medicul ajustează planul și prețul se schimbă, îți cerem acordul înainte de orice încasare.
+        </li>
+      </ul>
 
-      <h2>Anulare</h2>
-      <p>
-        Poți renunța oricând înainte de plată, fără niciun cost. După plată, condițiile de anulare și de
-        rambursare sunt cele afișate în cont înainte să plătești, în limitele prevăzute de lege.
-      </p>
+      <h2>Abonament, pauză și anulare</h2>
+      <ul>
+        <li>
+          Planul se reînnoiește automat la sfârșitul fiecărei perioade (o lună sau trei luni, după planul
+          ales), cu cardul folosit la prima plată. Primești un e-mail cu 3 zile înainte de fiecare plată.
+        </li>
+        <li>
+          Îl poți pune pe pauză sau îl poți anula oricând din cont, înainte de următoarea plată, fără costuri
+          și fără să dai explicații. Perioada deja plătită rămâne valabilă.
+        </li>
+        <li>
+          Medicul reevaluează periodic dacă tratamentul rămâne potrivit și poate opri sau ajusta planul.
+        </li>
+        <li>
+          Medicamentele livrate nu pot fi returnate, din motive de protecție a sănătății. Dacă un colet ajunge
+          deteriorat sau incomplet, scrie-ne.
+        </li>
+      </ul>
 
       <h2>Informațiile de pe site</h2>
       <p>
@@ -89,7 +111,7 @@ export default function TermsPage() {
       <p>
         Datele tale sunt prelucrate conform{" "}
         <Link href="/politica-de-confidentialitate">politicii de confidențialitate</Link>. Datele de sănătate
-        sunt prelucrate doar în contul tău, cu acordul tău explicit. Despre cookie-uri, vezi{" "}
+        se salvează doar după ce îți creezi contul și îți dai acordul explicit. Despre cookie-uri, vezi{" "}
         <Link href="/politica-cookie">politica de cookie-uri</Link>.
       </p>
 
@@ -108,8 +130,8 @@ export default function TermsPage() {
 
       <h2>Modificări</h2>
       <p>
-        Când modificăm acești termeni, actualizăm data de la începutul paginii. Pentru un serviciu deja plătit
-        se aplică termenii în vigoare la data plății.
+        Când modificăm acești termeni, actualizăm data de la începutul paginii și îți scriem în cont înainte
+        de următoarea plată. Pentru o perioadă deja plătită se aplică termenii în vigoare la data plății.
       </p>
     </LegalPage>
   );
