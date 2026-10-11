@@ -21,6 +21,8 @@ export interface ClinicalEnv {
   appLaunch: boolean;
   cronSecret: string | null;
   siteUrl: string;
+  /** Base for links in e-mails: the branch preview on Vercel previews, the site in production. */
+  appUrl: string;
   problems: string[];
 }
 
@@ -74,6 +76,10 @@ export function readClinicalEnv(env: NodeJS.ProcessEnv = process.env): ClinicalE
     appLaunch: env.APP_LAUNCH === "on" && vercelEnv === "production",
     cronSecret: trim(env.CRON_SECRET),
     siteUrl: (trim(env.NEXT_PUBLIC_SITE_URL) ?? "https://telegen.ro").replace(/\/$/, ""),
+    appUrl:
+      vercelEnv === "preview" && trim(env.VERCEL_BRANCH_URL)
+        ? `https://${trim(env.VERCEL_BRANCH_URL)}`
+        : (trim(env.NEXT_PUBLIC_SITE_URL) ?? "https://telegen.ro").replace(/\/$/, ""),
     problems,
   };
 }

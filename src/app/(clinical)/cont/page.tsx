@@ -96,10 +96,16 @@ export default async function AccountPage() {
                       {PATIENT_STATUS[c.status]} · începută pe {dateFmt.format(new Date(c.createdAt))}
                     </p>
                   </div>
-                  {(c.status === "draft" || c.status === "awaiting_payment") && (
+                  {c.status === "draft" || c.status === "awaiting_payment" ? (
                     <Link href="/evaluare" className={buttonClasses("secondary", "md")}>
                       Continuă <Arrow />
                     </Link>
+                  ) : (
+                    c.status !== "stopped" && (
+                      <Link href={`/cont/${c.id}`} className={buttonClasses("secondary", "md")}>
+                        Detalii și mesaje <Arrow />
+                      </Link>
+                    )
                   )}
                 </Card>
               </li>

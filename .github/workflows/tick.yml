@@ -1,0 +1,28 @@
+# Clinical scheduled job (SLA reminders at 12 h / 20 h, escalation at 24 h, card-hold warnings,
+# e-mail queue). Vercel's Hobby plan runs crons only once a day (vercel.json), so this schedule
+# calls the same endpoint every 15 minutes. It does nothing until the owner adds the repository
+# secrets TICK_URL (https://telegen.ro/api/cron/tick) and CRON_SECRET (docs/LAUNCH.md).
+name: clinical-tick
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Call the scheduled job
+        env:
+          TICK_URL: ${{ secrets.TICK_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$TICK_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "TICK_URL / CRON_SECRET not set: nothing to do."
+            exit 0
+          fi
+          curl --fail --silent --show-error --max-time 60 -H "Authorization: Bearer $CRON_SECRET" "$TICK_URL" > /dev/null

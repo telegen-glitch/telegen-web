@@ -15,4 +15,9 @@ export const SERVICE = {
   renewalReviewMonths: 6,
   /** Check-ins after approval, in months. */
   checkinMonths: [1, 3],
+  /**
+   * Flat fee per completed review, in lei, the same for approve, adjust and
+   * decline. Owner decision: null until supplied (the ledger counts reviews now).
+   */
+  doctorFeeRon: null as number | null,
 } as const;

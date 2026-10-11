@@ -5,6 +5,7 @@ import { authAdapter, currentSession } from "../auth";
 import { normalCode, normalEmail } from "../auth/types";
 import { intakeGate, purchasableTopics } from "../launch";
 import { logEvent } from "../log";
+import { acceptAdjustment, patientMessage, refuseAdjustment } from "../patient/case";
 import { ensureAccount } from "./account";
 import {
   fakeAuthorize,
@@ -166,6 +167,34 @@ export async function fakeAuthorizeAction(paymentId: unknown): Promise<ActionRes
   try {
     const outcome = await fakeAuthorize(session, paymentId);
     return outcome === "released" ? { ok: false, error: "locked" } : { ok: true };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function patientMessageAction(caseId: unknown, message: unknown): Promise<ActionResult<object>> {
+  const session = await currentSession();
+  if (!session) return { ok: false, error: "signed_out" };
+  if (typeof caseId !== "string") return { ok: false, error: "invalid" };
+  try {
+    await patientMessage(session, { caseId, message });
+    return { ok: true };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function answerAdjustmentAction(
+  caseId: unknown,
+  accept: unknown,
+): Promise<ActionResult<object>> {
+  const session = await currentSession();
+  if (!session) return { ok: false, error: "signed_out" };
+  if (typeof caseId !== "string") return { ok: false, error: "invalid" };
+  try {
+    if (accept === true) await acceptAdjustment(session, caseId);
+    else await refuseAdjustment(session, caseId);
+    return { ok: true };
   } catch (e) {
     return fail(e);
   }

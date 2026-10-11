@@ -53,6 +53,30 @@ export const templates = {
     subject: "E timpul pentru o scurtă verificare",
     text: `${hello(i)}\n\nMedicul te roagă să răspunzi la câteva întrebări de urmărire, în cont: ${i.link}${footer}`,
   }),
+  case_expired: (i: EmailInput): RenderedEmail => ({
+    subject: "Evaluarea ta a expirat",
+    text: `${hello(i)}
+
+Nu am reușit să finalizăm evaluarea la timp, așa că rezervarea de pe card a fost anulată integral. Nu plătești nimic. Poți începe o evaluare nouă din cont: ${i.link}${footer}`,
+  }),
+  patient_replied: (i: EmailInput): RenderedEmail => ({
+    subject: "Un pacient ți-a răspuns",
+    text: `${hello(i)}
+
+Ai un mesaj nou de la un pacient, în panoul medicului: ${i.link}${footer}`,
+  }),
+  doctor_reminder: (i: EmailInput): RenderedEmail => ({
+    subject: "O evaluare așteaptă decizia ta",
+    text: `${hello(i)}
+
+O evaluare din coada ta se apropie de termenul de răspuns. Detalii în panoul medicului: ${i.link}${footer}`,
+  }),
+  admin_alert: (i: EmailInput): RenderedEmail => ({
+    subject: "Telegen: un caz are nevoie de atenție",
+    text: `${hello(i)}
+
+Un caz a depășit termenul sau are o rezervare de card aproape de expirare. Detalii în panoul de administrare: ${i.link}${footer}`,
+  }),
   payment_upcoming: (i: EmailInput): RenderedEmail => ({
     subject: "Următoarea plată",
     text: `${hello(i)}\n\nUrmătoarea plată pentru planul tău se apropie. O poți amâna sau anula din cont, înainte de data plății: ${i.link}${footer}`,
