@@ -5,6 +5,7 @@ import { authAdapter } from "@/clinical/auth";
 import { DEV_CODE } from "@/clinical/auth/dev";
 import { ensureAccount } from "@/clinical/intake/account";
 import { listCases } from "@/clinical/intake/cases";
+import { syncOpenCheckouts } from "@/clinical/payments/stripe-events";
 import { AccountSignIn, SignOutButton } from "@/clinical/ui/AccountSignIn";
 import { Card, Screen } from "@/clinical/ui/parts";
 import { PATIENT_STATUS } from "@/clinical/ui/status";
@@ -43,6 +44,8 @@ export default async function AccountPage() {
   }
 
   const role = await ensureAccount(session);
+  // Back from Stripe Checkout: confirm the authorisation even before the webhook arrives.
+  if (role === "patient") await syncOpenCheckouts(session);
   const cases = role === "patient" ? await listCases(session) : [];
   const name = (slug: string) => evaluations.find((e) => e.topic === slug)?.name ?? slug;
 
@@ -93,7 +96,7 @@ export default async function AccountPage() {
                       {PATIENT_STATUS[c.status]} · începută pe {dateFmt.format(new Date(c.createdAt))}
                     </p>
                   </div>
-                  {c.status === "draft" && (
+                  {(c.status === "draft" || c.status === "awaiting_payment") && (
                     <Link href="/evaluare" className={buttonClasses("secondary", "md")}>
                       Continuă <Arrow />
                     </Link>

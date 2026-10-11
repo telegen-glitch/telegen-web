@@ -24,7 +24,7 @@ export type LogEvent =
   | "webhook.ignored"
   | "storage.error";
 
-const OPAQUE = /^[0-9a-f-]{8,64}$|^(?:pi|cs|sub|cus|evt|acct)_[A-Za-z0-9]+$/;
+const OPAQUE = /^[0-9a-f-]{8,64}$|^(?:pi|cs|sub|cus|evt|acct|fake_pi|fake_cs)_[A-Za-z0-9_]+$/;
 
 export function opaqueIds(ids: Record<string, string>): Record<string, string> {
   return Object.fromEntries(Object.entries(ids).map(([k, v]) => [k, OPAQUE.test(v) ? v : "[redacted]"]));

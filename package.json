@@ -27,7 +27,8 @@
     "postgres": "3.4.9",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "stripe": "^19.3.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
