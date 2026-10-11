@@ -2,7 +2,8 @@
 
 import { authAdapter } from "./auth";
 import { normalCode } from "./auth/types";
-import { createDoctor, setDoctorActive } from "./admin/ops";
+import { createDoctor, createPharmacy, setDoctorActive } from "./admin/ops";
+import { updateOrder } from "./pharmacy/orders";
 import { adjust, approve, askPatient, decline, doctorMessage, takeCase } from "./doctor/workflow";
 import { IntakeError } from "./intake/cases";
 import { staffGate } from "./staff";
@@ -91,4 +92,21 @@ export async function createDoctorAction(form: {
 }
 export async function setDoctorActiveAction(doctorId: unknown, active: unknown) {
   return as("admin", (s) => setDoctorActive(s, caseIdOf(doctorId), active === true));
+}
+
+export async function createPharmacyAction(form: {
+  name: unknown;
+  stripeAccount: unknown;
+  memberEmail: unknown;
+}) {
+  return as("admin", (s) => createPharmacy(s, form));
+}
+
+export async function updateOrderAction(
+  orderId: unknown,
+  status: unknown,
+  carrier: unknown,
+  tracking: unknown,
+) {
+  return as("pharmacy", (s) => updateOrder(s, { orderId: caseIdOf(orderId), status, carrier, tracking }));
 }

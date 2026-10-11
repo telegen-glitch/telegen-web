@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { listDoctors, overview } from "@/clinical/admin/ops";
+import { listDoctors, listPharmacies, overview } from "@/clinical/admin/ops";
 import { launchProblems } from "@/clinical/launch";
 import { staffGate } from "@/clinical/staff";
 import { SignOutButton } from "@/clinical/ui/AccountSignIn";
 import { AdminDoctors } from "@/clinical/ui/AdminDoctors";
+import { AdminPharmacies } from "@/clinical/ui/AdminPharmacies";
 import { conditionName, DOCTOR_STATUS, slaText, when } from "@/clinical/ui/labels";
 import { Card, Screen } from "@/clinical/ui/parts";
 import { StaffGateView } from "@/clinical/ui/StaffGateView";
@@ -13,9 +14,10 @@ export const metadata: Metadata = { title: "Administrare", robots: { index: fals
 export default async function AdminPage() {
   const gate = await staffGate("admin");
   if (gate.state !== "ok") return <StaffGateView gate={gate} title="Administrare" />;
-  const [ops, doctors, problems] = await Promise.all([
+  const [ops, doctors, pharmacies, problems] = await Promise.all([
     overview(gate.session),
     listDoctors(gate.session),
+    listPharmacies(gate.session),
     launchProblems(),
   ]);
   const month = new Date().toISOString().slice(0, 7);
@@ -97,6 +99,13 @@ export default async function AdminPage() {
           Medici
         </h2>
         <AdminDoctors doctors={doctors} />
+      </section>
+
+      <section aria-labelledby="farmacii" className="mt-10">
+        <h2 id="farmacii" className="text-xl font-semibold text-navy-950">
+          Farmacii partenere
+        </h2>
+        <AdminPharmacies pharmacies={pharmacies} />
       </section>
 
       <section aria-labelledby="plata-medici" className="mt-10">

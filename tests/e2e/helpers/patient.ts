@@ -28,7 +28,7 @@ export async function twoFactor(page: Page) {
 }
 
 /** A complete hair-loss case, authorised with the test provider; returns its id. */
-export async function submitHairCase(page: Page, email: string): Promise<string> {
+export async function submitHairCase(page: Page, email: string, name = "Pacient Test"): Promise<string> {
   await page.goto("/evaluare");
   await page.getByRole("button", { name: "Căderea părului" }).click();
   await page.getByRole("button", { name: /^Începe/ }).click();
@@ -50,7 +50,7 @@ export async function submitHairCase(page: Page, email: string): Promise<string>
   await pick(page, /^Continuă/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("verificat de medic");
   await pick(page, /^Continuă/);
-  await page.getByLabel("Nume și prenume").fill("Pacient Test");
+  await page.getByLabel("Nume și prenume").fill(name);
   await page.getByLabel("Telefon (pentru curier)").fill("0712345678");
   await page.getByLabel("Adresa (stradă, număr, bloc, apartament)").fill("Str. Exemplu 1");
   await page.getByLabel("Localitatea").fill("Iași");

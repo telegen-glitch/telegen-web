@@ -7,6 +7,7 @@ import { enqueue } from "../email/outbox";
 import { IntakeError, type CaseStatus } from "../intake/cases";
 import { logEvent } from "../log";
 import { paymentProvider } from "../payments/provider";
+import { fulfil } from "../pharmacy/orders";
 import { prescriptionAdapter, type PrescriptionItem } from "../prescriptions/adapter";
 import type { Session } from "../auth";
 
@@ -287,6 +288,7 @@ export async function afterApproval(
     await enqueue(q, patientId, "plan_approved", caseId);
   });
   await recordReview(caseId, doctorId);
+  await fulfil(caseId);
   logEvent("case.decided", { case: caseId });
 }
 

@@ -4,7 +4,10 @@ import { launchConfig } from "@/lib/launch-config";
 import { isPurchasable } from "@/lib/purchasable";
 import { authAdapter } from "./auth";
 import { asService } from "./db";
+import { splitFor } from "./config/pharmacy";
+import { PLANS } from "./config/plans";
 import { clinicalEnv } from "./env";
+import { invoiceAdapter } from "./invoicing/adapter";
 
 /**
  * Launch lock for the clinical flow (CLAUDE.md v5). Previews and local builds run
@@ -42,7 +45,17 @@ export async function launchProblems(): Promise<string[]> {
   if (!env.cronSecret) problems.push("CRON_SECRET");
   const topics = purchasableTopics();
   if (topics.length === 0) problems.push("cel puțin o afecțiune cu preț");
+  const plans = Object.values(PLANS).filter((p) => topics.includes(p.condition));
+  if (plans.some((p) => !splitFor(p.id, "monthly") || !splitFor(p.id, "quarterly")))
+    problems.push("împărțirea plății cu farmacia, pe produs (PHARMACY_SPLIT)");
+  if (!invoiceAdapter()) problems.push("facturarea (SmartBill sau Oblio)");
   try {
+    const [ph] = await asService((q) =>
+      q.query<{ n: number }>(
+        "select count(*)::int as n from clinical.pharmacies where active and stripe_account_id is not null",
+      ),
+    );
+    if (!ph?.n) problems.push("o farmacie parteneră activă, cu cont Stripe Connect");
     for (const t of topics) {
       let ready = 0;
       for (const spec of SPECIALTY_FOR[t] ?? []) {

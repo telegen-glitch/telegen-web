@@ -207,3 +207,70 @@ export async function ledgerCsv(session: Session, month: string, feeRon: number 
     );
   return lines.join("\n") + "\n";
 }
+
+export interface PharmacyRow {
+  id: string;
+  name: string;
+  stripeAccount: string | null;
+  active: boolean;
+  members: string[];
+}
+
+export async function listPharmacies(session: Session): Promise<PharmacyRow[]> {
+  const rows = await asUser(actor(session), (q) =>
+    q.query<{ id: string; name: string; stripe_account_id: string | null; active: boolean }>(
+      "select id, name, stripe_account_id, active from clinical.pharmacies order by created_at",
+    ),
+  );
+  const members = await asService((q) =>
+    q.query<{ pharmacy_id: string; email: string }>(
+      "select m.pharmacy_id, p.email from clinical.pharmacy_members m join clinical.profiles p on p.id = m.profile_id",
+    ),
+  );
+  return rows.map((r) => ({
+    id: r.id,
+    name: r.name,
+    stripeAccount: r.stripe_account_id,
+    active: r.active,
+    members: members.filter((m) => m.pharmacy_id === r.id).map((m) => m.email),
+  }));
+}
+
+/** A partner pharmacy with its Stripe Connect account and one sign-in account for its staff. */
+export async function createPharmacy(
+  session: Session,
+  raw: { name: unknown; stripeAccount: unknown; memberEmail: unknown },
+): Promise<void> {
+  const name = String(raw.name ?? "")
+    .replace(/\s+/g, " ")
+    .trim();
+  const account = String(raw.stripeAccount ?? "").trim();
+  const email = normalEmail(raw.memberEmail);
+  if (name.length < 3 || name.length > 120 || (account && !/^acct_[A-Za-z0-9]+$/.test(account)) || !email)
+    throw new IntakeError("invalid");
+  const [me] = await asUser(actor(session), (q) =>
+    q.query<{ ok: boolean }>("select clinical.is_admin() as ok"),
+  );
+  if (!me?.ok) throw new IntakeError("locked");
+  const exists = await asService((q) => q.query("select 1 from clinical.profiles where email = $1", [email]));
+  if (exists.length) throw new IntakeError("locked");
+  const userId = await createAuthUser(email);
+  await asService(async (q) => {
+    const [ph] = await q.query<{ id: string }>(
+      "insert into clinical.pharmacies (name, stripe_account_id) values ($1, $2) returning id",
+      [name, account || null],
+    );
+    await q.query("insert into clinical.profiles (id, role, email) values ($1, 'pharmacy', $2)", [
+      userId,
+      email,
+    ]);
+    await q.query("insert into clinical.pharmacy_members (profile_id, pharmacy_id) values ($1, $2)", [
+      userId,
+      ph.id,
+    ]);
+    await q.query(
+      "insert into clinical.audit_log (actor_id, actor_role, action, entity, entity_id) values ($1, 'admin', 'insert', 'pharmacies', $2)",
+      [session.userId, ph.id],
+    );
+  });
+}

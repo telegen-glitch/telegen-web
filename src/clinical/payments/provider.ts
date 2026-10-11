@@ -34,6 +34,8 @@ export interface PaymentProvider {
   expireCheckout(checkoutId: string): Promise<void>;
   capture(intentId: string, amount: number): Promise<void>;
   cancel(intentId: string): Promise<void>;
+  /** Pays the pharmacy's share of a captured payment to its Stripe Connect account. */
+  transfer(input: { intentId: string; amount: number; destination: string; caseId: string }): Promise<string>;
 }
 
 /** Lei to the smallest unit Stripe expects (bani). */
@@ -101,6 +103,22 @@ function stripeProvider(secretKey: string): PaymentProvider {
     async cancel(intentId) {
       await stripe.paymentIntents.cancel(intentId, {}, { idempotencyKey: `cancel-${intentId}` });
     },
+    async transfer({ intentId, amount, destination, caseId }) {
+      const pi = await stripe.paymentIntents.retrieve(intentId);
+      const charge = typeof pi.latest_charge === "string" ? pi.latest_charge : pi.latest_charge?.id;
+      if (!charge) throw new Error("no charge");
+      const tr = await stripe.transfers.create(
+        {
+          amount: toMinor(amount),
+          currency: "ron",
+          destination,
+          source_transaction: charge,
+          metadata: stripeMetadata({ caseId, purpose: "first_order" }),
+        },
+        { idempotencyKey: `transfer-${intentId}` },
+      );
+      return tr.id;
+    },
   };
 }
 
@@ -117,6 +135,9 @@ function fakeProvider(): PaymentProvider {
     async expireCheckout() {},
     async capture() {},
     async cancel() {},
+    async transfer({ intentId }) {
+      return `fake_tr_${intentId.replace(/^fake_pi_/, "")}`;
+    },
   };
 }
 

@@ -208,8 +208,14 @@ describe("doctors need two-factor authentication and see only their queue", () =
 });
 
 describe("pharmacies see only what they need to dispense and ship", () => {
+  it("nothing without two-factor authentication", async () => {
+    await as(U.pharmacy, "aal1", async (q) =>
+      expect(await rows(q, "select * from clinical.pharmacy_orders")).toEqual([]),
+    );
+  });
+
   it("their orders through the narrow view, without the condition", async () => {
-    await as(U.pharmacy, "aal1", async (q) => {
+    await as(U.pharmacy, "aal2", async (q) => {
       const orders = await rows(q, "select * from clinical.pharmacy_orders");
       expect(orders).toHaveLength(1);
       expect(Object.keys(orders[0])).not.toContain("condition");
@@ -219,18 +225,18 @@ describe("pharmacies see only what they need to dispense and ship", () => {
       expect(await rows(q, "select * from clinical.answers")).toEqual([]);
       expect(await rows(q, "select * from clinical.prescriptions")).toEqual([]);
     });
-    await as(U.otherPharmacy, "aal1", async (q) =>
+    await as(U.otherPharmacy, "aal2", async (q) =>
       expect(await rows(q, "select * from clinical.pharmacy_orders")).toEqual([]),
     );
   });
 
   it("can move only their own orders forward", async () => {
     const [order] = await service((q) => rows(q, "select id from clinical.orders"));
-    await as(U.pharmacy, "aal1", (q) =>
+    await as(U.pharmacy, "aal2", (q) =>
       rows(q, "select clinical.pharmacy_update_order($1, 'shipped', 'TEST', 'T123')", [order.id]),
     );
     await expect(
-      as(U.otherPharmacy, "aal1", (q) =>
+      as(U.otherPharmacy, "aal2", (q) =>
         rows(q, "select clinical.pharmacy_update_order($1, 'delivered', null, null)", [order.id]),
       ),
     ).rejects.toThrow(/not found/);
