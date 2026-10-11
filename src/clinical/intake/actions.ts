@@ -1,11 +1,15 @@
 "use server";
 
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { authAdapter, currentSession } from "../auth";
 import { normalCode, normalEmail } from "../auth/types";
 import { intakeGate, purchasableTopics } from "../launch";
 import { logEvent } from "../log";
 import { acceptAdjustment, patientMessage, refuseAdjustment } from "../patient/case";
+import { answerCheckin } from "../patient/checkins";
+import { deleteAccount, withdrawConsent } from "../patient/data-rights";
+import { changePlan } from "../subscriptions";
 import { ensureAccount } from "./account";
 import {
   fakeAuthorize,
@@ -198,6 +202,60 @@ export async function answerAdjustmentAction(
   } catch (e) {
     return fail(e);
   }
+}
+
+export async function changePlanAction(caseId: unknown, action: unknown): Promise<ActionResult<object>> {
+  const session = await currentSession();
+  if (!session) return { ok: false, error: "signed_out" };
+  if (typeof caseId !== "string" || (action !== "pause" && action !== "resume" && action !== "cancel"))
+    return { ok: false, error: "invalid" };
+  try {
+    await changePlan(session, caseId, action);
+    return { ok: true };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function answerCheckinAction(
+  checkinId: unknown,
+  answers: unknown,
+): Promise<ActionResult<{ urgent: boolean }>> {
+  const session = await currentSession();
+  if (!session) return { ok: false, error: "signed_out" };
+  try {
+    return { ok: true, ...(await answerCheckin(session, checkinId, answers)) };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function withdrawConsentAction(): Promise<ActionResult<object>> {
+  const session = await currentSession();
+  if (!session) return { ok: false, error: "signed_out" };
+  try {
+    await withdrawConsent(session);
+    return { ok: true };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function deleteAccountAction(
+  confirm: unknown,
+): Promise<ActionResult<{ outcome: "deleted" | "requested" }>> {
+  const session = await currentSession();
+  if (!session) return { ok: false, error: "signed_out" };
+  if (confirm !== "ȘTERGE") return { ok: false, error: "invalid" };
+  try {
+    const outcome = await deleteAccount(session);
+    if (outcome === "requested") return { ok: true, outcome };
+  } catch (e) {
+    return fail(e);
+  }
+  // Fully erased: end the session and show the confirmation page.
+  await authAdapter()?.signOut();
+  redirect("/cont/sters");
 }
 
 export async function signOutAction(): Promise<void> {

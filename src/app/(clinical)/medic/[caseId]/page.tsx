@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CHECKINS } from "@/clinical/config/checkins";
 import { DECLINE_REASONS, doctorCase } from "@/clinical/doctor/workflow";
+import { caseCheckins } from "@/clinical/patient/checkins";
+import { RenewalPanel } from "@/clinical/ui/RenewalPanel";
 import { staffGate } from "@/clinical/staff";
 import { DoctorPanel } from "@/clinical/ui/DoctorPanel";
 import { conditionName, DOCTOR_STATUS, slaText } from "@/clinical/ui/labels";
@@ -20,6 +23,8 @@ export default async function DoctorCasePage({ params }: PageProps<"/medic/[case
   if (!/^[0-9a-f-]{36}$/.test(caseId)) notFound();
   const view = await doctorCase(gate.session, caseId);
   if (!view) notFound();
+  const checkins = (await caseCheckins(gate.session, caseId)).filter((c) => c.completedAt);
+  const renewalPending = view.mine && checkins.some((c) => c.kind === "renewal" && !c.decision);
   return (
     <Screen wide>
       <Link href="/medic" className="text-sm font-semibold text-blue-700 underline underline-offset-2">
@@ -85,6 +90,36 @@ export default async function DoctorCasePage({ params }: PageProps<"/medic/[case
       )}
 
       <DoctorPanel view={view} reasons={DECLINE_REASONS} />
+
+      {checkins.length > 0 && (
+        <section aria-labelledby="verificari" className="mt-8">
+          <h2 id="verificari" className="text-xl font-semibold text-navy-950">
+            Verificări de urmărire
+          </h2>
+          {checkins.map((c) => (
+            <Card key={c.id} className="mt-3 text-sm">
+              <p className="font-semibold text-navy-950">{CHECKINS[c.kind].title}</p>
+              <dl className="mt-2 space-y-1">
+                {CHECKINS[c.kind].questions
+                  .filter((q) => c.answers?.[q.id]?.length)
+                  .map((q) => (
+                    <div key={q.id}>
+                      <dt className="text-ink-muted">{q.title}</dt>
+                      <dd className="text-navy-950">
+                        {q.type === "text"
+                          ? c.answers![q.id][0]
+                          : c
+                              .answers![q.id].map((v) => q.options.find((o) => o.value === v)?.label ?? v)
+                              .join(", ")}
+                      </dd>
+                    </div>
+                  ))}
+              </dl>
+            </Card>
+          ))}
+        </section>
+      )}
+      {renewalPending && <RenewalPanel caseId={view.id} />}
       <Messages
         caseId={view.id}
         messages={view.messages}
