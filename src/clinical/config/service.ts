@@ -1,10 +1,12 @@
+import { SLA_HOURS } from "@/lib/promise";
+
 /**
  * Service settings (CLAUDE.md v5). Defaults from the owner's brief; the doctor
  * confirms the renewal interval (docs/open-items.md).
  */
 export const SERVICE = {
   /** A doctor decides within this many hours of the authorisation. */
-  slaHours: Number(process.env.SLA_HOURS) > 0 ? Number(process.env.SLA_HOURS) : 24,
+  slaHours: SLA_HOURS,
   /** Doctor reminders, hours after submission. */
   reminderHours: [12, 20],
   /** Admin escalation when no decision by then. */

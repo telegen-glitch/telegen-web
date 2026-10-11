@@ -28,7 +28,7 @@ export function staticPages(): Record<string, StaticMeta> {
     "/": { title: homeTitle(), description: homeDescription(), absolute: true },
     "/afectiuni": {
       title: "Afecțiuni tratate online",
-      description: `Afecțiunile pentru care Telegen oferă evaluare medicală online: ${publishedConditionList()}. Ce se poate trata, cum și cu ce fel de medic.`,
+      description: `Ghiduri medicale Telegen despre ${publishedConditionList()}: ce se poate trata, cum, cu ce fel de medic și când ai nevoie de consult.`,
     },
     "/ghiduri": {
       title: "Ghiduri medicale explicate clar",
@@ -43,7 +43,7 @@ export function staticPages(): Record<string, StaticMeta> {
     "/cum-functioneaza": {
       title: "Cum funcționează evaluarea online",
       description:
-        "Pas cu pas: evaluarea online, analiza făcută de un medic cu specialitatea potrivită, planul de tratament și urmărirea. Ce primești și ce nu facem.",
+        "Evaluare gratuită, planul și prețul înainte de plată, suma doar rezervată, medic în 24 de ore, fără rețetă fără plată, livrare discretă, anulare oricând.",
     },
     "/standarde-clinice": {
       title: "Standarde clinice Telegen",
@@ -59,7 +59,7 @@ export function staticPages(): Record<string, StaticMeta> {
       title: "Evaluare medicală online",
       description: isPrelaunch()
         ? prelaunchCopy.evaluationMeta
-        : "Răspunde la câteva întrebări despre căderea părului, acnee sau disfuncția erectilă, apoi continuă către consultul cu un medic, în aplicația clinică Telegen.",
+        : "Evaluare online gratuită: câteva întrebări, apoi planul propus și prețul. Plătești doar dacă medicul aprobă planul, iar suma doar se rezervă pe card.",
     },
     "/contact": {
       title: "Contact Telegen",

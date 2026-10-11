@@ -528,7 +528,7 @@ const cicatrici = subpage({
         },
         {
           type: "p",
-          text: "Aceste proceduri se fac la medicul dermatolog, în persoană. Telegen nu le oferă. Rolul evaluării online este să tratezi la timp acneea activă, ca să previi cicatrici noi.",
+          text: "Aceste proceduri se fac la medicul dermatolog, în persoană. Telegen nu le oferă. Ce poți face oricând este să tratezi la timp acneea activă, ca să previi cicatrici noi.",
         },
         {
           type: "callout",
@@ -568,7 +568,7 @@ const cicatrici = subpage({
     {
       question: "Telegen tratează cicatricile de acnee?",
       answer:
-        "Nu. Procedurile pentru cicatrici se fac în persoană, la medicul dermatolog. Prin evaluarea Telegen poți trata acneea activă, ceea ce reduce riscul de cicatrici noi {{cite:dermnet-acne-scars}}.",
+        "Nu. Procedurile pentru cicatrici se fac în persoană, la medicul dermatolog. Tratarea la timp a acneei active reduce riscul de cicatrici noi {{cite:dermnet-acne-scars}}.",
     },
   ],
   sourceIds: ["dermnet-acne-scars", "euroguiderm-acne-2025", "dermnet-acne"],
@@ -645,7 +645,7 @@ export const acne: Condition = {
     title: "Acnee",
     metaTitle: "Acneea: cauze, tipuri și tratament",
     metaDescription:
-      "Ce este acneea, ce tipuri există, ce o declanșează și cum se tratează în trepte, de la geluri la tratament pe gură. Evaluare dermatologică online.",
+      "Ce este acneea, ce tipuri există, ce o declanșează și cum se tratează în trepte, de la geluri la tratament pe gură. Informații clare, cu surse citate.",
     h1: "Acneea",
     summary:
       "Acneea este o boală inflamatorie cronică a pielii, care apare mai ales pe față, cu puncte negre și albe, coșuri roșii, coșuri cu puroi sau noduli {{cite:euroguiderm-acne-2025}}. Este foarte frecventă în adolescență, dar poate continua și la vârsta adultă. Se tratează în trepte, iar tratamentul început la timp reduce riscul de cicatrici {{cite:dermnet-acne-scars}}.",
@@ -806,7 +806,7 @@ export const acne: Condition = {
       {
         period: "Ziua 1",
         title: "Evaluarea",
-        text: "Răspunzi la întrebări despre piele, despre tratamentele încercate și despre medicamentele pe care le iei. Medicul dermatolog decide dacă tratamentul la distanță e potrivit sau dacă ai nevoie de un consult în persoană.",
+        text: "Medicul dermatolog te întreabă despre piele, despre tratamentele încercate și despre medicamentele pe care le iei, apoi decide ce tratament începi și dacă ai nevoie de investigații.",
       },
       {
         period: "Primele săptămâni",

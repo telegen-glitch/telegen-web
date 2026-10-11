@@ -1,7 +1,10 @@
+import { promiseStep, SLA_HOURS } from "@/lib/promise";
+
+// The short form of the service promise (src/lib/promise.ts).
 const items = [
-  { title: "Evaluare online", text: "Câteva minute, de pe telefon." },
-  { title: "Analiză medicală", text: "Un medic citește tot." },
-  { title: "Plan și urmărire", text: "Știi ce urmează, lună de lună." },
+  { title: promiseStep("evaluare").title, text: "Câteva minute, de pe telefon." },
+  { title: "Planul și prețul, înainte de plată", text: "Suma doar se rezervă pe card." },
+  { title: `Medic în ${SLA_HOURS} de ore`, text: "Fără rețetă, fără plată." },
 ];
 
 /** Compact numbered strip directly under the hero. */
