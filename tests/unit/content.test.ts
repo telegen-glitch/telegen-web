@@ -8,6 +8,7 @@ import { staticPages } from "@/lib/page-meta";
 import { content, hrefForDoc } from "@/content/source";
 import type { MedicalDoc } from "@/content/types";
 import { docTexts } from "@/lib/medical";
+import { isClinicalPath } from "@/lib/clinical-paths";
 import { allRoutes } from "@/lib/routes";
 import { faqJsonLd } from "@/lib/seo";
 import { routes as e2eRoutes } from "../e2e/routes";
@@ -78,7 +79,9 @@ describe("sources and citations", () => {
 
 describe("internal linking graph", () => {
   it("the e2e route list covers every route (no page skips axe, metadata and CSP checks)", () => {
-    expect(new Set(e2eRoutes)).toEqual(routes);
+    expect(new Set(e2eRoutes.filter((r) => !isClinicalPath(r)))).toEqual(routes);
+    // The clinical entry point is checked too, though it is not a public route.
+    expect(e2eRoutes).toContain("/evaluare");
   });
 
   it("all internal links resolve to a route", () => {
