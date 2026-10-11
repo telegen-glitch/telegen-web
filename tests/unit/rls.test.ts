@@ -287,3 +287,117 @@ describe("audit log and state machine", () => {
     ).rejects.toThrow(/not allowed/);
   });
 });
+
+describe("payments, pharmacy and subscription tables, per role", () => {
+  const count = async (q: Executor, table: string) =>
+    (await rows(q, `select 1 from clinical.${table}`)).length;
+  const TABLES = [
+    "invoices",
+    "price_assignments",
+    "deletion_requests",
+    "subscriptions",
+    "checkins",
+    "doctor_ledger",
+  ];
+  const counts = (user: string, aal: "aal1" | "aal2") =>
+    as(user, aal, async (q) => {
+      const out: Record<string, number> = {};
+      for (const t of TABLES) out[t] = await count(q, t);
+      return out;
+    });
+
+  beforeAll(async () => {
+    await service(async (q) => {
+      const pay = await q.query<{ id: string }>("select id from clinical.payments where case_id = $1", [
+        C.a2,
+      ]);
+      await q.query("insert into clinical.invoices (case_id, payment_id, amount) values ($1, $2, 199)", [
+        C.a2,
+        pay[0].id,
+      ]);
+      await q.query("insert into clinical.price_assignments (patient_id, variant) values ($1, 'B')", [
+        U.patientA,
+      ]);
+      await q.query("insert into clinical.deletion_requests (patient_id) values ($1)", [U.patientB]);
+      await q.query(
+        "insert into clinical.subscriptions (case_id, patient_id, interval_months, amount) values ($1, $2, 1, 320)",
+        [C.b2, U.patientB],
+      );
+      await q.query(
+        "insert into clinical.checkins (case_id, kind, due_at, answers) values ($1, 'month1', now(), '{\"q\":\"TEST\"}')",
+        [C.b2],
+      );
+      await q.query(
+        "insert into clinical.doctor_ledger (doctor_id, case_id, kind, fee) values ($1, $2, 'review', 0), ($3, $4, 'review', 0)",
+        [U.derm, C.b2, U.uro, C.b1],
+      );
+    });
+  });
+
+  it("patients see only their own invoices, subscriptions, check-ins and deletion requests", async () => {
+    expect(await counts(U.patientA, "aal1")).toEqual({
+      invoices: 1,
+      price_assignments: 0,
+      deletion_requests: 0,
+      subscriptions: 0,
+      checkins: 0,
+      doctor_ledger: 0,
+    });
+    expect(await counts(U.patientB, "aal1")).toEqual({
+      invoices: 0,
+      price_assignments: 0,
+      deletion_requests: 1,
+      subscriptions: 1,
+      checkins: 1,
+      doctor_ledger: 0,
+    });
+  });
+
+  it("doctors with 2FA see check-ins of their own cases and their own ledger only", async () => {
+    expect(await counts(U.derm, "aal2")).toMatchObject({
+      checkins: 1,
+      doctor_ledger: 1,
+      invoices: 0,
+      subscriptions: 0,
+    });
+    expect(await counts(U.uro, "aal2")).toMatchObject({ checkins: 0, doctor_ledger: 1, invoices: 0 });
+    expect(Object.values(await counts(U.derm, "aal1")).every((n) => n === 0)).toBe(true);
+  });
+
+  it("admins with 2FA see operations but never check-in answers", async () => {
+    expect(await counts(U.admin, "aal2")).toEqual({
+      invoices: 1,
+      price_assignments: 1,
+      deletion_requests: 1,
+      subscriptions: 1,
+      checkins: 0,
+      doctor_ledger: 2,
+    });
+    expect(Object.values(await counts(U.admin, "aal1")).every((n) => n === 0)).toBe(true);
+  });
+
+  it("pharmacies see none of these tables", async () => {
+    expect(Object.values(await counts(U.pharmacy, "aal2")).every((n) => n === 0)).toBe(true);
+  });
+
+  it("nobody but the server writes money, price variants or deletion requests", async () => {
+    for (const sql of [
+      "insert into clinical.price_assignments (patient_id, variant) values (auth.uid(), 'A')",
+      "insert into clinical.deletion_requests (patient_id) values (auth.uid())",
+      "update clinical.subscriptions set amount = 1",
+      "update clinical.invoices set amount = 1",
+    ]) {
+      const changed = await as(U.patientB, "aal1", (q) => rows(q, `${sql} returning 1`)).catch(
+        () => "denied",
+      );
+      expect(changed === "denied" || (Array.isArray(changed) && changed.length === 0)).toBe(true);
+    }
+  });
+
+  it("a patient cannot answer another patient's check-in", async () => {
+    const changed = await as(U.patientA, "aal1", (q) =>
+      rows(q, "update clinical.checkins set completed_at = now() where case_id = $1 returning 1", [C.b2]),
+    ).catch(() => "denied");
+    expect(changed === "denied" || (Array.isArray(changed) && changed.length === 0)).toBe(true);
+  });
+});
