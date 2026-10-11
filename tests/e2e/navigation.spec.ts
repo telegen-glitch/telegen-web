@@ -56,10 +56,10 @@ test("topic picker opens from the hero CTA and hands the topic to the flow in me
     .click();
   const dialog = page.getByRole("dialog", { name: "Cu ce te putem ajuta?" });
   await expect(dialog).toBeVisible();
-  // All three conditions with a questionnaire are selectable.
-  for (const name of ["Căderea părului", "Acnee", "Disfuncție erectilă"]) {
-    await expect(dialog.getByRole("link", { name: new RegExp(name) })).toBeVisible();
-  }
+  // Only conditions that can be bought are offered (CLAUDE.md v5): hair loss has a price, acne and ED do not.
+  await expect(dialog.getByRole("link", { name: /Căderea părului/ })).toBeVisible();
+  for (const name of ["Acnee", "Disfuncție erectilă"])
+    await expect(dialog.getByRole("link", { name: new RegExp(name) })).toHaveCount(0);
   await page.screenshot({ path: `artifacts/screenshots/${info.project.name}/_topic-picker.png` });
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();

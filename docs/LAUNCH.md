@@ -17,17 +17,16 @@ supplied yet:
 - **stops the production build**. Before every build, `scripts/launch-lock.ts` checks the values below.
   On Vercel Production it fails the build and lists exactly what is missing. Previews never fail on it.
 
-| Value                                                                                                           | Where it goes                                                                   |
-| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| Legal name of the company                                                                                       | `src/lib/launch-config.ts` → `company.legalName`                                |
-| CUI                                                                                                             | `company.cui`                                                                   |
-| Nr. Registrul Comerțului                                                                                        | `company.regCom`                                                                |
-| Registered address                                                                                              | `company.address`                                                               |
-| Public contact e-mail                                                                                           | `contact.email`                                                                 |
-| Usual reply time (e.g. "2 zile lucrătoare")                                                                     | `contact.responseTime`                                                          |
-| A price for each published condition (amount in lei with VAT, what it covers, optional note; no medicine names) | `prices["caderea-parului"]`, `prices["acnee"]`, `prices["disfunctie-erectila"]` |
-| Address of the clinical app (https)                                                                             | Vercel variable `CLINICAL_APP_URL`                                              |
-| The lawyer has signed off the legal pages                                                                       | `legalApproved: true`                                                           |
+| Value                                                                                                                                   | Where it goes                                                                                    |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Legal name of the company                                                                                                               | `src/lib/launch-config.ts` → `company.legalName`                                                 |
+| CUI                                                                                                                                     | `company.cui`                                                                                    |
+| Nr. Registrul Comerțului                                                                                                                | `company.regCom`                                                                                 |
+| Registered address                                                                                                                      | `company.address`                                                                                |
+| Public contact e-mail                                                                                                                   | `contact.email`                                                                                  |
+| Usual reply time (e.g. "2 zile lucrătoare")                                                                                             | `contact.responseTime`                                                                           |
+| Plan prices (lei with VAT, label "Plan pentru …", no medicine names). Hair loss is set; acne and ED have none, so they cannot be bought | `prices["caderea-parului"]` (set: 320 / 870), `prices["acnee"]`, `prices["disfunctie-erectila"]` |
+| The lawyer has signed off the legal pages                                                                                               | `legalApproved: true`                                                                            |
 
 **The easiest way from a phone:** send Claude one message with the values, for example:
 
@@ -38,16 +37,15 @@ Claude fills `src/lib/launch-config.ts` in a pull request and reports the new pr
 yourself on github.com also works: open the file, tap the pencil, change the values, **Commit changes**
 to the working branch, never to `main`.)
 
-`CLINICAL_APP_URL` is set in Vercel (step 1), not in the code. It is the page of the clinical app that
-receives the hand-over from the evaluation (the contract is in docs/clinical-app-architecture.md,
-"Hand-over from telegen.ro").
+The clinical flow (evaluation, account, plan, payment, doctor, pharmacy) runs inside this site
+(CLAUDE.md v5). It accepts real patients only with `APP_LAUNCH=on` in production and the checks in
+`src/clinical/launch.ts` passing; `/api/health` shows what is configured.
 
 ## 0b. Before launch (must all be true)
 
-- [ ] **The patient app exists and works** at `CLINICAL_APP_URL`: accounts, explicit GDPR art. 9
-      consent, the medical questions, the doctor's review, payment, EU hosting and encryption, as the
-      site now states (docs/clinical-app-architecture.md). The site hands every evaluation over to it, so
-      the website must not go live without it.
+- [ ] **The clinical flow is ready for real patients:** Supabase live project (Frankfurt), Stripe live
+      keys and webhook, Brevo, the pharmacy split, doctor accounts with two-factor sign-in, and the
+      lawyer's sign-off. Production refuses real patients until all of these exist and `APP_LAUNCH=on`.
 - [ ] Every value in the table above is supplied; `pnpm launch:check` (run by Claude) lists nothing.
 - [ ] The lawyer has signed off terms, privacy, cookies and the editorial policy
       (docs/legal-review-needed.md, items marked REQUIRES LAWYER SIGN-OFF); then `legalApproved: true`.
@@ -60,13 +58,13 @@ receives the hand-over from the evaluation (the contract is in docs/clinical-app
 Vercel → project **telegen-web** → **Settings** → **Environment Variables**. For each row tap
 **Add New**, choose **Production** only, then **Save**.
 
-| Name                       | Value                                                  | When                                          |
-| -------------------------- | ------------------------------------------------------ | --------------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL`     | `https://telegen.ro`                                   | now (already the default)                     |
-| `CLINICAL_APP_URL`         | the https address of the clinical app's hand-over page | when the app is live (Production and Preview) |
-| `GOOGLE_SITE_VERIFICATION` | the code from Search Console (step 4)                  | at launch                                     |
-| `BING_SITE_VERIFICATION`   | the code from Bing Webmaster Tools (step 4)            | at launch                                     |
-| `SITE_INDEXING`            | `on`                                                   | **the launch moment**                         |
+| Name                       | Value                                       | When                                       |
+| -------------------------- | ------------------------------------------- | ------------------------------------------ |
+| `NEXT_PUBLIC_SITE_URL`     | `https://telegen.ro`                        | now (already the default)                  |
+| `APP_LAUNCH`               | `on`                                        | when the clinical flow takes real patients |
+| `GOOGLE_SITE_VERIFICATION` | the code from Search Console (step 4)       | at launch                                  |
+| `BING_SITE_VERIFICATION`   | the code from Bing Webmaster Tools (step 4) | at launch                                  |
+| `SITE_INDEXING`            | `on`                                        | **the launch moment**                      |
 
 After changing variables: **Deployments** → latest Production deployment → **⋯** → **Redeploy**.
 

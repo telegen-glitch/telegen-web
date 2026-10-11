@@ -1,11 +1,14 @@
 import { expect, type Page, test } from "@playwright/test";
 import { evaluations } from "../../src/content/evaluations";
 import type { EvaluationDefinition, Question } from "../../src/content/evaluations/types";
+import { isPurchasable } from "../../src/lib/purchasable";
 
 /**
  * Every red-flag answer must end the evaluation on a hard-stop screen with no
  * way to continue (CLAUDE.md 7c.D/H). The walker answers each screen with a
- * neutral option until it reaches the target question.
+ * neutral option until it reaches the target question. Only conditions that can
+ * be started are reachable (CLAUDE.md v5); tests/unit/intake.test.ts checks every
+ * stop of every question set on the server side.
  */
 async function walkTo(page: Page, def: EvaluationDefinition, target: Question, value: string) {
   await page.goto("/evaluare");
@@ -22,6 +25,11 @@ async function walkTo(page: Page, def: EvaluationDefinition, target: Question, v
     const q = def.questions.find((x) => x.title === heading);
     if (!q) throw new Error(`Unexpected screen: ${heading}`);
 
+    if (q.type === "text") {
+      await page.getByRole("textbox").fill("test");
+      await page.getByRole("button", { name: /^Continuă/ }).click();
+      continue;
+    }
     const answer =
       q.id === target.id
         ? value
@@ -34,7 +42,7 @@ async function walkTo(page: Page, def: EvaluationDefinition, target: Question, v
   throw new Error(`Never reached ${target.id}`);
 }
 
-for (const def of evaluations) {
+for (const def of evaluations.filter((e) => isPurchasable(e.topic))) {
   for (const q of def.questions.filter((x) => x.stop)) {
     for (const value of q.stop!.anyOf) {
       test(`${def.topic}: ${q.id} = ${value} hard-stops`, async ({ page }, info) => {

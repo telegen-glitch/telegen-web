@@ -1,22 +1,43 @@
 import { decidingDoctor } from "@/content/clinicians";
-import { content } from "@/content/source";
 import { evaluations } from "@/content/evaluations";
-import { EvaluationFlow } from "@/components/evaluation/EvaluationFlow";
-import { clinicalAppUrl, showOwnerMarkers } from "@/lib/launch-config";
+import { content } from "@/content/source";
+import { authAdapter } from "@/clinical/auth";
+import { DEV_CODE } from "@/clinical/auth/dev";
+import { photoSlotsFor } from "@/clinical/config/conditions";
+import { ensureAccount } from "@/clinical/intake/account";
+import { consentsCurrent, latestDraft } from "@/clinical/intake/cases";
+import { purchasableTopics } from "@/clinical/launch";
+import { IntakeFlow } from "@/clinical/ui/IntakeFlow";
+import { showOwnerMarkers } from "@/lib/launch-config";
 import { staticPageMetadata } from "@/lib/page-meta";
 
 export const metadata = staticPageMetadata("/evaluare");
 
-export default function EvaluationPage() {
+export default async function EvaluationPage() {
+  const auth = authAdapter();
+  const allowed = purchasableTopics();
+  const session = auth ? await auth.session() : null;
+  let account: { email: string; consented: boolean } | null = null;
+  let draft = null;
+  if (session && (await ensureAccount(session)) === "patient") {
+    account = { email: session.email, consented: await consentsCurrent(session) };
+    draft = await latestDraft(session, allowed);
+  }
   return (
-    <EvaluationFlow
-      topics={evaluations.map((e) => ({
-        slug: e.topic,
-        name: e.name,
-        href: content.getCondition(e.topic)?.basePath,
-        decider: decidingDoctor(e.topic),
-      }))}
-      clinicalAppUrl={clinicalAppUrl()}
+    <IntakeFlow
+      topics={evaluations
+        .filter((e) => allowed.includes(e.topic))
+        .map((e) => ({
+          slug: e.topic,
+          name: e.name,
+          href: content.getCondition(e.topic)?.basePath,
+          decider: decidingDoctor(e.topic),
+          photoSlots: photoSlotsFor(e.topic),
+        }))}
+      account={account}
+      draft={draft}
+      authReady={auth !== null}
+      devCode={auth?.kind === "dev" ? DEV_CODE : null}
       ownerMarkers={showOwnerMarkers()}
     />
   );

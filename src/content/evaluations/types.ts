@@ -1,6 +1,8 @@
 /**
  * Evaluation (questionnaire) definitions. Content data: wording is reviewed
- * like any medical copy. Answers never leave the browser's memory (CLAUDE.md 7b).
+ * like any medical copy. Answers stay in the browser until the patient has an
+ * account and has given explicit consent; then they are stored server-side only
+ * (CLAUDE.md v5). The server validates every answer against these definitions.
  */
 export interface Option {
   value: string;
@@ -11,8 +13,11 @@ export interface Question {
   id: string;
   title: string;
   help?: string;
-  type: "single" | "multi";
+  /** "text": a short free answer for the doctor (no options). */
+  type: "single" | "multi" | "text";
   options: Option[];
+  /** Text questions: maximum length in characters. */
+  maxLength?: number;
   /** Multi-select: options that clear all others when chosen. */
   exclusive?: string[];
   /** Shown only when another answer matches. */
@@ -39,6 +44,8 @@ export interface SummaryNote {
 export interface EvaluationDefinition {
   /** Matches the condition slug. */
   topic: string;
+  /** Stored with every case, so a doctor reads answers against the wording the patient saw. */
+  version: string;
   name: string;
   /** Shown under the name in the topic picker. */
   label: string;

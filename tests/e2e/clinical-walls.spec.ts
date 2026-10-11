@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 /** CLAUDE.md v5 WALLS: the clinical area is dynamic, never cached or indexed, with its own strict CSP. */
 test("clinical paths get the strict per-request CSP; public paths keep theirs", async ({ request }, info) => {
   test.skip(info.project.name !== "desktop-1280", "headers are the same at every width");
-  for (const path of ["/evaluare"]) {
+  for (const path of ["/evaluare", "/cont"]) {
     const a = await request.get(path);
     const b = await request.get(path);
     const csp = a.headers()["content-security-policy"];

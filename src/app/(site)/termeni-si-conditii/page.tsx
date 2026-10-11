@@ -10,11 +10,11 @@ export const metadata = staticPageMetadata("/termeni-si-conditii");
 /** Launch version (v4.7). Requires the lawyer's sign-off: docs/legal-review-needed.md. */
 export default function TermsPage() {
   return (
-    <LegalPage title="Termeni și condiții" path="/termeni-si-conditii" updatedAt="2026-10-10">
+    <LegalPage title="Termeni și condiții" path="/termeni-si-conditii" updatedAt="2026-10-11">
       <h2>Cine suntem</h2>
       <p>
-        Telegen este o clinică online pentru sănătatea bărbaților. Site-ul telegen.ro și aplicația clinică
-        Telegen sunt administrate de:
+        Telegen este o clinică online pentru sănătatea bărbaților. Site-ul telegen.ro și conturile pacienților
+        sunt administrate de:
       </p>
       <div className="not-prose my-4">
         <CompanyIdentity />
@@ -28,24 +28,24 @@ export default function TermsPage() {
         Telegen oferă evaluare medicală online pentru {publishedConditionList()}. Evaluarea este analizată de
         un medic cu drept de liberă practică în România și cu specialitatea potrivită afecțiunii. Site-ul
         telegen.ro conține informații medicale educative și evaluarea inițială; serviciul medical propriu-zis
-        se desfășoară în aplicația clinică Telegen.
+        se desfășoară în contul tău Telegen.
       </p>
 
       <h2>Cum funcționează serviciul</h2>
       <ol>
         <li>
-          Pe site răspunzi la câteva întrebări. Răspunsurile rămân doar în pagina deschisă și nu se transmit.
+          Răspunzi la câteva întrebări. Până să îți creezi contul, răspunsurile rămân doar în pagina deschisă.
         </li>
         <li>
-          În aplicația clinică îți creezi contul, îți dai acordul explicit pentru prelucrarea datelor medicale
-          și răspunzi la întrebările medicale.
+          Îți creezi contul cu un cod primit pe e-mail și îți dai acordul explicit pentru prelucrarea datelor
+          medicale; abia apoi răspunsurile se salvează.
         </li>
         <li>
           Un medic îți analizează evaluarea, îți poate pune întrebări și decide ce recomandă: un plan de
           tratament, investigații sau un consult în persoană. Înainte de consult afli numele medicului și
           codul lui de parafă.
         </li>
-        <li>Primești planul în aplicație, împreună cu reevaluările stabilite de medic.</li>
+        <li>Primești planul în cont, împreună cu reevaluările stabilite de medic.</li>
       </ol>
 
       <h2>Limitele evaluării online</h2>
@@ -68,14 +68,14 @@ export default function TermsPage() {
       <h2>Prețuri și plată</h2>
       <p>
         Prețurile sunt publicate pe pagina <Link href="/cum-functioneaza">Cum funcționează</Link> și sunt
-        afișate din nou în aplicație, înainte de plată. Ce include fiecare preț este descris lângă preț. Plata
-        se face online, în aplicația clinică.
+        afișate din nou în cont, înainte de plată. Ce include fiecare preț este descris lângă preț. Plata se
+        face online, în contul tău.
       </p>
 
       <h2>Anulare</h2>
       <p>
         Poți renunța oricând înainte de plată, fără niciun cost. După plată, condițiile de anulare și de
-        rambursare sunt cele afișate în aplicație înainte să plătești, în limitele prevăzute de lege.
+        rambursare sunt cele afișate în cont înainte să plătești, în limitele prevăzute de lege.
       </p>
 
       <h2>Informațiile de pe site</h2>
@@ -89,7 +89,7 @@ export default function TermsPage() {
       <p>
         Datele tale sunt prelucrate conform{" "}
         <Link href="/politica-de-confidentialitate">politicii de confidențialitate</Link>. Datele de sănătate
-        sunt prelucrate doar în aplicația clinică, cu acordul tău explicit. Despre cookie-uri, vezi{" "}
+        sunt prelucrate doar în contul tău, cu acordul tău explicit. Despre cookie-uri, vezi{" "}
         <Link href="/politica-cookie">politica de cookie-uri</Link>.
       </p>
 

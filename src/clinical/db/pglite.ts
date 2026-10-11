@@ -18,7 +18,9 @@ create function auth.uid() returns uuid language sql stable as $$
   select nullif(nullif(current_setting('request.jwt.claims', true), '')::json ->> 'sub', '')::uuid
 $$;
 grant usage on schema auth to anon, authenticated, service_role;
+create table auth.mfa_factors (id uuid primary key default gen_random_uuid(), user_id uuid not null references auth.users (id) on delete cascade, factor_type text not null default 'totp', status text not null default 'unverified', created_at timestamptz not null default now());
 grant select, insert, delete on auth.users to service_role;
+grant select, insert, update, delete on auth.mfa_factors to service_role;
 `;
 
 export async function createPglite(

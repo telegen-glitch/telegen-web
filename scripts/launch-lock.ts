@@ -1,18 +1,20 @@
 /**
- * Prebuild launch lock (CLAUDE.md v4.7). A production build (VERCEL_ENV=production)
+ * Prebuild launch lock (CLAUDE.md v4.7, v5). A production build (VERCEL_ENV=production)
  * in the "open" launch state fails while any launch value is missing, and lists
- * exactly what. Previews and local builds only print the list.
+ * exactly what; with APP_LAUNCH=on it also needs the clinical services' keys.
+ * Previews and local builds only print the list. Checks that need the database
+ * (doctors with 2FA, pharmacy split) run when the clinical flow starts
+ * (src/clinical/launch.ts).
  */
 import { content } from "../src/content/source";
-import { clinicalAppUrl, launchConfig } from "../src/lib/launch-config";
-import { launchBlockers, launchLocked } from "../src/lib/launch-lock";
+import { launchConfig } from "../src/lib/launch-config";
+import { clinicalLaunchBlockers, launchBlockers, launchLocked } from "../src/lib/launch-lock";
 import { siteConfig } from "../src/lib/site";
 
-const blockers = launchBlockers({
-  config: launchConfig,
-  clinicalAppUrl: clinicalAppUrl(),
-  conditions: content.listConditions(),
-});
+const blockers = [
+  ...launchBlockers({ config: launchConfig, conditions: content.listConditions() }),
+  ...clinicalLaunchBlockers(process.env),
+];
 
 if (launchLocked(process.env, siteConfig.launchState, blockers)) {
   console.error(

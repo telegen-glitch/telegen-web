@@ -3,7 +3,7 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 
 /** Where clinical code may be imported from (CLAUDE.md v5 WALLS). */
-const CLINICAL_ALLOWED = ["src/clinical/**", "src/app/(clinical)/**", "src/app/api/**"];
+const CLINICAL_ALLOWED = ["src/clinical/**", "src/app/(clinical)/**", "src/app/api/**", "src/proxy.ts"];
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -15,6 +15,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Test output.
+    "playwright-report/**",
+    "test-results/**",
+    "artifacts/**",
   ]),
   // Wall 1: public code (marketing pages, shared components, lib) never imports clinical code.
   {
@@ -28,7 +32,7 @@ const eslintConfig = defineConfig([
             {
               group: ["@/clinical", "@/clinical/*", "**/clinical", "**/clinical/*"],
               message:
-                "Clinical code may be imported only under src/clinical, src/app/(clinical) and src/app/api (CLAUDE.md v5 WALLS).",
+                "Clinical code may be imported only under src/clinical, src/app/(clinical), src/app/api and src/proxy.ts (CLAUDE.md v5 WALLS).",
             },
           ],
         },
@@ -37,7 +41,7 @@ const eslintConfig = defineConfig([
   },
   // Wall 2: clinical code logs only through src/clinical/log.ts and loads no analytics or third-party scripts.
   {
-    files: CLINICAL_ALLOWED.map((g) => g.replace("**", "**/*.{ts,tsx}")),
+    files: CLINICAL_ALLOWED.map((g) => (g.endsWith("**") ? g.replace("**", "**/*.{ts,tsx}") : g)),
     rules: {
       "no-console": "error",
       "no-restricted-imports": [

@@ -34,7 +34,7 @@ const standards = [
   {
     id: "date",
     title: "Date de sănătate protejate",
-    text: "Acest site nu colectează date medicale. Datele clinice sunt prelucrate în aplicația clinică Telegen, separată de site, doar cu acordul tău explicit, cu găzduire în Uniunea Europeană și criptare.",
+    text: "Datele de sănătate se păstrează doar în contul tău, după acordul tău explicit, pe servere din Uniunea Europeană, criptate. Le vede doar medicul care îți analizează evaluarea; farmacia vede doar rețeta și adresa de livrare.",
   },
 ];
 

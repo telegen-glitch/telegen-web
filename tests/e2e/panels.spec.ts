@@ -50,10 +50,19 @@ test("a hero chip opens its panel and stays on the page", async ({ page }) => {
 
 test("the panel CTA hands its topic to the evaluation in memory, not in the URL", async ({ page }) => {
   await page.goto("/");
-  await button(page, /Acnee/).click();
-  await page.getByRole("link", { name: "Începe evaluarea pentru acnee" }).click();
+  // The hair-loss panel is open first.
+  await expect(button(page, /Căderea/)).toHaveAttribute("aria-expanded", "true");
+  await page.getByRole("link", { name: "Începe evaluarea pentru căderea părului" }).click();
   await expect(page).toHaveURL(/\/evaluare$/);
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Acneea");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Căderea părului");
+});
+
+test("conditions without a price offer no evaluation button (CLAUDE.md v5)", async ({ page }) => {
+  await page.goto("/");
+  await button(page, /Acnee/).click();
+  await expect(page.getByRole("link", { name: "Începe evaluarea pentru acnee" })).toHaveCount(0);
+  await page.goto("/disfunctie-erectila");
+  await expect(page.locator("main").getByRole("link", { name: /Începe evaluarea/ })).toHaveCount(0);
 });
 
 test("reduced motion: posters only, no WebGL scene, and the ED line drawn whole and still", async ({

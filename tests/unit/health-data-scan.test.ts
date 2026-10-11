@@ -22,7 +22,8 @@ function files(dir: string, ext = /\.(ts|tsx)$/): string[] {
   });
 }
 const all = files(path.join(ROOT, "src"));
-const isClinical = (f: string) => /^src\/(clinical\/|app\/\(clinical\)\/|app\/api\/)/.test(rel(f));
+const isClinical = (f: string) =>
+  /^src\/(clinical\/|app\/\(clinical\)\/|app\/api\/)/.test(rel(f)) || rel(f) === "src/proxy.ts";
 const clinical = all.filter(isClinical);
 const publicFiles = all.filter((f) => !isClinical(f));
 const read = (f: string) => readFileSync(f, "utf8");
