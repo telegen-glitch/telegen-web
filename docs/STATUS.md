@@ -1,6 +1,65 @@
 # Status
 
-_Last updated: 2026-10-10 (v4.7: launch state, no pre-launch signals; branch claude/hero-realistic)_
+_Last updated: 2026-10-11 (v5 P0: clinical foundation, branch claude/v5-p0-foundation)_
+
+## v5 clinical flow inside the site
+
+Owner decision 2026-10-11: one repo, one Vercel project; the clinical flow is built here with the
+separation enforced in code. Phases P0–P6, one stacked pull request each.
+
+### P0 foundation (branch claude/v5-p0-foundation) — DONE (verified locally, 2026-10-11)
+
+- **Schema** `supabase/migrations/0001_clinical_core.sql`, in a `clinical` schema that Supabase's REST
+  API does not expose:
+  - Tables: profiles, patients, doctors, pharmacies, consents (insert-only, versioned), cases, answers,
+    photos, proposals, payments, subscriptions, messages, prescriptions, orders, check-ins, doctor
+    ledger, SLA events, e-mail outbox (template + ids only), audit log.
+  - RLS on every table, by role. Patients see only their own records. Doctors need two-factor (aal2)
+    and see their specialty's open queue plus their own cases. Pharmacies get a narrow view with the
+    prescription and the delivery address, never the condition. Admins see operations, never answers,
+    photos or messages.
+  - The case state machine is enforced by a trigger. Writes to health tables are audited by trigger;
+    reads are audited by the app (who, when, which record, never the content).
+- **Data access** (`src/clinical/db`): every query runs in a transaction as the signed-in user's role
+  with Supabase-style JWT claims, so RLS always applies. The service role is used only for webhooks,
+  jobs and account set-up. Drivers: postgres.js against Supabase in deployed environments; PGlite
+  (Postgres 18 in WebAssembly, same migrations, same `auth.uid()`) locally and in CI. The build applies
+  migrations itself when `DATABASE_URL` is set (`scripts/db-migrate.ts`).
+- **Walls.**
+  - ESLint forbids importing `src/clinical` outside `src/clinical`, `src/app/(clinical)` and
+    `src/app/api` (verified to fire), and forbids `console`, analytics and `next/script` in clinical
+    code.
+  - /evaluare moved into the `(clinical)` route group: dynamic, `noindex`, `no-store`.
+  - `src/proxy.ts` gives clinical paths a per-request nonce CSP (`strict-dynamic`, a hash for the one
+    inline layout script, forms only to the site and Stripe Checkout, no frames). Public paths keep
+    their static CSP: exactly one policy per path, and `/contact` is not caught by the `/cont` rule.
+  - robots.txt disallows the clinical paths and `/api/` even in indexable mode. The sitemap excludes
+    them. Analytics never runs on clinical paths.
+  - Functions are pinned to Frankfurt (`vercel.json` regions `fra1`) so health data is processed in the EU.
+- **Health-data scan** (`tests/unit/health-data-scan.test.ts`, runs before every build). It checks:
+  - no clinical imports in public code, and no request-time APIs in public pages;
+  - only opaque ids in clinical route segments;
+  - no query strings with health fields, and no console or analytics in clinical code;
+  - the logger keeps only opaque ids;
+  - Stripe metadata is `case_id` and `purpose` only;
+  - every e-mail template is free of conditions, medicines and answers.
+- **Other.** `/api/health` (booleans and counts only) lets the owner check the set-up from a phone.
+  Phone steps are in `docs/SUPABASE.md`. CLAUDE.md is updated with the v5 overrides. The lawyer
+  confirmation reported by the owner is recorded in docs/legal-review-needed.md #25.
+- **Tests:** 12 RLS tests (`tests/unit/rls.test.ts`), 10 scan tests, 80 unit tests in total, and 191
+  Playwright tests (0 failed), including the clinical-wall headers and the evaluation under the strict
+  CSP with no violations.
+
+Stack additions (why each):
+
+- `@supabase/supabase-js`, `@supabase/ssr`: Supabase Auth (e-mail one-time code, TOTP for staff) and
+  private Storage with signed URLs; the official clients.
+- `postgres` (postgres.js): talks SQL to Supabase Postgres from the server, so every query runs under
+  RLS as the signed-in user instead of through the public REST API.
+- `@electric-sql/pglite` (dev only): the same Postgres engine in-process for RLS tests, CI and local
+  e2e, with no database server to run.
+- Coming in later phases: `stripe` (P2), Brevo over plain `fetch` (no SDK), and invoicing over plain
+  `fetch` (adapter disabled until credentials).
 
 ## v4.7 launch state: no "not open / at launch" signals
 
