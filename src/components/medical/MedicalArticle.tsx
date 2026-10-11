@@ -89,7 +89,7 @@ export function MedicalArticle({
 
       {/* Treatment pages carry no call to action at all (section 9.4). */}
       {doc.kind !== "treatment" && (
-        <ClosingCta title="Vrei o părere medicală?" accent="Începe cu evaluarea." />
+        <ClosingCta topic={doc.conditionSlug} title="Vrei o părere medicală?" accent="Începe cu evaluarea." />
       )}
 
       <JsonLd data={medicalPageJsonLd(doc, path, condition?.medicalName ?? doc.title, reviewedAt)} />

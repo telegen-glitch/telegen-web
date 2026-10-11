@@ -5,7 +5,9 @@ import type { EvaluationDefinition, Question } from "../../src/content/evaluatio
 /**
  * Every red-flag answer must end the evaluation on a hard-stop screen with no
  * way to continue (CLAUDE.md 7c.D/H). The walker answers each screen with a
- * neutral option until it reaches the target question.
+ * neutral option until it reaches the target question. Every published condition
+ * is reachable (CLAUDE.md v5.1); tests/unit/intake.test.ts also checks every stop
+ * on the server side.
  */
 async function walkTo(page: Page, def: EvaluationDefinition, target: Question, value: string) {
   await page.goto("/evaluare");
@@ -22,6 +24,11 @@ async function walkTo(page: Page, def: EvaluationDefinition, target: Question, v
     const q = def.questions.find((x) => x.title === heading);
     if (!q) throw new Error(`Unexpected screen: ${heading}`);
 
+    if (q.type === "text") {
+      await page.getByRole("textbox").fill("test");
+      await page.getByRole("button", { name: /^Continuă/ }).click();
+      continue;
+    }
     const answer =
       q.id === target.id
         ? value

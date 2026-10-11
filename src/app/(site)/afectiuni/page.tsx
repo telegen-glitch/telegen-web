@@ -14,7 +14,7 @@ export default function ConditionsHub() {
         eyebrow="Afecțiuni"
         title="Ce evaluăm"
         accent="online."
-        lead="Fiecare afecțiune are ghiduri medicale scrise din surse citate și o evaluare online. Medicii cu specialitatea potrivită revizuiesc conținutul înainte de lansare."
+        lead="Fiecare afecțiune are ghiduri medicale scrise din surse citate și o evaluare online, analizată de un medic cu specialitatea potrivită."
       />
       <div className="container-page section-y">
         <ConditionCards

@@ -537,7 +537,7 @@ export const erectileDysfunction: Condition = {
     title: "Disfuncție erectilă",
     metaTitle: "Disfuncția erectilă: cauze și tratament",
     metaDescription:
-      "Ce este disfuncția erectilă, de ce apare, cum se tratează și de ce merită verificată și inima. Evaluare medicală online, discretă, de pe telefon.",
+      "Ce este disfuncția erectilă, de ce apare, cum se tratează și de ce merită verificată și inima. Informații clare și discrete, cu surse citate.",
     h1: "Disfuncția erectilă",
     summary:
       "Disfuncția erectilă înseamnă dificultatea persistentă de a obține sau de a menține o erecție suficientă pentru o activitate sexuală satisfăcătoare {{cite:eau-srh}}. Este frecventă, mai ales după 40 de ani, și poate fi un semn timpuriu al unei boli de inimă sau a vaselor de sânge {{cite:eau-srh}}. Se poate evalua discret, iar opțiunile de tratament sunt mai multe.",
@@ -624,7 +624,7 @@ export const erectileDysfunction: Condition = {
           },
           {
             type: "p",
-            text: "Evaluarea Telegen începe cu întrebări despre dificultăți, sănătatea generală și medicamente, inclusiv întrebări de siguranță despre inimă. Pentru disfuncția erectilă nu se cer niciodată fotografii. Dacă medicul are nevoie de analize sau de un examen în persoană, îți spune.",
+            text: "Medicul începe cu întrebări despre dificultăți, sănătatea generală și medicamente, inclusiv întrebări de siguranță despre inimă. Pentru disfuncția erectilă nu sunt necesare fotografii. Dacă are nevoie de analize sau de un examen, îți spune.",
           },
         ],
       },
@@ -675,11 +675,6 @@ export const erectileDysfunction: Condition = {
         question: "Pot opri singur un medicament care cred că îmi afectează erecția?",
         answer:
           "Nu. Unele medicamente pentru tensiune, antidepresive sau medicamente antiandrogene pot contribui la disfuncția erectilă {{cite:eau-srh}}, dar nu le opri și nu schimba doza fără medic. Discută cu medicul care ți le-a prescris.",
-      },
-      {
-        question: "Evaluarea este discretă?",
-        answer:
-          "Da. Întrebările se completează pe telefon, iar răspunsurile din evaluarea de pe site nu se salvează nicăieri. Pentru disfuncția erectilă nu se cer fotografii.",
       },
     ],
     sourceIds: ["eau-srh", "ema-viagra"],

@@ -59,7 +59,8 @@ confirmed).
     obsolete; the lawyer should confirm and say what replaces it, if anything.
 14. **Company identity on the website.** Which identification data Romanian law requires on the site
     (Legea 365/2002 on e-commerce, consumer law): legal name, CUI, Reg. Com. number, registered address,
-    contact email, and for a medical provider any authorisation number. Currently shown as TEMPORARY.
+    contact email, and for a medical provider any authorisation number. Filled from src/lib/launch-config.ts
+    (owner-only markers on previews; the launch lock blocks production until supplied).
 15. **Anonymous doctors.** Doctors are not named publicly; patients receive the doctor's name and parafă
     code in the clinical app before the consult (owner decision). Confirm this satisfies Romanian rules on
     medical advertising, telemedicine and patient information, and that "Revizuit medical de un medic
@@ -93,3 +94,102 @@ confirmed).
     image-rights rules (Codul civil art. 73, dreptul la propria imagine), or should we license a photo with a model release that
     covers sensitive (health) use? The switch `heroMedia.hair` in `src/lib/flags.ts` turns it back to
     the illustration with one line.
+
+## Added for the launch state (CLAUDE.md v4.7)
+
+The site now reads as the live service. Production cannot launch until the owner sets
+`legalApproved: true` in `src/lib/launch-config.ts`, after the lawyer has signed off the items below.
+
+20. **REQUIRES LAWYER SIGN-OFF: /termeni-si-conditii (launch version, 2026-10-10).** Describes the live
+    service: the online evaluation, the clinical app, adults only (18+), prices on /cum-functioneaza and
+    in the app, online payment in the app, cancellation (free before payment; after payment, the
+    conditions shown in the app before paying, within the law), complaints, ANPC and SAL. Open points:
+    (a) the right of withdrawal under OUG 34/2014: does the healthcare exclusion apply to the evaluation,
+    and what must be said; (b) the refund policy itself is an owner + lawyer decision and is not stated on
+    the site; (c) telemedicine information the law requires on the site (see item 3).
+21. **REQUIRES LAWYER SIGN-OFF: /politica-de-confidentialitate (launch version, 2026-10-10).** Covers the
+    site (no health data; the evaluation stays in the browser; only the condition is handed over) and the
+    clinical app (account data; health data under art. 9(2)(a) and (h); payment data held by the payment
+    processor; EU hosting, encryption, processors under contract; retention per medical-records law;
+    rights; ANSPDCP). These describe the app as designed in docs/clinical-app-architecture.md: confirm
+    each matches the real app before launch, and add the DPO contact if one is required.
+22. **REQUIRES LAWYER SIGN-OFF: /politica-cookie (launch version, 2026-10-10).** Only the strictly
+    necessary consent cookie on the site; the clinical app's cookies are explained in the app.
+23. **REQUIRES LAWYER SIGN-OFF: /politica-editoriala.** Unreviewed pages now show "Scris de echipa
+    editorială Telegen pe baza ghidurilor citate · actualizat {dată}" (no review claim) instead of a
+    "review pending" badge. Confirm this is acceptable together with item 12 (AI assistance).
+24. **Item 6 (pre-launch email consent)** now applies only to the "prelaunch" fallback mode, which is
+    not the default.
+
+## v5: clinical flow inside telegen.ro (2026-10-11)
+
+25. **Recorded as reported by the owner, 2026-10-11:** the owner's lawyer confirmed that the
+    Fellos-class model (free evaluation → personal proposed plan with the medicine and the price →
+    card authorised, not charged → doctor review → capture, prescription and pharmacy delivery, or full
+    release when not prescribed) is lawful **if the site describes it exactly**, and that medicine names
+    together with a price may appear **only inside the logged-in personal proposal and checkout**.
+    Public pages keep the earlier rule: no medicine names in hero, CTA, price or ad blocks; public price
+    blocks say "Plan pentru căderea părului". Claude did not see the lawyer's opinion; the owner should
+    keep it on file. Still to be confirmed in writing: the prescription format and transmission to the
+    pharmacy, the Stripe Connect split with the pharmacy, invoicing (e-Factura), and the terms and
+    privacy drafts that describe the flow (marked DRAFT FOR LAWYER).
+
+26. **Consent texts (DRAFT FOR LAWYER).** Before anything is saved, the patient ticks four separate,
+    unticked boxes: GDPR art. 9 health data, telemedicine, terms, privacy notice. Each is stored with
+    version `2026-10-11` and a timestamp; a withdrawal is a new row. Text: `src/clinical/config/consents.ts`.
+    Bump the version when a text changes; patients are asked again. To confirm: wording, whether the
+    privacy notice should be an acknowledgement rather than a consent (it is worded "Am citit"), and
+    the withdrawal flow (P5).
+27. **Answers before the account.** The questionnaire runs in the page's memory until the account and
+    the four consents exist; nothing is sent before. A signed-in patient with current consents has every
+    answer saved as given; a hard stop then leaves a "stopped" case in the account (no payment). To
+    confirm: retention for stopped cases (proposal: delete after 90 days unless the patient asks
+    earlier; P5 adds deletion from the account).
+28. **Photos.** Hair loss asks for 3 photos (front, top, crown), acne for 1 (face), ED for none. The phone
+    re-encodes them (≤1600 px, no EXIF/location) and the server strips metadata again. Stored in a
+    private Supabase bucket in Frankfurt; viewed only through 60-second links by the patient and the
+    doctor on the case; each view is audited.
+29. **Proposal and checkout (P2).** Signed-in only, the proposal names the medicine (e.g. "Finasteridă
+    1 mg și minoxidil pentru scalp") next to the price, with purpose, time to results, main side effects
+    (incl. the EMA 2025 finasteride warning), links to /tratamente and official product information, what
+    the price includes, and: "Decizia finală aparține medicului. Dacă nu primești rețetă, nu plătești
+    nimic." No urgency, timers or "cumpără". Checkout: "Suma este doar rezervată pe card până la decizia
+    medicului." To confirm: the pre-contract information required for distance contracts (OUG 34/2014,
+    incl. whether the right of withdrawal applies to a prescribed, dispensed medicine), and the wording.
+30. **A/B first-month price.** Half of new patients see 320 lei for the first month, half 199 lei
+    (assigned at random on the server, the same patient always sees the same price; the regular price is
+    320 lei/month for everyone). To confirm with the lawyer: whether price testing needs disclosure under
+    consumer law (OG 21/1992, Law 363/2007 on unfair practices) and in the terms.
+31. **Doctor identity and decisions (P3).** When a doctor takes a case, the patient sees the doctor's full
+    name, specialty and parafă code in the account and is told by e-mail (without the name). Decline
+    reasons shown to the patient: contraindication; needs in-person care; not enough information; not
+    indicated; other (explained in a message). The doctor's message includes where to go in person. To
+    confirm: wording, and the record-keeping duty for telemedicine consultations (retention of the case,
+    messages and prescription).
+32. **Prescription format (P3).** Stored as structured items with the doctor's instructions, the doctor's
+    name and parafă; the pharmacy sees it in its panel. To confirm with the lawyer and the pharmacy: the
+    legally valid format (e.g. electronic prescription), signature, and transmission.
+33. **Pharmacy and money flow (P4).** The patient pays Telegen (card captured after approval); the partner
+    pharmacy receives its share by Stripe Connect transfer; Telegen invoices the service ("Plan Telegen").
+    To confirm: who sells and invoices the medicines (the pharmacy, to the patient?), the contract and
+    data-processing agreement with the pharmacy (it receives the prescription, the doctor's name and
+    parafă, and the delivery address), and the distance sale of prescription medicines by the pharmacy.
+34. **Subscriptions and data rights (P5), DRAFT FOR LAWYER.** The plan renews automatically from the next
+    cycle (e-mail 3 days before each charge), can be paused or cancelled in one tap, and needs the doctor's
+    re-review every 6 months (charges stop until then). The patient can export all data (JSON), withdraw the
+    health-data consent (open cases and plans stop) and delete the account (full erasure only without a
+    medical decision or payment; otherwise a recorded request). To confirm: auto-renewal disclosure and
+    cancellation terms for distance contracts; retention periods for medical and financial records; what a
+    deletion request must erase and when; the wording on the screens.
+35. **TEMPORARY until signed off: /termeni-si-conditii and /politica-de-confidentialitate (v5, 2026-10-11).**
+    Rewritten for the v5 model: free evaluation, plan and price before payment, card authorised and captured
+    only on approval, full release when not prescribed, automatic renewal with a 3-day e-mail, pause and
+    cancel any time, no returns of delivered medicines (health protection, OUG 34/2014 art. 16 — to confirm),
+    who sees what (doctor, pharmacy, operations), the processors by name and region, legal bases per
+    purpose, retention by category and the in-account export, consent withdrawal and deletion request.
+    The TEMPORARY status lives here and as "DRAFT FOR LAWYER" in the page source, not on the page (CLAUDE.md v4.7 forbids
+    visible TEMPORARY labels). Lawyer to correct and sign off before APP_LAUNCH=on.
+36. **DRAFT FOR LAWYER: docs/legal/** — DPIA (art. 35), art. 30 record, processors and recipients,
+    retention, breach procedure (arts. 33–34). Open questions inside each: DPO (art. 37), role of the
+    doctors (art. 28/29 or separate controllers), Stripe's role split, identity verification of patients,
+    retention periods (medical, accounting, drafts, audit log), prior consultation (art. 36).

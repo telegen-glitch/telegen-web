@@ -3,6 +3,7 @@ import type { EvaluationDefinition } from "./types";
 
 export const hairLossEvaluation: EvaluationDefinition = {
   topic: "caderea-parului",
+  version: "2026-10-11",
   name: "Căderea părului",
   label: "Evaluare dermatologică online",
   introTitle: "Căderea părului:",
@@ -91,12 +92,33 @@ export const hairLossEvaluation: EvaluationDefinition = {
     {
       id: "health",
       title: "Ai o afecțiune sau iei un tratament de care ar trebui să știe medicul?",
-      help: "De exemplu probleme ale tiroidei, anemie, o sarcină sau medicamente zilnice. Detaliile le vei putea da medicului în aplicația clinică.",
+      help: "De exemplu probleme ale tiroidei, anemie, o sarcină sau medicamente zilnice.",
       type: "single",
       options: [
         { value: "no", label: "Nu" },
         { value: "yes", label: "Da" },
         { value: "unsure", label: "Nu sunt sigur" },
+      ],
+    },
+    {
+      id: "health-details",
+      title: "Spune-i medicului pe scurt ce afecțiuni ai și ce medicamente sau suplimente iei.",
+      help: "Numele medicamentului și doza, dacă le știi. Medicul te poate întreba mai multe în mesaje.",
+      type: "text",
+      maxLength: 1000,
+      options: [],
+      showIf: { question: "health", anyOf: ["yes", "unsure"] },
+    },
+    {
+      id: "mood",
+      title: "Ai avut vreodată depresie, anxietate sau gânduri de a-ți face rău?",
+      help: "Întrebăm pentru că unele tratamente pentru căderea părului pot influența starea emoțională. Răspunsul îl vede doar medicul tău.",
+      type: "single",
+      options: [
+        { value: "no", label: "Nu" },
+        { value: "past", label: "Da, în trecut" },
+        { value: "current", label: "Da, în prezent" },
+        { value: "private", label: "Prefer să vorbesc direct cu medicul" },
       ],
     },
     {
@@ -121,6 +143,11 @@ export const hairLossEvaluation: EvaluationDefinition = {
       ],
       tone: "caution",
       text: "Unele dintre răspunsurile tale (pete fără păr, apariție bruscă, roșeață sau durere pe scalp) pot avea alte cauze decât alopecia androgenetică. Îți recomandăm un consult în persoană la un medic dermatolog.",
+    },
+    {
+      when: [{ question: "mood", anyOf: ["past", "current", "private"] }],
+      tone: "info",
+      text: "Medicul ține cont de acest răspuns când alege tratamentul. Agenția Europeană a Medicamentului a confirmat în 2025 gândurile suicidare ca efect advers posibil al finasteridei, așa că medicul poate recomanda o variantă fără ea. Dacă ai acum gânduri de a-ți face rău, sună la 112.",
     },
   ],
 };

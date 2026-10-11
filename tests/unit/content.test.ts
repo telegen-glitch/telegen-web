@@ -8,6 +8,7 @@ import { staticPages } from "@/lib/page-meta";
 import { content, hrefForDoc } from "@/content/source";
 import type { MedicalDoc } from "@/content/types";
 import { docTexts } from "@/lib/medical";
+import { isClinicalPath } from "@/lib/clinical-paths";
 import { allRoutes } from "@/lib/routes";
 import { faqJsonLd } from "@/lib/seo";
 import { routes as e2eRoutes } from "../e2e/routes";
@@ -78,7 +79,9 @@ describe("sources and citations", () => {
 
 describe("internal linking graph", () => {
   it("the e2e route list covers every route (no page skips axe, metadata and CSP checks)", () => {
-    expect(new Set(e2eRoutes)).toEqual(routes);
+    expect(new Set(e2eRoutes.filter((r) => !isClinicalPath(r)))).toEqual(routes);
+    // The clinical entry point is checked too, though it is not a public route.
+    expect(e2eRoutes).toContain("/evaluare");
   });
 
   it("all internal links resolve to a route", () => {
@@ -150,9 +153,13 @@ describe("internal linking graph", () => {
 describe("prescription-medicine promotion rules (section 9.4)", () => {
   const medicine = MEDICINE_NAMES;
 
+  // v5 exception (lawyer, docs/legal-review-needed.md #25): the signed-in proposal names the medicine next to
+  // its price. Those names live in one server-only file; tests/unit/proposal.test.ts keeps it out of browser code.
+  const PROPOSAL_PLANS = join("src", "clinical", "config", "plans.ts");
+
   it("medicine names appear only in neutral content data, never in page or component code", () => {
     const offenders = walk("src")
-      .filter((f) => /\.(tsx?|css)$/.test(f) && !f.startsWith(join("src", "content")))
+      .filter((f) => /\.(tsx?|css)$/.test(f) && !f.startsWith(join("src", "content")) && f !== PROPOSAL_PLANS)
       .filter((f) => medicine.test(readFileSync(f, "utf8")))
       .map((f) => relative(".", f));
     expect(offenders).toEqual([]);

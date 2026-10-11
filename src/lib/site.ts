@@ -4,6 +4,7 @@
  */
 
 export type GptBotPolicy = "unchanged" | "allow" | "disallow";
+export type LaunchState = "open" | "prelaunch";
 
 export const siteConfig = {
   name: "Telegen",
@@ -13,20 +14,14 @@ export const siteConfig = {
   description:
     "Clinică online pentru sănătatea bărbaților din România: evaluare medicală, plan de tratament clar și urmărire, de pe telefon.",
   /**
-   * Company identity for the footer, /contact and legal pages. Every null value is
-   * shown as TEMPORARY until the owner supplies it (CLAUDE.md §9.6). Never invent.
+   * Launch state (CLAUDE.md v4.7). "open" is the default on previews and in
+   * production: the site reads as the live service. "prelaunch" is kept only as a
+   * fallback mode; it alone shows the pre-launch notices and the launch-
+   * notification form. Company identity, contact, prices and the legal sign-off
+   * live in src/lib/launch-config.ts; the production build refuses to launch
+   * while any of them is missing (scripts/launch-lock.ts).
    */
-  company: {
-    legalName: null as string | null,
-    cui: null as string | null,
-    regCom: null as string | null,
-    address: null as string | null,
-    email: null as string | null,
-    /** e.g. "2 zile lucrătoare" — an owner commitment, so not set by default. */
-    responseTime: null as string | null,
-  },
-  /** Status shown on the site while the clinical service is not open. */
-  launchState: "prelaunch" as "prelaunch" | "open",
+  launchState: "open" as LaunchState,
   crawlers: {
     /**
      * GPTBot (OpenAI model training) is a separate owner decision.
@@ -37,6 +32,8 @@ export const siteConfig = {
     gptbot: "unchanged" as GptBotPolicy,
   },
 } as const;
+
+export const isPrelaunch = (): boolean => siteConfig.launchState === "prelaunch";
 
 /**
  * The whole site is noindex unless BOTH are true:

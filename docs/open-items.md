@@ -1,18 +1,36 @@
-# Open items (TEMPORARY content and unverified facts)
+# Open items (launch values and unverified facts)
 
-Everything below is visibly labelled TEMPORARY on the site or is otherwise unconfirmed.
+## Launch values the owner still has to supply (v4.7)
+
+The site reads as the live service. Each value below shows on previews as an owner-only marker
+"[lipsește: …]" and blocks the production build until supplied (docs/LAUNCH.md, step 0). Send them to
+Claude in one message, or edit `src/lib/launch-config.ts`.
+
+1. Legal name of the company (`company.legalName`)
+2. CUI (`company.cui`)
+3. Nr. Registrul Comerțului (`company.regCom`)
+4. Registered address (`company.address`)
+5. Public contact e-mail (`contact.email`)
+6. Usual reply time, e.g. "2 zile lucrătoare" (`contact.responseTime`)
+7. Price for hair loss: amount in lei with VAT, what it covers, optional note (`prices["caderea-parului"]`)
+8. Price for acne (`prices["acnee"]`)
+9. Price for erectile dysfunction (`prices["disfunctie-erectila"]`)
+10. (v5) No separate clinical app: the flow runs in this site. Its own launch checks are in
+    `src/clinical/launch.ts` (APP_LAUNCH, Supabase, Stripe live, Brevo, doctors with 2FA, pharmacy split).
+11. Lawyer sign-off on the legal pages → `legalApproved: true` (docs/legal-review-needed.md, items 20–23)
+
+Not part of the lock but still needed for indexing: a recorded medical review per page (docs/REVIEW.md).
+
+## Unconfirmed items
 
 | Item                                                                                                                                                                                                                                                | Where                                                                    | Needed from                                                               |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| Company identity: legal name, CUI, Reg. Com. no., registered address, contact                                                                                                                                                                       | Footer, legal pages, `siteConfig.legalName`                              | Owner                                                                     |
 | ANPC / SAL links and wording                                                                                                                                                                                                                        | Footer, Terms                                                            | Owner + lawyer                                                            |
 | Medical coordinator and clinicians: name, grade, specialty, CMR code                                                                                                                                                                                | `src/content/clinicians.ts`, team pages, review blocks                   | Owner                                                                     |
 | Medical review of every medical page (reviewer + date) — pages stay noindex until then                                                                                                                                                              | `review` field on each doc                                               | Medical reviewer                                                          |
 | Verify every source URL and citation (network blocked during authoring; DOIs written from records, EMA URL especially)                                                                                                                              | `src/content/sources.ts`                                                 | Medical reviewer                                                          |
 | Clinical standards wording (commitments on verification, protocols)                                                                                                                                                                                 | `/standarde-clinice`                                                     | Medical coordinator                                                       |
-| Prices and pricing structure (`features.pricing` stays OFF)                                                                                                                                                                                         | Pricing block, how-it-works                                              | Owner                                                                     |
-| Legal texts: terms, privacy, cookies are working drafts                                                                                                                                                                                             | Legal pages                                                              | Lawyer                                                                    |
-| Launch-notification processor (proposed: Brevo, EU) + API key, list id, DPA                                                                                                                                                                         | `src/lib/notify`                                                         | Owner                                                                     |
+| Launch-notification processor (Brevo, EU): "prelaunch" fallback mode only                                                                                                                                                                           | `src/lib/notify`                                                         | Owner                                                                     |
 | Analytics provider (none configured; consent banner appears only once one is)                                                                                                                                                                       | `NEXT_PUBLIC_ANALYTICS_PROVIDER`                                         | Owner                                                                     |
 | Sanity project id, dataset, read token (Phase 5)                                                                                                                                                                                                    | env vars                                                                 | Owner                                                                     |
 | GPTBot policy (currently "unchanged": no explicit rule)                                                                                                                                                                                             | `siteConfig.crawlers.gptbot`                                             | Owner                                                                     |
@@ -24,8 +42,6 @@ Everything below is visibly labelled TEMPORARY on the site or is otherwise uncon
 | Romanian keyword research (autocomplete, PAA, SERPs)                                                                                                                                                                                                | docs/keywords-ro.md                                                      | Network access; or Semrush API units (https://www.semrush.com/mcp-access) |
 | Fellos acne/ED page capture for structure                                                                                                                                                                                                           | /reference                                                               | Network access                                                            |
 | Hair-loss hero photo (Pexels stock, no model release): confirm the licence covers health-topic use, or supply a photo with a model release (legal-review-needed.md #19)                                                                             | Home hero, /caderea-parului                                              | Owner + lawyer                                                            |
-| Company identity values (legal name, CUI, Reg. Com., address, contact email, response time)                                                                                                                                                         | `siteConfig.company` in src/lib/site.ts (footer, /contact)               | Owner                                                                     |
-| Prices per condition (flag off, none set)                                                                                                                                                                                                           | src/lib/pricing.ts, `flags.pricing`                                      | Owner                                                                     |
 | Women and hair loss: men's-health positioning vs hair-loss content covering women                                                                                                                                                                   | home, hair-loss pages, docs/legal-review-needed.md §16                   | Owner                                                                     |
 | Search Console / Bing verification codes                                                                                                                                                                                                            | Vercel env (docs/LAUNCH.md)                                              | Owner at launch                                                           |
 
@@ -44,3 +60,58 @@ Everything below is visibly labelled TEMPORARY on the site or is otherwise uncon
 | **Romanian status not confirmed** for adapalene alone, benzoyl peroxide alone, topical tretinoin, topical clindamycin alone and lymecycline. Pages say so plainly; no `prescriptionStatus` for adapalen and benzoyl peroxide. Check nomenclator.anm.ro when reachable.                                                                        | `src/content/medicines/acne.ts`                                 | Next session with network access  |
 | **Citation details to verify:** AAD 2024 volume and pages (listed, not cited); EAU edition year (cited as "accessed 7 October 2026"); DOIs of `kanti-2018`, `olsen-2002`, `kaufman-1998`, `hamilton-1951`, `norwood-1975`, `ludwig-1977` not re-checked.                                                                                      | `src/content/sources.ts`                                        | Medical reviewer                  |
 | **Not covered by the pack (left out of the pages):** acne hormones and genetics as causes, hygiene myths, isotretinoin side effects other than pregnancy and mood, retinoid irritation details. Add only from a fetched source.                                                                                                               | acne pages                                                      | Next session with network access  |
+
+## v5 P2 (proposal and payment)
+
+- Owner: confirm that 320 lei/month (870 lei/3 months) **includes the medicines** dispensed by the
+  partner pharmacy, as the proposal now says ("tratamentul pentru perioada plătită").
+- Owner: how long the 199/320 first-month A/B test runs and how it is judged (it is assigned and stored
+  per patient; reporting comes with the admin view in P3).
+- Doctor: confirm the plan rules (finasteride only for men; a history of depression, anxiety or
+  self-harm starts the proposal from minoxidil alone) and the plan texts in `src/clinical/config/plans.ts`.
+- Owner: Stripe account (docs/STRIPE.md): test key and webhook for previews now; live keys at launch.
+
+## v5 P3 (doctor)
+
+- Owner: the flat fee per completed review (`SERVICE.doctorFeeRon`, `src/clinical/config/service.ts`).
+- Owner + lawyer + pharmacy: the prescription format and how it reaches the pharmacy (today the
+  structured "manual" prescription the pharmacy sees in /farmacie).
+- Doctor: confirm the 24 h SLA, the 6-month renewal review and the decline reason wording.
+- Owner: Brevo key and sender, `CRON_SECRET` in Vercel, and the GitHub secrets `TICK_URL` + `CRON_SECRET`
+  for the 15-minute job (docs/EMAIL-AND-JOBS.md).
+- Owner (in /admin, after launch set-up): create the two doctors' accounts; each sets up 2FA on first sign-in.
+
+## v5 P4 (pharmacy)
+
+- Owner + pharmacy: the partner pharmacy, its Stripe Connect (Express) onboarding, and the split per
+  product and billing period (docs/PHARMACY.md). Production takes no real payments until it exists.
+- Owner: invoicing credentials (SmartBill or Oblio) and the invoice series.
+- Owner + pharmacy: courier and parcel standard (discreet packaging, no condition or medicine on the outside).
+
+## v5 P5 (plans and data rights)
+
+- Doctor: confirm the 6-month re-review, the check-in months (1 and 3) and the check-in questions.
+- Owner + lawyer + pharmacy: how long one prescription covers refills (each paid cycle reuses the latest
+  prescription until the doctor's re-review).
+- Lawyer: retention periods for medical records, and what a deletion request erases (docs/legal-review-needed.md #34).
+
+## v5 P6 (site alignment and legal drafts)
+
+- Lawyer: sign off the v5 terms and privacy pages (docs/legal-review-needed.md #35) and the drafts in
+  `docs/legal/` (#36): DPIA, art. 30 record, processors, retention, breach procedure. Open inside them:
+  DPO, the doctors' role, Stripe's role, patient identity checks, prior consultation.
+- Owner + lawyer: retention periods; then Claude adds the clean-up jobs (unsubmitted evaluations, e-mail
+  outbox) listed in `docs/legal/retention.md`.
+- Owner: sign the processors' DPAs (Supabase, Vercel, Stripe, Brevo, SmartBill/Oblio) and the pharmacy contract.
+
+## v5.1 (Supabase project exists)
+
+- Owner: apply the migrations (paste `docs/supabase-setup.sql`, or ask the Claude chat with the Supabase
+  connector) and check `/api/health` (docs/SUPABASE.md §1, §4).
+- Owner: Supabase Auth settings by hand: 6-digit code template, Site URL and redirect URLs, TOTP
+  (docs/SUPABASE.md §2a–c).
+- Owner: Vercel Preview variables `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`,
+  `DATABASE_URL`, `ADMIN_EMAILS`, then Redeploy (docs/SUPABASE.md §3).
+- **Blocker before any real user:** a Brevo account, SMTP key and the telegen.ro sender domain (its DNS
+  records are the owner's decision) for Supabase custom SMTP (docs/SUPABASE.md §2d). Until then the
+  built-in sender allows only a few codes per hour.

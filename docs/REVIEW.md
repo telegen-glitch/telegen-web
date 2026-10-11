@@ -65,7 +65,9 @@ Keep the signed checklist with the private name-to-id log, not in the repository
 - [ ] Contraindications and warnings are correct and visible (for example nitrates and riociguat on ED pages).
 - [ ] Medicine information is neutral: no promotion, no price, no call to action next to a medicine.
 - [ ] No guarantee, cure claim, fear framing, performance or size language.
-- [ ] The evaluation questions and hard-stop texts for this condition are clinically appropriate.
+- [ ] The evaluation questions and hard-stop texts for this condition are clinically appropriate,
+      including the hair-loss intake questions added in v5 (details of conditions and medicines; history
+      of depression, anxiety or self-harm, asked because of the EMA 2025 finasteride warning).
 - [ ] Romanian medical terminology and diacritics are correct.
 - [ ] I agree that the page states it was reviewed by "un medic [specialitate] din echipa Telegen".
 

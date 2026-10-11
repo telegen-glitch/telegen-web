@@ -15,46 +15,49 @@ import { StartButton } from "@/components/topic/StartButton";
 import { Arrow, ButtonLink } from "@/components/ui/Button";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { publishedConditionList } from "@/lib/positioning";
+import { prelaunchCopy } from "@/lib/prelaunch-copy";
+import { priceAnswer } from "@/lib/price-text";
+import { promiseFaqs } from "@/lib/promise-faqs";
+import { purchasableConditionNames } from "@/lib/purchasable-names";
+import { isPrelaunch } from "@/lib/site";
 import { staticPageMetadata } from "@/lib/page-meta";
 import { faqJsonLd } from "@/lib/seo";
 
 export const metadata = staticPageMetadata("/");
 
-const homeFaqs = (): Faq[] => [
-  {
-    question: "Ce afecțiuni evaluați?",
-    answer: `În prezent: ${publishedConditionList()}. Pentru fiecare există un ghid medical pe site și o evaluare online. Căderea părului și acneea sunt evaluate de un medic dermatolog, iar disfuncția erectilă de un medic urolog sau de familie.`,
-  },
-  {
-    question: "Telegen funcționează deja?",
-    answer:
-      "Nu încă. Site-ul este în pre-lansare: poți citi ghidurile și poți parcurge evaluarea ca să vezi cum arată, dar răspunsurile nu sunt trimise nimănui. Te putem anunța când serviciul medical se deschide.",
-  },
-  {
-    question: "Cine îmi va analiza evaluarea?",
-    answer:
-      "Un medic cu drept de liberă practică în România și cu specialitatea potrivită afecțiunii tale. Înainte de consult afli numele medicului și codul lui de parafă.",
-  },
-  {
-    question: "Primesc tratament fără să vorbesc cu un medic?",
-    answer:
-      "Nu. Orice recomandare de tratament pornește de la evaluarea unui medic. Dacă situația ta are nevoie de un consult în persoană, îți spunem direct.",
-  },
-  {
-    question: "Ce se întâmplă cu datele mele de sănătate?",
-    answer:
-      "În pre-lansare, răspunsurile la evaluare rămân doar în pagina deschisă și dispar când o închizi. La lansare, datele medicale vor fi gestionate într-o aplicație clinică separată, cu acordul tău explicit și găzduire în Uniunea Europeană. Detalii în [politica de confidențialitate](/politica-de-confidentialitate).",
-  },
-  {
-    question: "Cât costă?",
-    answer:
-      "Prețurile vor fi afișate clar pe site înainte de lansare, pentru fiecare tip de evaluare și de urmărire.",
-  },
-];
+const lower = (names: string[]) => names.join(", ").toLowerCase();
+
+const homeFaqs = (conditions: { slug: string; name: string }[]): Faq[] => {
+  const open = purchasableConditionNames();
+  return [
+    {
+      question: "Ce afecțiuni evaluați?",
+      answer: open.length
+        ? `Evaluarea online este deschisă acum pentru ${lower(open)}. Pentru ${publishedConditionList()} găsești pe site ghiduri medicale cu surse citate.`
+        : `Pentru ${publishedConditionList()} găsești pe site ghiduri medicale cu surse citate.`,
+    },
+    ...(isPrelaunch() ? [prelaunchCopy.homeFaq] : []),
+    ...(open.length ? promiseFaqs(priceAnswer(conditions)) : []),
+    {
+      question: "Primesc tratament fără să vorbesc cu un medic?",
+      answer:
+        "Nu. Orice tratament pornește de la decizia unui medic, care îți analizează evaluarea și îți poate scrie în cont. Dacă situația ta are nevoie de un consult în persoană, îți spune direct.",
+    },
+    {
+      question: "Ce se întâmplă cu datele mele de sănătate?",
+      answer:
+        "Răspunsurile la evaluare se păstrează doar după ce îți creezi contul și îți dai acordul explicit, separat pentru fiecare scop. Le stocăm pe servere din Uniunea Europeană, criptate, și le vede doar medicul care îți analizează evaluarea. Nu apar niciodată în adrese de pagini, statistici sau e-mailuri. Detalii în [politica de confidențialitate](/politica-de-confidentialitate).",
+    },
+  ];
+};
 
 export default function HomePage() {
   const conditions = content.listConditions();
-  const faqs = homeFaqs();
+  const faqs = homeFaqs(conditions);
+  const open = purchasableConditionNames();
+  const heroText = open.length
+    ? `Evaluare gratuită pentru ${lower(open)}, de pe telefon. Vezi planul propus și prețul înainte să plătești, iar suma se încasează doar dacă medicul aprobă planul.`
+    : `Ghiduri medicale clare despre ${publishedConditionList()}, scrise pe baza ghidurilor clinice europene și cu surse citate.`;
 
   return (
     <>
@@ -62,7 +65,7 @@ export default function HomePage() {
         eyebrow="Clinică online pentru bărbați"
         title="Sănătatea ta, tratată discret."
         accent="Cu un medic alături."
-        text={`Evaluare online pentru ${publishedConditionList()}, un plan stabilit de medic și urmărire pe termen lung. De pe telefon, fără drumuri la cabinet.`}
+        text={heroText}
         chips={conditions.map((c) => ({ label: c.name, slug: c.slug, href: c.basePath }))}
         panels={panelViews(conditions)}
       />
@@ -95,7 +98,10 @@ export default function HomePage() {
                 "Medici cu drept de liberă practică în România și specialitatea potrivită afecțiunii.",
               ],
               ["Explicat clar", "Știi ce ai, ce opțiuni există și la ce să te aștepți."],
-              ["Datele tale, protejate", "Datele medicale nu ajung pe acest site."],
+              [
+                "Datele tale, protejate",
+                "Răspunsurile tale se păstrează criptat, în Uniunea Europeană, doar cu acordul tău.",
+              ],
             ].map(([t, d]) => (
               <li key={t} data-reveal className="rounded-card bg-mist p-6">
                 <p className="font-semibold text-navy-950">{t}</p>

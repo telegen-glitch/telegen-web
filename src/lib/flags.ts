@@ -1,3 +1,5 @@
+import { siteConfig } from "./site";
+
 /**
  * Feature flags for sections that need real assets or owner confirmation
  * (CLAUDE.md §4c.C, §9). Every flag stays OFF until real content exists and
@@ -35,14 +37,16 @@ export const heroMedia: { hair: HeroMedia } = {
 };
 
 /**
- * Per-condition service switch (CLAUDE.md 7c.D). While false, the evaluation ends
- * on the honest "not open yet" screen with the launch-notification form.
- * Turning one on requires the clinical app (app.telegen.ro) and owner approval.
+ * Per-condition service switch (CLAUDE.md 7c.D, v4.7). Open for every condition
+ * when the site is in the "open" launch state: the evaluation then ends with the
+ * hand-over to the clinical app. In "prelaunch" every condition is closed and the
+ * evaluation ends on the "not open yet" screen with the notification form.
  */
+const open = siteConfig.launchState === "open";
 export const serviceOpen: Record<string, boolean> = {
-  "caderea-parului": false,
-  acnee: false,
-  "disfunctie-erectila": false,
+  "caderea-parului": open,
+  acnee: open,
+  "disfunctie-erectila": open,
 };
 
 export function isServiceOpen(topic: string): boolean {

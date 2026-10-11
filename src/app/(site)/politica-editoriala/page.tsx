@@ -37,8 +37,9 @@ export default function EditorialPolicy() {
       </p>
       <p>
         O pagină verificată afișează „Revizuit medical de un medic [specialitate] din echipa Telegen” și data
-        revizuirii. Până la revizuire, pagina spune că revizuirea este în așteptare și nu apare în motoarele
-        de căutare.
+        revizuirii. O pagină care nu are încă o revizuire înregistrată arată „Scris de echipa editorială
+        Telegen pe baza ghidurilor citate” și data actualizării, fără o mențiune de revizuire, și nu apare în
+        motoarele de căutare.
       </p>
       <p>
         Pe site nu publicăm numele medicilor. Înainte de consult, primești numele medicului care te evaluează

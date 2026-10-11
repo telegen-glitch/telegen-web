@@ -38,7 +38,16 @@ for (const route of routes) {
 
       // JSON-LD must parse and FAQPage must mirror visible questions.
       const blocks = await page.locator('script[type="application/ld+json"]').allTextContents();
-      const visible = (await page.locator("details > summary").allTextContents()).map((t) => t.trim());
+      // A question whose answer is only an owner-only marker (previews) has no text to publish.
+      const visible = await page.locator("details").evaluateAll((els) =>
+        els
+          .filter((d) => {
+            const answer = d.querySelector(":scope > div")?.cloneNode(true) as HTMLElement | undefined;
+            answer?.querySelectorAll("[data-owner-marker]").forEach((m) => m.remove());
+            return (answer?.textContent ?? "").trim() !== "";
+          })
+          .map((d) => d.querySelector("summary")?.textContent?.trim() ?? ""),
+      );
       for (const b of blocks) {
         const data = JSON.parse(b);
         if (data["@type"] === "FAQPage") {

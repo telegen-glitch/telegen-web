@@ -50,3 +50,6 @@ next-env.d.ts
 /blob-report/
 /artifacts/
 /lighthouse/
+
+# local clinical data (development only)
+/.data/

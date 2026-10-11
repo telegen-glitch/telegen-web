@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { promiseStep } from "@/lib/promise";
 import {
   PhoneMockup,
   ScreenFollowUp,
@@ -12,23 +13,23 @@ import {
 
 const steps: { title: string; text: string; Screen: (m: MockupContent) => ReactNode }[] = [
   {
-    title: "Spui ce observi",
-    text: "Răspunzi la întrebări clare despre ce s-a schimbat, de când și ce ai încercat. Durează câteva minute, de pe telefon.",
+    title: promiseStep("evaluare").title,
+    text: "Răspunzi la întrebări clare despre ce s-a schimbat, de când și ce ai încercat. Durează câteva minute, de pe telefon, și nu costă nimic.",
     Screen: (m) => <ScreenQuestion question={m.question} options={m.options} />,
   },
   {
-    title: "Un medic analizează",
-    text: "Medicul, cu specialitatea potrivită afecțiunii tale, citește evaluarea, îți poate pune întrebări și decide dacă tratamentul la distanță ți se potrivește.",
+    title: promiseStep("plan").title,
+    text: `${promiseStep("plan").text} ${promiseStep("plata").text}`,
     Screen: () => <ScreenReview />,
   },
   {
-    title: "Primești un plan clar",
-    text: "Ce ai, ce opțiuni există, la ce să te aștepți și când reevaluăm. Fără termeni greu de înțeles.",
+    title: promiseStep("medic").title,
+    text: `${promiseStep("medic").text} ${promiseStep("fara-reteta").title}: rezervarea se anulează integral.`,
     Screen: (m) => <ScreenPlan goal={m.goal} checkIn={m.checkIn} />,
   },
   {
-    title: "Rămânem alături",
-    text: "Verificări periodice și întrebări oricând. Planul se ajustează în funcție de cum evoluezi.",
+    title: "Livrare și urmărire",
+    text: `${promiseStep("livrare").text} ${promiseStep("urmarire").text}`,
     Screen: (m) => <ScreenFollowUp followUp={m.followUp} />,
   },
 ];

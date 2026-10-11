@@ -1,5 +1,5 @@
 import { isEnabled } from "@/lib/flags";
-import { pricesFor } from "@/lib/pricing";
+import { pricesFor } from "@/lib/launch-config";
 
 const ron = new Intl.NumberFormat("ro-RO", { style: "currency", currency: "RON", maximumFractionDigits: 0 });
 

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { homeDescription, homeTitle, publishedConditionList } from "@/lib/positioning";
+import { prelaunchCopy } from "@/lib/prelaunch-copy";
 import { pageMetadata } from "@/lib/seo";
+import { isPrelaunch } from "@/lib/site";
 
 /**
  * Titles and descriptions of every non-medical page, in one place so tests and
@@ -26,7 +28,7 @@ export function staticPages(): Record<string, StaticMeta> {
     "/": { title: homeTitle(), description: homeDescription(), absolute: true },
     "/afectiuni": {
       title: "Afecțiuni tratate online",
-      description: `Afecțiunile pentru care Telegen oferă evaluare medicală online: ${publishedConditionList()}. Ce se poate trata, cum și cu ce fel de medic.`,
+      description: `Ghiduri medicale Telegen despre ${publishedConditionList()}: ce se poate trata, cum, cu ce fel de medic și când ai nevoie de consult.`,
     },
     "/ghiduri": {
       title: "Ghiduri medicale explicate clar",
@@ -41,7 +43,7 @@ export function staticPages(): Record<string, StaticMeta> {
     "/cum-functioneaza": {
       title: "Cum funcționează evaluarea online",
       description:
-        "Pas cu pas: evaluarea online, analiza făcută de un medic cu specialitatea potrivită, planul de tratament și urmărirea. Ce primești și ce nu facem.",
+        "Evaluare gratuită, planul și prețul înainte de plată, suma doar rezervată, medic în 24 de ore, fără rețetă fără plată, livrare discretă, anulare oricând.",
     },
     "/standarde-clinice": {
       title: "Standarde clinice Telegen",
@@ -55,8 +57,9 @@ export function staticPages(): Record<string, StaticMeta> {
     },
     "/evaluare": {
       title: "Evaluare medicală online",
-      description:
-        "Răspunde la câteva întrebări despre căderea părului, acnee sau disfuncția erectilă. În pre-lansare, răspunsurile nu sunt trimise și nici salvate.",
+      description: isPrelaunch()
+        ? prelaunchCopy.evaluationMeta
+        : "Evaluare online gratuită: câteva întrebări, apoi planul propus și prețul. Plătești doar dacă medicul aprobă planul, iar suma doar se rezervă pe card.",
     },
     "/contact": {
       title: "Contact Telegen",
@@ -71,12 +74,12 @@ export function staticPages(): Record<string, StaticMeta> {
     "/termeni-si-conditii": {
       title: "Termeni și condiții",
       description:
-        "Condițiile de utilizare a site-ului telegen.ro: informații educative, nu sfat medical, pre-lansarea serviciului, date personale și soluționarea litigiilor.",
+        "Termenii serviciului Telegen: evaluarea medicală online, aplicația clinică, plata, anularea, datele personale și soluționarea litigiilor cu ANPC.",
     },
     "/politica-de-confidentialitate": {
       title: "Politica de confidențialitate",
       description:
-        "Cum tratează Telegen datele personale ale vizitatorilor telegen.ro: ce colectăm, ce nu colectăm (date de sănătate), drepturile tale și cum ne contactezi.",
+        "Cum prelucrează Telegen datele personale, pe site și în aplicația clinică: datele de sănătate doar cu acordul tău explicit, drepturile tale și contactul.",
     },
     "/politica-cookie": {
       title: "Politica de cookie-uri",

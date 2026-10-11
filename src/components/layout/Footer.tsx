@@ -20,7 +20,8 @@ export function Footer() {
           <div className="max-w-sm">
             <Logo inverse />
             <p className="mt-5 text-[1.375rem] leading-snug font-semibold tracking-tight">
-              Dermatologie online, <span className="accent text-blue-200">cu un medic alături.</span>
+              Sănătatea ta, tratată discret,{" "}
+              <span className="accent text-blue-200">cu un medic alături.</span>
             </p>
             <StartButton variant="inverse" size="md" className="mt-7" />
           </div>
