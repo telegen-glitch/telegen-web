@@ -133,3 +133,19 @@ The site now reads as the live service. Production cannot launch until the owner
     keep it on file. Still to be confirmed in writing: the prescription format and transmission to the
     pharmacy, the Stripe Connect split with the pharmacy, invoicing (e-Factura), and the terms and
     privacy drafts that describe the flow (marked DRAFT FOR LAWYER).
+
+26. **Consent texts (DRAFT FOR LAWYER).** Before anything is saved, the patient ticks four separate,
+    unticked boxes: GDPR art. 9 health data, telemedicine, terms, privacy notice. Each is stored with
+    version `2026-10-11` and a timestamp; a withdrawal is a new row. Text: `src/clinical/config/consents.ts`.
+    Bump the version when a text changes; patients are asked again. To confirm: wording, whether the
+    privacy notice should be an acknowledgement rather than a consent (it is worded "Am citit"), and
+    the withdrawal flow (P5).
+27. **Answers before the account.** The questionnaire runs in the page's memory until the account and
+    the four consents exist; nothing is sent before. A signed-in patient with current consents has every
+    answer saved as given; a hard stop then leaves a "stopped" case in the account (no payment). To
+    confirm: retention for stopped cases (proposal: delete after 90 days unless the patient asks
+    earlier; P5 adds deletion from the account).
+28. **Photos.** Hair loss asks for 3 photos (front, top, crown), acne for 1 (face), ED for none. The phone
+    re-encodes them (≤1600 px, no EXIF/location) and the server strips metadata again. Stored in a
+    private Supabase bucket in Frankfurt; viewed only through 60-second links by the patient and the
+    doctor on the case; each view is audited.

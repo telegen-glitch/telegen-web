@@ -47,7 +47,7 @@ export default function HowItWorks() {
           <ul data-reveal-group className="space-y-3">
             {[
               "Reevaluări periodice; pentru piele și păr, cu fotografii comparabile.",
-              "Întrebări despre efecte adverse oricând, în aplicația clinică.",
+              "Întrebări despre efecte adverse oricând, prin mesaje în contul tău.",
               "Planul se ajustează sau se oprește când medicul consideră necesar.",
               "Dacă apare ceva neobișnuit, îți recomandăm un consult în persoană.",
             ].map((t) => (

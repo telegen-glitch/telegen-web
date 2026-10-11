@@ -13,7 +13,7 @@ export default function PrivacyPage() {
     <LegalPage
       title="Politica de confidențialitate"
       path="/politica-de-confidentialitate"
-      updatedAt="2026-10-10"
+      updatedAt="2026-10-11"
     >
       <h2>Cine este operatorul</h2>
       <p>Operatorul datelor tale personale este societatea care administrează Telegen:</p>
@@ -26,10 +26,10 @@ export default function PrivacyPage() {
 
       <h2>Pe site-ul telegen.ro</h2>
       <p>
-        <strong>Site-ul nu colectează date despre sănătate.</strong> Evaluarea de pe site funcționează
-        exclusiv în browserul tău: răspunsurile nu sunt trimise, nu sunt salvate pe server, în cookie-uri sau
-        în memoria browserului și dispar când închizi pagina. Când continui către consult, aplicația clinică
-        primește doar afecțiunea aleasă, nu și răspunsurile.
+        <strong>Paginile publice nu colectează date despre sănătate.</strong> Cât timp răspunzi la evaluare
+        fără cont, răspunsurile rămân doar în pagina deschisă: nu sunt trimise, nu sunt salvate pe server, în
+        cookie-uri sau în memoria browserului. Se salvează abia după ce îți creezi contul și îți dai acordul
+        explicit, ca mai jos.
       </p>
       <ul>
         <li>
@@ -48,8 +48,11 @@ export default function PrivacyPage() {
         </li>
       </ul>
 
-      <h2>În aplicația clinică Telegen</h2>
-      <p>Serviciul medical se desfășoară în aplicația clinică Telegen, separată de site. Acolo prelucrăm:</p>
+      <h2>În contul tău Telegen</h2>
+      <p>
+        Serviciul medical se desfășoară în contul tău (evaluare, cont, mesaje), o zonă separată de paginile
+        publice, fără statistici și fără scripturi ale altor companii. Acolo prelucrăm:
+      </p>
       <ul>
         <li>datele contului: nume, adresă de e-mail, număr de telefon, data nașterii;</li>
         <li>
@@ -60,9 +63,10 @@ export default function PrivacyPage() {
       </ul>
       <p>
         Datele de sănătate sunt o categorie specială de date (art. 9 din Regulamentul (UE) 2016/679, GDPR). Le
-        prelucrăm pe baza acordului tău explicit, cerut separat în aplicație, și pentru asigurarea asistenței
-        medicale de către un medic obligat la secret profesional (art. 9 alin. (2) lit. (a) și (h)). Le
-        folosim doar ca să te evalueze medicul, să primești planul și să te urmărim pe durata tratamentului.
+        prelucrăm pe baza acordului tău explicit, cerut separat înainte de salvare, și pentru asigurarea
+        asistenței medicale de către un medic obligat la secret profesional (art. 9 alin. (2) lit. (a) și
+        (h)). Le folosim doar ca să te evalueze medicul, să primești planul și să te urmărim pe durata
+        tratamentului.
       </p>
       <p>
         Datele sunt găzduite în Uniunea Europeană și sunt criptate. Le văd medicul care te evaluează și

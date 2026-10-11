@@ -20,10 +20,17 @@ Everything below works in a phone browser. Takes about 15 minutes.
 
 1. In the project: **Authentication** → **Sign In / Providers** → **Email**: make sure it is **enabled**.
 2. **Authentication** → **Emails** → **Magic Link** template: replace the body with
-   `Codul tău Telegen: {{ .Token }}` and tap **Save**. (Patients sign in with a 6-digit code.)
-3. **Authentication** → **Multi-Factor** → **TOTP (authenticator app)**: **enabled**. Doctors and
+   `Codul tău Telegen: {{ .Token }}` and tap **Save**. Do the same in the **Confirm signup**
+   template (a new patient's first code uses it). Patients sign in with a 6-digit code; the
+   e-mail contains only the code.
+3. **Authentication** → **Sign In / Providers** → **Email**: **Email OTP Length** = `6`.
+4. **Authentication** → **Multi-Factor** → **TOTP (authenticator app)**: **enabled**. Doctors and
    admins must use it.
-4. **Authentication** → **URL Configuration** → **Site URL**: paste the preview link Claude gave you.
+5. **Authentication** → **URL Configuration** → **Site URL**: paste the preview link Claude gave you.
+
+Supabase's own e-mail sender allows only a few e-mails per hour: enough to test, not for patients.
+Before launch: **Authentication** → **Emails** → **SMTP Settings** → **Enable custom SMTP**, with the
+SMTP login from Brevo (Brevo → **SMTP & API** → **SMTP**), sender `no-reply@telegen.ro`.
 
 ## 3. Copy four values
 
@@ -48,7 +55,9 @@ Vercel → project **telegen-web** → **Settings** → **Environment Variables*
 | `ADMIN_EMAILS`              | your e-mail address (becomes the admin)  |
 
 Then **Deployments** → the latest preview → **⋯** → **Redeploy**. The build creates all tables
-by itself (`scripts/db-migrate.ts`); nothing has to be pasted into Supabase.
+and the private photo bucket by itself (`scripts/db-migrate.ts`); nothing has to be pasted into
+Supabase. Photos stay in that private bucket; the site shows them only through links valid for
+60 seconds, to the patient and to the doctor on the case.
 
 ## 5. Check
 

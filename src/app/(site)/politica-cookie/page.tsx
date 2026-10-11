@@ -7,11 +7,12 @@ export const metadata = staticPageMetadata("/politica-cookie");
 
 export default function CookiePolicy() {
   return (
-    <LegalPage title="Politica de cookie-uri" path="/politica-cookie" updatedAt="2026-10-10">
+    <LegalPage title="Politica de cookie-uri" path="/politica-cookie" updatedAt="2026-10-11">
       <p>
         Folosim doar cookie-urile strict necesare funcționării site-ului. Cookie-urile de analiză sau
         marketing se folosesc doar cu acordul tău, separat pentru fiecare categorie. În prezent nu folosim
-        astfel de cookie-uri. Aplicația clinică Telegen are propriile reguli, explicate în aplicație.
+        astfel de cookie-uri. Când intri în contul tău, folosim în plus doar cookie-urile de autentificare,
+        necesare ca să rămâi conectat; ele nu conțin date despre sănătate.
       </p>
       <h2>Cookie-uri folosite</h2>
       <div className="overflow-x-auto" role="region" aria-label="Tabel cookie-uri" tabIndex={0}>
@@ -30,6 +31,14 @@ export default function CookiePolicy() {
               <td className="py-2 pr-4">Necesar</td>
               <td className="py-2 pr-4">Memorează alegerea ta privind cookie-urile.</td>
               <td className="py-2">6 luni</td>
+            </tr>
+            <tr className="border-b border-line-soft align-top">
+              <td className="py-2 pr-4 font-mono text-xs">sb-…-auth-token</td>
+              <td className="py-2 pr-4">Necesar</td>
+              <td className="py-2 pr-4">
+                Te ține conectat în contul tău, după ce intri cu codul primit pe e-mail.
+              </td>
+              <td className="py-2">până ieși din cont</td>
             </tr>
           </tbody>
         </table>

@@ -1,11 +1,49 @@
 # Status
 
-_Last updated: 2026-10-11 (v5 P0: clinical foundation, branch claude/v5-p0-foundation)_
+_Last updated: 2026-10-11 (v5 P1: intake, branch claude/v5-p1-intake)_
 
 ## v5 clinical flow inside the site
 
 Owner decision 2026-10-11: one repo, one Vercel project; the clinical flow is built here with the
 separation enforced in code. Phases P0–P6, one stacked pull request each.
+
+### P1 intake (branch claude/v5-p1-intake) — DONE (verified locally, 2026-10-11)
+
+- **What can be started.** Only conditions with the service open AND a price (`src/lib/purchasable.ts`);
+  in production also `APP_LAUNCH=on`. Today: hair loss (320 lei/month, 870 lei/3 months, owner pricing).
+  Acne and ED keep their education pages without any evaluation button, topic-picker entry or price.
+- **Flow** (`src/clinical/ui/IntakeFlow.tsx`, on `/evaluare`, nothing in the URL):
+  topic → questions (one per screen) → hard stop _or_ summary → account by e-mail code → four separate
+  consents → answers saved → photos → saved. Before the account and consents the answers stay in the
+  page only (verified: no requests, storage or cookies). Signed in with consent, every answer is saved
+  as given; a hard stop marks the case "stopped" and ends it (no payment, no edits). Drafts resume from
+  the server (`/cont` and `/evaluare`).
+- **Server side** (`src/clinical/intake`): every answer re-validated against the question set
+  (`validateAnswers`: options, single/multi/exclusive, free text ≤ limit, hidden questions dropped,
+  hard stops detected even if the browser skips them); queries as the patient under RLS; consents
+  versioned (`2026-10-11`) and timestamped; question sets versioned per case.
+- **Auth** (`src/clinical/auth`): Supabase e-mail code + TOTP when configured; httpOnly auth cookies only;
+  the proxy refreshes the session. Locally and in CI only: test sign-in (code 123456, 2FA 654321),
+  never on Vercel and, with `next start`, only with `CLINICAL_LOCAL=on`.
+- **Photos:** hair front/top/crown, acne face, ED none (server refuses other slots). The phone re-encodes
+  to JPEG ≤1600 px without EXIF; the server strips metadata again and stores them privately (Supabase
+  bucket, 60-second signed links; local files in development). Upload is same-origin only.
+- **Launch gate** (`src/clinical/launch.ts`): previews run in test mode (cases marked TEST); production
+  takes real patients only with `APP_LAUNCH=on` and Supabase, Stripe live, Brevo, CRON_SECRET, company
+  details, the lawyer's sign-off and an active doctor with 2FA per condition. The prebuild lock also
+  fails a production build with `APP_LAUNCH=on` and missing keys.
+- **Removed:** the v4.7 hand-over to a separate app (`CLINICAL_APP_URL`) and the in-memory-only
+  `EvaluationFlow`. Public copy that said answers are never saved now describes the account and consent
+  (home FAQ, clinical standards, privacy, terms, cookies; full legal rewrite in P6).
+- **Questions added** (hair loss, for the doctor, to be confirmed in review): details of conditions and
+  medicines; history of depression, anxiety or self-harm (EMA 2025 finasteride warning).
+- **Fixed on the way:** the local database is one instance per server process (route handlers had their
+  own copy); the P0 CSP blocked the old hand-over (PR #3 CI).
+- **Tests:** 101 unit (new: intake validation, consents, autosave, hard stops for every question set,
+  RLS between patients, photo slots, EXIF stripping, purchasable rules) and 181 Playwright passed, 0
+  failed: the full hair flow with photos at 360 and 1280, autosave and a final hard stop, resume, no
+  health data in any URL, photo API refuses other origins and signed-out users.
+- **Not verifiable here:** real Supabase e-mail codes and Storage (need the owner's project).
 
 ### P0 foundation (branch claude/v5-p0-foundation) — DONE (verified locally, 2026-10-11)
 

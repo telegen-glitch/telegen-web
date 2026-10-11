@@ -15,8 +15,8 @@ Claude in one message, or edit `src/lib/launch-config.ts`.
 7. Price for hair loss: amount in lei with VAT, what it covers, optional note (`prices["caderea-parului"]`)
 8. Price for acne (`prices["acnee"]`)
 9. Price for erectile dysfunction (`prices["disfunctie-erectila"]`)
-10. The clinical app's https hand-over address, set in Vercel as `CLINICAL_APP_URL` (the app must be
-    live first: docs/clinical-app-architecture.md, "Hand-over from telegen.ro")
+10. (v5) No separate clinical app: the flow runs in this site. Its own launch checks are in
+    `src/clinical/launch.ts` (APP_LAUNCH, Supabase, Stripe live, Brevo, doctors with 2FA, pharmacy split).
 11. Lawyer sign-off on the legal pages → `legalApproved: true` (docs/legal-review-needed.md, items 20–23)
 
 Not part of the lock but still needed for indexing: a recorded medical review per page (docs/REVIEW.md).

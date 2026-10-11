@@ -44,7 +44,7 @@ const homeFaqs = (conditions: { slug: string; name: string }[]): Faq[] => {
     {
       question: "Ce se întâmplă cu datele mele de sănătate?",
       answer:
-        "Pe acest site, răspunsurile la evaluare rămân doar în pagina deschisă și dispar când o închizi. Datele medicale le introduci în aplicația clinică Telegen, separată de site, unde sunt prelucrate doar cu acordul tău explicit, găzduite în Uniunea Europeană și criptate. Detalii în [politica de confidențialitate](/politica-de-confidentialitate).",
+        "Răspunsurile la evaluare se păstrează doar după ce îți creezi contul și îți dai acordul explicit, separat pentru fiecare scop. Le stocăm pe servere din Uniunea Europeană, criptate, și le vede doar medicul care îți analizează evaluarea. Nu apar niciodată în adrese de pagini, statistici sau e-mailuri. Detalii în [politica de confidențialitate](/politica-de-confidentialitate).",
     },
     ...(price ? [{ question: "Cât costă?", answer: price }] : []),
   ];
